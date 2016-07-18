@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniExplorer3D.CSharp.Plugins", "MiniExplorer3D.CSharp.Plugins.csproj", "{622779F5-C034-756B-48B4-DC0786E0FC11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniExplorer3D.CSharp", "MiniExplorer3D.CSharp.csproj", "{66AC63D7-0E3D-A4C1-65A6-B8BDD3611DC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniExplorer3D.CSharp.Editor", "MiniExplorer3D.CSharp.Editor.csproj", "{0E5728D9-774B-B780-7E70-AD7ADDB2F1A5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{622779F5-C034-756B-48B4-DC0786E0FC11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{622779F5-C034-756B-48B4-DC0786E0FC11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{622779F5-C034-756B-48B4-DC0786E0FC11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{622779F5-C034-756B-48B4-DC0786E0FC11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66AC63D7-0E3D-A4C1-65A6-B8BDD3611DC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66AC63D7-0E3D-A4C1-65A6-B8BDD3611DC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66AC63D7-0E3D-A4C1-65A6-B8BDD3611DC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66AC63D7-0E3D-A4C1-65A6-B8BDD3611DC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E5728D9-774B-B780-7E70-AD7ADDB2F1A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E5728D9-774B-B780-7E70-AD7ADDB2F1A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E5728D9-774B-B780-7E70-AD7ADDB2F1A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E5728D9-774B-B780-7E70-AD7ADDB2F1A5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
