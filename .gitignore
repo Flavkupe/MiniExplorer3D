@@ -1,0 +1,4 @@
+/Assets/Scripts/Utils/*.meta
+
+*.meta
+Library/
