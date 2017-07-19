@@ -1,4 +1,6 @@
-﻿// http://forum.unity3d.com/threads/3d-text-that-takes-the-depth-buffer-into-account.9931/
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// http://forum.unity3d.com/threads/3d-text-that-takes-the-depth-buffer-into-account.9931/
 // slightly modified so that it has a color parameter,
 // start with white sprites and you can color them
 // if having trouble making font sprite sets http://answers.unity3d.com/answers/1105527/view.html 
@@ -43,7 +45,7 @@ Shader "GUI/Color3DText - Cull Back"
             v2f vert (appdata v)
             {
                 v2f o;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 o.color = v.color;
                 o.uv    = TRANSFORM_TEX (v.texcoord, _MainTex);
                 return o;
