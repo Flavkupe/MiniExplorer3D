@@ -8,6 +8,8 @@ public class Door : MonoBehaviour, IHasName, IHasLocation
 
     private BoxCollider boxCollider;
 
+    public bool RemoveOnUnused = true;
+
     public DoorData Data = new DoorData();
 
 	void Start() 

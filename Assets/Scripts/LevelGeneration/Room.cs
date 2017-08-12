@@ -25,6 +25,8 @@ public class Room : MonoBehaviour, IHasName
 
     public RoomData Data = new RoomData();
 
+    public Transform PlayerSpawn;
+
 	public Door[] Doors = new Door[] {};
 
     public SpawnPoint[] SpawnPoints = new SpawnPoint[] { }; 
@@ -112,12 +114,45 @@ public class Room : MonoBehaviour, IHasName
             this.AreaTitleSign.SetTitle(currentLocation.Name);
         }
 
+        List<Door> doors = new List<Door>();
+
+        // Toggle the connector visuals
+        foreach (RoomConnectorData connectorData in roomData.Connectors)
+        {
+            foreach (RoomConnector instanceConnector in this.Connectors)
+            {
+                if (connectorData.IsSamePrefab(instanceConnector))
+                {
+                    if (connectorData.Used)
+                    {
+                        instanceConnector.SetUsed();
+                    }
+                    else
+                    {
+                        instanceConnector.SetUnused();
+                        if (instanceConnector.ShouldUseAlternativeDoor)
+                        {
+                            Debug.Assert(instanceConnector.DoorAlternative != null, "Door expected not null!");
+                            doors.Add(instanceConnector.DoorAlternative);
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        doors.AddRange(this.Doors);
+
         // Create the doors        
-        foreach (Door door in this.Doors)
+        foreach (Door door in doors)
         {
             if (roomData.Requirements.Locations.Count == 0)
             {
-                door.gameObject.SetActive(false);
+                if (door.RemoveOnUnused)
+                {
+                    door.gameObject.SetActive(false);
+                }
             }
             else
             {
@@ -192,27 +227,6 @@ public class Room : MonoBehaviour, IHasName
             else
             {
                 podiumPlaceholder.gameObject.SetActive(false);
-            }
-        }
-
-        // Toggle the connector visuals
-        foreach (RoomConnectorData connectorData in roomData.Connectors)
-        {
-            foreach (RoomConnector instanceConnector in this.Connectors)
-            {
-                if (connectorData.IsSamePrefab(instanceConnector))
-                {
-                    if (connectorData.Used)
-                    {
-                        instanceConnector.SetUsed();
-                    }
-                    else
-                    {
-                        instanceConnector.SetUnused();
-                    }
-
-                    break;
-                }
             }
         }
 

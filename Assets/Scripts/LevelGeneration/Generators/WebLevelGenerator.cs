@@ -46,7 +46,7 @@ public class WebLevelGenerator : BaseLevelGenerator
             }
         }
 
-        HtmlNode contentNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@id='mw-content-text']");
+        HtmlNode contentNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@class='mw-parser-output']");
 
         HtmlNodeCollection subCategories = contentNode.SelectNodes("h1 | h2 | h3 | p | p/a | .//div/div[@class='thumbinner'] | .//table | .//div[@id='toc']");
         

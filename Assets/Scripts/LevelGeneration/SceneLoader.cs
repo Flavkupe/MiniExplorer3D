@@ -16,6 +16,9 @@ public enum GameDimensionMode
 
 public class SceneLoader : MonoBehaviour 
 {
+    private static SceneLoader instance;
+    public static SceneLoader Instance { get { return instance; } }
+
     public AreaMapDrawer Minimap = null;
     public GameObject Player = null;
     public GameDimensionMode GameDimensionMode = GameDimensionMode.TwoD;
@@ -49,6 +52,8 @@ public class SceneLoader : MonoBehaviour
         {
             this.levelGenerator.OnAreaGenReady += LevelGenerator_OnAreaGenReady;              
         }
+
+        instance = this;
     }
 
     void Start()
@@ -115,16 +120,23 @@ public class SceneLoader : MonoBehaviour
             yield return this.levelGenerator.AreaPostProcessing(currentLocation, this);
         }
 
+        Vector3? spawnPos = null;
         List<Room> instances = new List<Room>();
         foreach (RoomData roomData in grid.Rooms)
         {
             // Put each room from grid in its actual location
             Room model = this.GetRoomByPrefabID(roomData.PrefabID, area);
-            Room roomInstance = Instantiate(model) as Room;
+            Room roomInstance = Instantiate(model) as Room;            
+
             roomInstance.transform.parent = area.transform;
             roomInstance.transform.position = roomData.WorldCoords;
 
-            roomInstance.GenerateRoomPartsFromRoomData(currentLocation, roomData);            
+            roomInstance.GenerateRoomPartsFromRoomData(currentLocation, roomData);
+
+            if (roomInstance.PlayerSpawn != null)
+            {
+                spawnPos = roomInstance.PlayerSpawn.position;
+            }
 
             instances.Add(roomInstance);
         }
@@ -139,6 +151,10 @@ public class SceneLoader : MonoBehaviour
 
         this.Loading.ToggleCamera(false);
         this.Player.transform.gameObject.SetActive(true);
+        if (spawnPos != null)
+        {
+            this.Player.transform.position = spawnPos.Value;
+        }
 
         yield return null;         
     }

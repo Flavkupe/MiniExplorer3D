@@ -7,6 +7,7 @@ public enum RoomConnectorUsageMode
 {    
     RemoveOnUsed = 1,   
     EncloseSurroundingWallsOnUnused = 2,
+    ReplaceWithDoorOnUnused = 4,
 }
 
 public class RoomConnector : MonoBehaviour 
@@ -14,6 +15,13 @@ public class RoomConnector : MonoBehaviour
     public Room ParentRoom = null;
 
     public RoomConnectorData Data = new RoomConnectorData();
+
+    /// <summary>
+    /// Door to use if this is unused.
+    /// </summary>
+    public Door DoorAlternative;
+
+    public bool ShouldUseAlternativeDoor = false;
 
     [EnumFlags]
     public RoomConnectorUsageMode ConnectedUsageBehavior;
@@ -72,7 +80,8 @@ public class RoomConnector : MonoBehaviour
         // Shift location such that room's bottom-left is at 0,0, rather than center at 0,0
 
         Func<float,int,int> GridCoordAdjustment = (float coordLocal, int localDimension) =>
-        {            
+        {
+            coordLocal += coordLocal < 0 ? 0.01f : -0.01f; // adjust for exactly 8 or -8
             int loc = (int)coordLocal + localDimension / 2;
             loc = loc / StageManager.StepSize;
             return loc;
@@ -131,6 +140,7 @@ public class RoomConnector : MonoBehaviour
 
     public void SetUnused()
     {
+
         if ((this.ConnectedUsageBehavior & RoomConnectorUsageMode.EncloseSurroundingWallsOnUnused) != 0)
         {
             foreach (ClosingWall wall in this.EnclosingWalls)
@@ -139,8 +149,14 @@ public class RoomConnector : MonoBehaviour
                 this.gameObject.SetActive(false);
             }
         }
-    }
 
+        if ((this.ConnectedUsageBehavior & RoomConnectorUsageMode.ReplaceWithDoorOnUnused) != 0)
+        {
+            this.ShouldUseAlternativeDoor = true;
+            this.DoorAlternative.gameObject.SetActive(true);
+            //this.gameObject.SetActive(false);
+        }
+    }
 }
 
 [Serializable]
