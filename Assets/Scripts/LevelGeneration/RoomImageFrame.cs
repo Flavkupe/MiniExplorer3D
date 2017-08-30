@@ -1,7 +1,17 @@
 ﻿
 using UnityEngine;
-public class RoomImageFrame : MonoBehaviour
+public class RoomImageFrame : MonoBehaviour, ICanLookAt
 {
+    public enum ImageFrameType
+    {
+        Painting,
+        Podium
+    }
+
+    public ImageFrameType FrameType;
+
+    public Simple3DText textObject;
+
     public bool IsUsed { get; set; }
 
     public float BaseWidthMultiplier = 1.0f;
@@ -9,11 +19,15 @@ public class RoomImageFrame : MonoBehaviour
     public float BasePPUMultiplier = 2.0f;
 
     void Start()
-    {
+    {        
     }
 
     void Update()
     {
+        if (this.textObject != null)
+        {
+            this.textObject.ToggleText(false);
+        }
     }
 
     public void SetLevelImage(LevelImage newLevelImage)
@@ -38,6 +52,19 @@ public class RoomImageFrame : MonoBehaviour
             meshRenderer.materials[materialIndex].SetTexture("_MainTex", newLevelImage.Texture2D);
 
             this.IsUsed = true;
+        }
+
+        if (this.textObject != null)
+        {
+            this.textObject.SetText(newLevelImage.Name);
+        }
+    }
+
+    public void LookAt(GameObject source)
+    {
+        if (this.textObject != null)
+        {
+            this.textObject.ToggleText(true);
         }
     }
 }

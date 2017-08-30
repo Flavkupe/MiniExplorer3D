@@ -10,12 +10,15 @@ public interface ILevelGenerator
     RoomGrid GenerateRoomGrid(Location targetLocation);
 
     List<string> GetLevelEntities(Location location);
-    List<LevelImage> GetLevelImages(Location location);
     
     bool CanLoadLocation(Location location);
 
     IEnumerator PrepareAreaGeneration(Location location, MonoBehaviour caller);
+    IEnumerator AreaPostProcessing(Location location, MonoBehaviour caller);
+    
     event EventHandler<AreaGenerationReadyEventArgs> OnAreaGenReady;
+    event EventHandler<AreaGenerationReadyEventArgs> OnAreaPostProcessingDone;
+    
 
     bool NeedsAreaGenPreparation { get; }
 }

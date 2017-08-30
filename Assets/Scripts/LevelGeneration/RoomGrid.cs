@@ -85,11 +85,6 @@ namespace Assets.Scripts.LevelGeneration
             {
                 for (int j = y; j < y + stepY; ++j)
                 {
-                    if (HasRoomAt(i, j))
-                    {
-                        int hhh = 1;
-                    }
-
                     this.grid[i, j] = new RoomCell(data, i, j);                    
                 }
             }
@@ -98,6 +93,12 @@ namespace Assets.Scripts.LevelGeneration
             {
                 Vector2 connectorCoords = connector.RelativeGridCoords;
                 RoomCell cellWithConnector = this.grid[x + (int)connectorCoords.x, y + (int)connectorCoords.y];
+                if (cellWithConnector == null)
+                {
+                    Debug.LogError(string.Format("Room {0} connector {1} is off bounds: ({2},{3}) out of ({4},{5})",
+                                    data.PrefabID, connector.PrefabID, connectorCoords.x, connectorCoords.y, stepX, stepY));
+                }
+
                 cellWithConnector.Connectors.Add(connector);
                 Vector2 adjacentCoords = this.GetAdjacentConnectorCoords(cellWithConnector, connector);
                 if (this.grid[(int)adjacentCoords.x, (int)adjacentCoords.y] == null)
@@ -173,11 +174,11 @@ namespace Assets.Scripts.LevelGeneration
             int center = this.dimensions / 2;            
             int xWorld = (x - center) * StageManager.StepSize;
             int yWorld = (y - center) * StageManager.StepSize;
-            
+            int depth = threeD ? 0 : 1;
             // Center the object from bottom-left to its center
             xWorld = xWorld + objWidth / 2;
             yWorld = yWorld + objHeight / 2;
-            return threeD ? new Vector3(xWorld, 1, yWorld) : new Vector3(xWorld, yWorld, 1);
+            return threeD ? new Vector3(xWorld, depth, yWorld) : new Vector3(xWorld, yWorld, depth);
         }        
 
         public RoomData AddRoomFromList(List<Room> possibleRooms) 
@@ -193,6 +194,8 @@ namespace Assets.Scripts.LevelGeneration
                 // Get list of rooms that have a connector that can match any of the currently open connectors
                 OpenConnectorCell currentOpenConnectorCell = openConnectors.Dequeue();
                 List<Room> viableRooms = possibleRooms.Where(room => room.Connectors.Any(connector => connector.IsMatchingConnector(currentOpenConnectorCell.OpenConnector))).ToList();
+                
+                // TODO: select rooms more intellegently, based on list of room requirements
                 viableRooms.Shuffle();
                 foreach (Room room in viableRooms)
                 {
@@ -229,8 +232,9 @@ namespace Assets.Scripts.LevelGeneration
         }
 
         public RoomData GetRoomData(Room room, int x, int y)
-        {
+        {            
             RoomData data = room.ToRoomData();
+            data.RoomReference = room;
             bool threeD = StageManager.SceneLoader.GameDimensionMode == GameDimensionMode.ThreeD;
             int height = threeD ? room.Length : room.Height;
             

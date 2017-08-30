@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.3.5f1</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -85,6 +83,7 @@
     <Compile Include="Assets\Scripts\LevelGeneration\ClosingWall.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Door.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\BaseLevelGenerator.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\Generators\DebugLevelGenerator.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\FileLevelGenerator.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\ILevelGenerator.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\WebLevelGenerator.cs" />
@@ -92,6 +91,7 @@
     <Compile Include="Assets\Scripts\LevelGeneration\LevelImage.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Location.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\LocationData.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\Placeholder.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\ReadingContent.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Room.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\RoomConnector.cs" />
@@ -106,20 +106,38 @@
     <Compile Include="Assets\Scripts\Map\AreaMapDrawer.cs" />
     <Compile Include="Assets\Scripts\Map\MapTile.cs" />
     <Compile Include="Assets\Scripts\Pair.cs" />
-    <Compile Include="Assets\Scripts\Parts\ThreeDTextBase.cs" />
+    <Compile Include="Assets\Scripts\Parts\AreaTitle.cs" />
     <Compile Include="Assets\Scripts\Parts\ArticleText.cs" />
+    <Compile Include="Assets\Scripts\Parts\ClickableText.cs" />
+    <Compile Include="Assets\Scripts\Parts\DisplayPodium.cs" />
     <Compile Include="Assets\Scripts\Parts\FloatyText.cs" />
+    <Compile Include="Assets\Scripts\Parts\ICanLookAt.cs" />
+    <Compile Include="Assets\Scripts\Parts\InfoBoxDisplay.cs" />
+    <Compile Include="Assets\Scripts\Parts\LinkBoard.cs" />
+    <Compile Include="Assets\Scripts\Parts\LinkHolder.cs" />
     <Compile Include="Assets\Scripts\Parts\NameTag.cs" />
+    <Compile Include="Assets\Scripts\Parts\NewBehaviourScript.cs" />
+    <Compile Include="Assets\Scripts\Parts\Simple3DText.cs" />
+    <Compile Include="Assets\Scripts\Parts\TableOfContentsPodium.cs" />
+    <Compile Include="Assets\Scripts\Parts\TextOutline.cs" />
+    <Compile Include="Assets\Scripts\Parts\TiledQuad.cs" />
+    <Compile Include="Assets\Scripts\Parts\WallWithDoor.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerControls.cs" />
     <Compile Include="Assets\Scripts\Utils\EnumFlagsAttributeDrawer.cs" />
     <Compile Include="Assets\Scripts\Utils\ExtensionFunctions.cs" />
     <Compile Include="Assets\Scripts\Utils\Interfaces.cs" />
+    <Compile Include="Assets\Scripts\Utils\LoadingView.cs" />
     <Compile Include="Assets\SnapToGrid.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Shaders\3DTextOneSided.shader" />
     <None Include="Assets\Standard Assets\Characters\FirstPersonCharacter\FirstPersonCharacterGuidelines.txt" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
     <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />
+    <None Include="Assets\Standard Assets\Fonts\Documentation\JazzCreateAltKeys_BubbleFont.txt" />
+    <None Include="Assets\Standard Assets\Fonts\Documentation\JazzCreateBubble_VersionHistory_1.1.txt" />
     <None Include="Assets\Standard Assets\JuliusCaesarBust\readme_first.txt" />
+    <None Include="Assets\Standard Assets\PBS Materials Variety Pack\readme.txt" />
     <None Include="Assets\Standard Assets\Prototyping\Shaders\WorldCoordDiffuse.shader" />
     <None Include="Assets\Standard Assets\RetroLamps\Shaders\Lamps_rimShaderSpecEmi.shader" />
     <None Include="Assets\Standard Assets\RetroLamps\Shaders\Lamps_rimShader_dust.shader" />

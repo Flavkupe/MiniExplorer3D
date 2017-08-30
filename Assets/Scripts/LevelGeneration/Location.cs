@@ -10,6 +10,8 @@ public abstract class Location
 	public string Path;
 	public string Name;
 
+    public string Anchor { get; set; }
+
     private LocationData locationData = new LocationData();
     public LocationData LocationData 
     { 
@@ -101,7 +103,7 @@ public class SubLocation : Location
 {
     public override bool IsBackLocation { get { return false; } }
 
-    public Location ParentLocation { get; set; }
+    public Location ParentLocation { get; set; }    
 
     public override Location Clone(bool deepClone = false)
     {

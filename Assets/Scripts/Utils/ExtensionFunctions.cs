@@ -36,6 +36,14 @@ public static class ExtensionFunctions
         return queue;
     }
 
+    public static void TransferOneFrom<T>(this Queue<T> me, Queue<T> other)
+    {
+        if (other.Count > 0)
+        {
+            me.Enqueue(other.Dequeue());
+        }
+    }
+
     public static void Shuffle<T>(this IList<T> list)
     {
         int n = list.Count;
@@ -48,6 +56,14 @@ public static class ExtensionFunctions
             list[n] = value;
         }
     }    
+
+    public static void EnqueueRange<T>(this Queue<T> queue, IEnumerable<T> list) 
+    {
+        foreach (T item in list)
+        {
+            queue.Enqueue(item);
+        }
+    }
 
     public static Vector2 SetX(this Vector2 vector, float x)
     {

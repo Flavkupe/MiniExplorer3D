@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Room : MonoBehaviour, IHasName
 {   	
@@ -30,9 +31,15 @@ public class Room : MonoBehaviour, IHasName
 
     public RoomConnector[] Connectors = new RoomConnector[] { };
 
-    public RoomImageFrame[] RoomImageFrames = new RoomImageFrame[] { };
+    public RoomImageFrame[] Paintings = new RoomImageFrame[] { };
 
-    public ReadingContent[] Reading = new ReadingContent[] { };
+    public Placeholder[] Reading = new Placeholder[] { };
+
+    public Placeholder[] DisplayPodiums = new Placeholder[] { };
+
+    public Placeholder TOCPodium = null;
+
+    public AreaTitle AreaTitleSign = null;
 
     void Awake()
     {        
@@ -49,11 +56,7 @@ public class Room : MonoBehaviour, IHasName
 
 	public void SetName(string name) 
 	{ 
-		this.Data.DisplayName = name; 
-		if (this.nametag != null) 
-		{
-			this.nametag.RefreshName();
-		}
+		this.Data.DisplayName = name; 		
 
 		foreach (Door door in this.Doors) 
 		{
@@ -87,36 +90,46 @@ public class Room : MonoBehaviour, IHasName
 
     public void PopulateParts()
     {
+        List<Placeholder> allPlaceholders = this.GetComponentsInChildren<Placeholder>(true).ToList();
+
         this.Doors = this.transform.GetComponentsInChildren<Door>(true);
         this.Connectors = this.transform.GetComponentsInChildren<RoomConnector>(true);
         this.SpawnPoints = this.transform.GetComponentsInChildren<SpawnPoint>(true);
-        this.RoomImageFrames = this.transform.GetComponentsInChildren<RoomImageFrame>(true);
-        this.Reading = this.transform.GetComponentsInChildren<ReadingContent>(true);
+        this.Paintings = this.transform.GetComponentsInChildren<RoomImageFrame>(true).Where(a => a.FrameType == RoomImageFrame.ImageFrameType.Painting).ToArray();
+        this.Reading = allPlaceholders.Where(a => a.PartType == Placeholder.RoomPartType.Reading).ToArray();
+
+        this.DisplayPodiums = allPlaceholders.Where(a => a.PartType == Placeholder.RoomPartType.DisplayPodium ||
+                                                         a.PartType == Placeholder.RoomPartType.TextPodium).ToArray();
+        this.TOCPodium = allPlaceholders.FirstOrDefault(a => a.PartType == Placeholder.RoomPartType.TableOfContentsPodium);
+        this.AreaTitleSign = this.transform.GetComponentInChildren<AreaTitle>();
     }
 
     public void GenerateRoomPartsFromRoomData(Location currentLocation, RoomData roomData)
     {
-        // Create the doors
-        int locationCount = 0;
+        // Apply title where applicable
+        if (this.AreaTitleSign != null)
+        {
+            this.AreaTitleSign.SetTitle(currentLocation.Name);
+        }
+
+        // Create the doors        
         foreach (Door door in this.Doors)
         {
-            if (locationCount >= roomData.Locations.Count)
+            if (roomData.Requirements.Locations.Count == 0)
             {
                 door.gameObject.SetActive(false);
             }
             else
             {
-                Location currentLoc = roomData.Locations[locationCount];
+                Location currentLoc = roomData.Requirements.Locations.Dequeue();
                 door.SetLocation(currentLoc);
                 door.SetName(currentLoc.Name);
                 if (StageManager.PreviousLocation != null && 
                     currentLoc.LocationKey == StageManager.PreviousLocation.LocationKey &&
                     StageManager.SceneLoader != null && StageManager.SceneLoader.Player != null)
-                {
-                    StageManager.SceneLoader.Player.transform.position = door.transform.position;
+                {                    
+                    door.TeleportObjectToFront(StageManager.SceneLoader.Player);                    
                 }
-
-                locationCount++;
             }
         }
 
@@ -143,25 +156,42 @@ public class Room : MonoBehaviour, IHasName
             }
 
             spawn.gameObject.SetActive(false);
-        }
-
-        // TEMP
-        Queue<LevelImage> levelImages = StageManager.LevelGenerator.GetLevelImages(currentLocation).ToQueue();
+        }        
 
         // Place the images
-        foreach (RoomImageFrame frame in this.RoomImageFrames)
+        foreach (RoomImageFrame frame in this.Paintings)
         {
-            if (!frame.IsUsed)
+            if (roomData.Requirements.ImagePaths.Count > 0)
             {
-                if (levelImages.Count == 0)
+                if (!frame.IsUsed)
                 {
-                    frame.gameObject.SetActive(false);
-                }
-                else
-                {
-                    LevelImage image = levelImages.Dequeue();
+                    LevelImage image = roomData.Requirements.ImagePaths.Dequeue().LoadedImage;
                     frame.SetLevelImage(image);
                 }
+            }
+            else
+            {
+                frame.gameObject.SetActive(false);
+            }
+        }
+
+        // Place the podium images
+        foreach (Placeholder podiumPlaceholder in this.DisplayPodiums)
+        {                        
+            if (podiumPlaceholder.PartType == Placeholder.RoomPartType.DisplayPodium && roomData.Requirements.PodiumImages.Count > 0)
+            {
+                DisplayPodium podium = podiumPlaceholder.GetInstance<DisplayPodium>();
+                LevelImage image = roomData.Requirements.PodiumImages.Dequeue().LoadedImage;
+                podium.SetImage(image);                
+            }
+            else if (podiumPlaceholder.PartType == Placeholder.RoomPartType.TextPodium && roomData.Requirements.PodiumText.Count > 0) 
+            {
+                DisplayPodium podium = podiumPlaceholder.GetInstance<DisplayPodium>();
+                podium.SetText(roomData.Requirements.PodiumText.Dequeue());
+            }
+            else
+            {
+                podiumPlaceholder.gameObject.SetActive(false);
             }
         }
 
@@ -186,18 +216,31 @@ public class Room : MonoBehaviour, IHasName
             }
         }
 
-        // Set the text
-        int count = 0;
-        foreach (string locationText in currentLocation.LocationData.LocationText)
+        if (this.TOCPodium != null)
         {
-            if (this.Reading != null && this.Reading.Length > count)
+            if (roomData.Requirements.TableOfContents != null)
             {
-                this.Reading[count].AddText(locationText);
-                count++;
+                TableOfContentsPodium podium = this.TOCPodium.GetInstance<TableOfContentsPodium>();
+                podium.SetTableOfContents(roomData.Requirements.TableOfContents);
+                roomData.Requirements.TableOfContents = null;
             }
             else
             {
-                break;
+                this.TOCPodium.gameObject.SetActive(false);
+            }
+        }
+
+        // Set the text
+        foreach (Placeholder bookPlaceholder in this.Reading)
+        {
+            if (roomData.Requirements.LocationText.Count > 0)
+            {
+                ReadingContent book = bookPlaceholder.GetInstance<ReadingContent>();
+                book.AddText(roomData.Requirements.LocationText.Dequeue());
+            }
+            else
+            {
+                bookPlaceholder.gameObject.SetActive(false);
             }
         }
     }
@@ -210,11 +253,12 @@ public class RoomData : IMatchesPrefab
     public int DimY;
     public int DimZ;
     public string DisplayName;
-    
+
+    // Should not clone this in a deep copy!
+    public Room RoomReference { get; set; }
 
     public string PrefabID { get; set; }
 
-    private List<Location> locations = new List<Location>();
     private List<RoomConnectorData> connectors = new List<RoomConnectorData>();
     private List<DoorData> doors = new List<DoorData>();
     private List<SpawnPointData> spawnPoints = new List<SpawnPointData>();      
@@ -228,9 +272,10 @@ public class RoomData : IMatchesPrefab
         get { return doors; }
     }
 
-    public List<Location> Locations
+    private LevelGenRequirements requirements = new LevelGenRequirements();
+    public LevelGenRequirements Requirements
     {
-        get { return locations; }
+        get { return requirements; }
     }
 
     public List<RoomConnectorData> Connectors
@@ -257,20 +302,18 @@ public class RoomData : IMatchesPrefab
         data.PrefabID = this.PrefabID;
         data.doors = new List<DoorData>();
         data.connectors = new List<RoomConnectorData>();
-        data.locations = new List<Location>();
         data.spawnPoints = new List<SpawnPointData>();
+
+        data.RoomReference = this.RoomReference;
+
+        data.Requirements.Clone(deepCopy);
 
         if (deepCopy)
         {
             foreach (DoorData door in this.Doors)
             {
                 data.Doors.Add(door.Clone());
-            }
-
-            foreach (Location location in this.Locations)
-            {
-                data.Locations.Add(location.Clone());
-            }
+            }            
 
             foreach (RoomConnectorData connector in this.Connectors)
             {

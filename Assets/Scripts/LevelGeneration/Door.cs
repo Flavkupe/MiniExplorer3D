@@ -6,6 +6,8 @@ public class Door : MonoBehaviour, IHasName, IHasLocation
 {
 	private NameTag nametag;
 
+    private BoxCollider boxCollider;
+
     public DoorData Data = new DoorData();
 
 	void Start() 
@@ -15,6 +17,7 @@ public class Door : MonoBehaviour, IHasName, IHasLocation
 
     void Awake()
     {
+        this.boxCollider = this.GetComponent<BoxCollider>();
         DontDestroyOnLoad(transform.gameObject);
     }
 	
@@ -47,6 +50,7 @@ public class Door : MonoBehaviour, IHasName, IHasLocation
         if (!nametag.gameObject.activeSelf)
         {
             nametag.gameObject.SetActive(true);
+            nametag.RefreshName();
         }
         if (Input.GetKeyUp(KeyCode.Space))
         {
@@ -56,11 +60,7 @@ public class Door : MonoBehaviour, IHasName, IHasLocation
 
 	public void SetName(string name) 
 	{ 
-		this.Data.DisplayName = name; 
-		if (this.nametag != null) 
-		{
-			this.nametag.RefreshName();
-		}
+		this.Data.DisplayName = name;
 	}
 
 	public string GetName() { return this.Data.DisplayName; }
@@ -75,6 +75,11 @@ public class Door : MonoBehaviour, IHasName, IHasLocation
         return data; 
     }
 
+
+    public void TeleportObjectToFront(GameObject gameObject)
+    {
+        gameObject.transform.position = this.transform.position + (transform.localRotation * this.boxCollider.center);
+    }
 }
 
 [Serializable]

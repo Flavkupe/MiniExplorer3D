@@ -75,28 +75,37 @@ public class RoomConnector : MonoBehaviour
         {            
             int loc = (int)coordLocal + localDimension / 2;
             loc = loc / StageManager.StepSize;
-            if (coordLocal % StageManager.StepSize == 0 &&
-                (this.Position == ConnectorPosition.Top ||
-                this.Position == ConnectorPosition.Right))
-            {
-                // This is the special case in which the connector is in the 
-                // far top or right of the room; as an off-by-one, it should
-                // be one room back.
-                //loc -= 1;
-            }
-
             return loc;
         };
 
-        int locX = GridCoordAdjustment((int)this.transform.localPosition.x, this.ParentRoom.Width);
+        // Get the localPos relative to the Room.
+        //Vector3 trueLocal = new Vector3();
+        //Transform current = this.transform;
+        //while (current != null && current.parent != null) // Until current is the room
+        //{
+        //    trueLocal += current.transform.localPosition;
+        //    current = current.parent;
+        //}
+
+        Vector3 trueLocal = new Vector3();
+        Transform current = this.transform;
+        while (current != null && current.parent != null) // Until current is the room
+        {            
+            current = current.parent;
+        }
+
+        trueLocal = this.transform.position - current.position;
+        
+
+        int locX = GridCoordAdjustment(trueLocal.x, this.ParentRoom.Width);
         int locY;                       
         if (StageManager.SceneLoader.GameDimensionMode == GameDimensionMode.TwoD)
         {
-            locY = GridCoordAdjustment(this.transform.localPosition.y, this.ParentRoom.Height);             
+            locY = GridCoordAdjustment(trueLocal.y, this.ParentRoom.Height);             
         }
         else
-        {            
-            locY = GridCoordAdjustment(this.transform.localPosition.z, this.ParentRoom.Length);                         
+        {
+            locY = GridCoordAdjustment(trueLocal.z, this.ParentRoom.Length);                         
         }
         
         return new Vector2(locX, locY);

@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ClosingWall : MonoBehaviour {
-
+public class ClosingWall : MonoBehaviour 
+{
     public Vector3 NormalScale;
     public Vector3 ModifiedScale;
 
@@ -19,7 +19,7 @@ public class ClosingWall : MonoBehaviour {
 	
 	}
 
-    public void SwitchStance(bool modified)
+    public virtual void SwitchStance(bool modified)
     {
         if (modified)
         {

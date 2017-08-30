@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public static class StageManager 
 {
     public const int StepSize = 8;
-    public const int RoomGridDimensions = 40;
+    public const int RoomGridDimensions = 50;
     public const int MaxAreaEntities = 2;
     public const int MaxRoomDoors = 300;
 
@@ -28,13 +28,14 @@ public static class StageManager
         return knownAreaMap.GetValueOrDefault(location.LocationKey);
     }
 
-    public static GameObject Player { get; set; }
+    public static GameObject Player { get; set; }    
 
     public static SceneLoader SceneLoader = null;
     
     public static Location CurrentLocation = null;
     public static Location PreviousLocation = null;
     public static Area CurrentArea = null;
+    public static LoadingView LoadingViewer = null;
 
     public static bool AttemptTransition(Location location) 
     {
@@ -47,6 +48,46 @@ public static class StageManager
         }
         
         return false;       
+    }
+
+    public static void AttemptTransitionToAnchor(string anchor)
+    {
+        if (!string.IsNullOrEmpty(anchor) && CurrentLocation != null)
+        {
+            Location anchored = GetLocationWithAnchor(CurrentLocation, anchor);
+            if (anchored != null)
+            {
+                AttemptTransition(anchored);                                
+            }
+        }        
+    }
+
+    private static Location GetLocationWithAnchor(Location root, string anchor)
+    {
+        if (root == null)  
+        {
+            return null;
+        }
+        else if (root.Anchor == anchor)
+        {
+            return root;
+        }
+
+        foreach (Location child in root.LocationData.SubLocations)
+        {
+            Location anchoredLocation = GetLocationWithAnchor(child, anchor);
+            if (anchoredLocation != null)
+            {
+                return anchoredLocation;
+            }
+        }
+
+        return null;
+    }
+
+    public static bool AttemptTransition(string path, string name)
+    {
+        return AttemptTransition(new MainLocation(path, name));
     }
 
     public static Vector2 GetGridCoordsFromWorldCoords(Vector3 worldLoc)
@@ -73,6 +114,19 @@ public static class StageManager
             !(levelGenerator is WebLevelGenerator))
         {
             levelGenerator = new WebLevelGenerator();
+        }
+        else if (levelGenerationMode == LevelGenerationMode.Debug && 
+            !(levelGenerator is DebugLevelGenerator))
+        {
+            levelGenerator = new DebugLevelGenerator();
+        }
+    }
+
+    public static void CreateDisabledInstance(MonoBehaviour model)
+    {
+        if (SceneLoader != null)
+        {
+            SceneLoader.CreateDisabledInstance(model);
         }
     }
 }

@@ -19,43 +19,52 @@ public class SceneLoader : MonoBehaviour
     public AreaMapDrawer Minimap = null;
     public GameObject Player = null;
     public GameDimensionMode GameDimensionMode = GameDimensionMode.TwoD;
-    public string InitialLocation = "C:\\test";    
+    public string InitialLocation = "C:\\test";
+
+    private LoadingView Loading;
 
     public LevelGenerationMode Mode = LevelGenerationMode.File;
 
     private AreaGenerationReadyEventArgs delayedAreaLoadArgs = null;
 
+    private ILevelGenerator levelGenerator = null;
+
     public Room[] RoomPrefabs;
     public Room[] StartingRoomPrefabs;
 
     void Awake() 
-    {
+    {        
         Player.transform.gameObject.SetActive(false);
         StageManager.SetLevelGenMode(this.Mode);
         StageManager.SceneLoader = this;
+
+        this.levelGenerator = StageManager.LevelGenerator;
 
         if (StageManager.CurrentLocation == null)
         {
             StageManager.CurrentLocation = new MainLocation(this.InitialLocation);
         }
 
-        if (StageManager.LevelGenerator.NeedsAreaGenPreparation)
+        if (this.levelGenerator.NeedsAreaGenPreparation)
         {
-            StageManager.LevelGenerator.OnAreaGenReady += LevelGenerator_OnAreaGenReady;
+            this.levelGenerator.OnAreaGenReady += LevelGenerator_OnAreaGenReady;              
         }
     }
 
     void Start()
     {
+        this.Loading = StageManager.LoadingViewer;
+        this.Loading.ToggleCamera(true);
+
         Location current = StageManager.CurrentLocation;        
 
-        if (StageManager.LevelGenerator.NeedsAreaGenPreparation)
+        if (this.levelGenerator.NeedsAreaGenPreparation)
         {
-            StartCoroutine(StageManager.LevelGenerator.PrepareAreaGeneration(current, this));
+            StartCoroutine(this.levelGenerator.PrepareAreaGeneration(current, this));
         }
         else 
         {
-            this.GenerateLevel(current);
+            StartCoroutine(this.GenerateLevel(current));
         }
     }
 
@@ -84,7 +93,7 @@ public class SceneLoader : MonoBehaviour
         return room;
     }
 
-    private void GenerateLevel(Location currentLocation)
+    private IEnumerator GenerateLevel(Location currentLocation)
     {
         Area area = Instantiate(ResourceManager.GetEmptyAreaPrefab()) as Area;
         area.name = currentLocation.Name ?? currentLocation.Path;
@@ -94,16 +103,22 @@ public class SceneLoader : MonoBehaviour
         if (grid == null)
         {
             // Generate new map if none exists            
-            grid = StageManager.LevelGenerator.GenerateRoomGrid(currentLocation);
+            grid = this.levelGenerator.GenerateRoomGrid(currentLocation);
         }
 
         // Populate rooms with stuff and create actual instances
         area.RoomGrid = grid;
         StageManager.CurrentArea = area;
-        
+
+        if (this.levelGenerator.NeedsAreaGenPreparation)
+        {
+            yield return this.levelGenerator.AreaPostProcessing(currentLocation, this);
+        }
+
         List<Room> instances = new List<Room>();
         foreach (RoomData roomData in grid.Rooms)
         {
+            // Put each room from grid in its actual location
             Room model = this.GetRoomByPrefabID(roomData.PrefabID, area);
             Room roomInstance = Instantiate(model) as Room;
             roomInstance.transform.parent = area.transform;
@@ -122,24 +137,31 @@ public class SceneLoader : MonoBehaviour
             this.Minimap.RefreshMinimap();
         }
 
+        this.Loading.ToggleCamera(false);
         this.Player.transform.gameObject.SetActive(true);
+
+        yield return null;         
     }
 
-    
-        
+    public MonoBehaviour CreateDisabledInstance(MonoBehaviour model)
+    {
+        MonoBehaviour instance = Instantiate(model);
+        instance.gameObject.SetActive(false);
+        return instance;
+    }
+
     void Update () 
     {
         if (this.delayedAreaLoadArgs != null)
         {
             try
             {
-                this.GenerateLevel(this.delayedAreaLoadArgs.AreaLocation);
+                StartCoroutine(GenerateLevel(this.delayedAreaLoadArgs.AreaLocation));
             }
             finally
             {
                 this.delayedAreaLoadArgs = null;
             }
-            
-        }
+        }        
     }
 }

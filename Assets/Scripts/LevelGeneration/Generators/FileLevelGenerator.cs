@@ -6,16 +6,15 @@ using Assets.Scripts.LevelGeneration;
 
 public class FileLevelGenerator : BaseLevelGenerator 
 {
-    protected override List<Location> GetBranchLocations(Location location) 
+    protected override void ProcessLocation(Location location) 
 	{
-		string[] directories = Directory.GetDirectories(location.Path);
-		List<Location> locations = new List<Location>();
+		string[] directories = Directory.GetDirectories(location.Path);		
 		foreach (string directory in directories) 
 		{
-            locations.Add(new MainLocation(directory, Path.GetFileName(directory)));
+            location.LocationData.SubLocations.Add(new MainLocation(directory, Path.GetFileName(directory)));
 		}
 
-		return locations;
+		return;
 	}
 
     public override bool CanLoadLocation(Location location)
@@ -46,12 +45,6 @@ public class FileLevelGenerator : BaseLevelGenerator
 
         return new BackLocation(parent.FullName, "..");	 
 	}
-
-
-    public override List<LevelImage> GetLevelImages(Location location)
-    {
-        return new List<LevelImage>();
-    }
 
     protected override AreaTheme GetAreaTheme(Location location)
     {

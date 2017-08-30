@@ -33,11 +33,8 @@ public abstract class BaseLevelGenerator : ILevelGenerator
             entities.Enqueue(entity);
         }
 
-        IEnumerable<Location> branchLocations = GetBranchLocations(targetLocation);
-        foreach (Location location in branchLocations)
-        {
-            locations.Enqueue(location);
-        }
+        this.ProcessLocation(targetLocation);        
+        locations.EnqueueRange(targetLocation.LocationData.SubLocations);        
 
         List<Room> possibleRooms = null;
         if (StageManager.SceneLoader.RoomPrefabs.Length > 0)
@@ -78,7 +75,7 @@ public abstract class BaseLevelGenerator : ILevelGenerator
                 {
                     currentLocation = locations.Dequeue();
                     Location loc = currentLocation.Clone();                    
-                    currentRoomData.Locations.Add(loc);
+                    currentRoomData.Requirements.Locations.Enqueue(loc);
                 }
             }
 
@@ -107,15 +104,13 @@ public abstract class BaseLevelGenerator : ILevelGenerator
         return grid;
     }
 
-    protected abstract List<Location> GetBranchLocations(Location location);
+    protected abstract void ProcessLocation(Location location);
 
     protected abstract AreaTheme GetAreaTheme(Location location);
 
     protected abstract Location GetBackLocation(Location currentLcation);
 
     public abstract List<string> GetLevelEntities(Location location);
-
-    public abstract List<LevelImage> GetLevelImages(Location location);
 
     public abstract bool CanLoadLocation(Location location);
 
@@ -135,16 +130,91 @@ public abstract class BaseLevelGenerator : ILevelGenerator
         }
     }
 
-    public event EventHandler<AreaGenerationReadyEventArgs> OnAreaGenReady;    
+
+    protected void CallOnAreaPostProcessingDone(AreaGenerationReadyEventArgs e)
+    {
+        if (OnAreaPostProcessingDone != null)
+        {
+            OnAreaPostProcessingDone(this, e);
+        }
+    }
+
+    public virtual IEnumerator AreaPostProcessing(Location location, MonoBehaviour caller)
+    {
+        yield return null;
+    }
+
+    public event EventHandler<AreaGenerationReadyEventArgs> OnAreaGenReady;
+    public event EventHandler<AreaGenerationReadyEventArgs> OnAreaPostProcessingDone;
 }
 
 public enum LevelGenerationMode 
 {
     File,
-    Web
+    Web,
+    Debug
 }
 
 public class AreaGenerationReadyEventArgs : EventArgs
 {
     public Location AreaLocation { get; set; }
+}
+
+public class LevelGenRequirements
+{
+    private Queue<Location> locations = new Queue<Location>();
+    public Queue<Location> Locations
+    {
+        get { return locations; }
+    }
+
+    private Queue<LocationTextData> locationText = new Queue<LocationTextData>();
+    public Queue<LocationTextData> LocationText
+    {
+        get { return locationText; }        
+    }
+
+    private Queue<ImagePathData> imagePaths = new Queue<ImagePathData>();
+    public Queue<ImagePathData> ImagePaths
+    {
+        get { return imagePaths; }
+    }
+
+    private Queue<ImagePathData> podiumImages = new Queue<ImagePathData>();
+    public Queue<ImagePathData> PodiumImages
+    {
+        get { return podiumImages; }
+    }
+
+    private Queue<InfoBoxData> podiumText = new Queue<InfoBoxData>();
+    public Queue<InfoBoxData> PodiumText
+    {
+        get { return podiumText; }
+    }
+
+    public TableOfContents TableOfContents { get; set; }
+
+    /// <summary>
+    /// The base reqs are just that all locations are linked, nothing else.
+    /// </summary>
+    public virtual bool AllRequirementsMet
+    {
+        get { return this.Locations.Count == 0; }
+    }
+
+    protected virtual LevelGenRequirements GetInstance() 
+    {
+        return new LevelGenRequirements();        
+    }
+
+    public LevelGenRequirements Clone(bool deepCopy = true)
+    {
+        LevelGenRequirements copy = this.GetInstance();
+        this.locations.ToList().ForEach(item => copy.locations.Enqueue(item.Clone(deepCopy)));
+        this.imagePaths.ToList().ForEach(item => copy.imagePaths.Enqueue(item.Clone()));
+        this.podiumImages.ToList().ForEach(item => copy.podiumImages.Enqueue(item.Clone()));
+        copy.locationText.EnqueueRange(this.locationText);
+        copy.TableOfContents = this.TableOfContents;
+        return copy;
+    }
 }
