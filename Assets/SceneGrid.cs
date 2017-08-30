@@ -7,7 +7,6 @@ public class SceneGrid : MonoBehaviour
     public float width = 32.0f;
     public float height = 32.0f;
 
-
     public Color color;
 
     void Start()
