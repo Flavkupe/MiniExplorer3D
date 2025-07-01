@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityVS.MiniExplorer3D.CSharp.Plugins", "UnityVS.MiniExplorer3D.CSharp.Plugins.csproj", "{C0339A84-3BC9-B881-C404-1306B4CD9EDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityVS.MiniExplorer3D.CSharp", "UnityVS.MiniExplorer3D.CSharp.csproj", "{8E3FBC15-EA18-D863-73FA-E211C88A473F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityVS.MiniExplorer3D.CSharp.Editor", "UnityVS.MiniExplorer3D.CSharp.Editor.csproj", "{F606302F-BC77-3132-6680-79B47E162802}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C0339A84-3BC9-B881-C404-1306B4CD9EDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0339A84-3BC9-B881-C404-1306B4CD9EDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0339A84-3BC9-B881-C404-1306B4CD9EDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0339A84-3BC9-B881-C404-1306B4CD9EDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E3FBC15-EA18-D863-73FA-E211C88A473F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E3FBC15-EA18-D863-73FA-E211C88A473F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E3FBC15-EA18-D863-73FA-E211C88A473F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E3FBC15-EA18-D863-73FA-E211C88A473F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F606302F-BC77-3132-6680-79B47E162802}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F606302F-BC77-3132-6680-79B47E162802}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F606302F-BC77-3132-6680-79B47E162802}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F606302F-BC77-3132-6680-79B47E162802}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
