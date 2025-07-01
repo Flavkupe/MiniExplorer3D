@@ -20,7 +20,6 @@ public class TransformInspector : Editor
         Transform t = (Transform)target;
 
         // Replicate the standard transform inspector gui
-        EditorGUIUtility.LookLikeControls();
         EditorGUI.indentLevel = 0;
         Vector3 position = EditorGUILayout.Vector3Field("Position", t.localPosition);
         Vector3 eulerAngles = EditorGUILayout.Vector3Field("Rotation", t.localEulerAngles);
