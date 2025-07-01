@@ -29,7 +29,6 @@ public class LinkBoard : MonoBehaviour, ICanLookAtAndInteract
         float xScale = meshFilter.transform.localScale.x;
         float yScale = meshFilter.transform.localScale.y;
         float zScale = meshFilter.transform.localScale.z;
-        Vector3 forward = DirectionPointer.transform.position - this.transform.position;
 
         foreach (LinkedLocationData link in links)
         {

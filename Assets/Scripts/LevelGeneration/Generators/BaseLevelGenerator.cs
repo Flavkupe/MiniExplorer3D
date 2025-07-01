@@ -64,7 +64,6 @@ public abstract class BaseLevelGenerator : ILevelGenerator
 
         Location currentLocation = null;
         List<RoomData> rooms = new List<RoomData>();
-        Room currentRoom = startingRoom;
         RoomData currentRoomData = grid.AddFirstRoom(startingRoom);
 
         do

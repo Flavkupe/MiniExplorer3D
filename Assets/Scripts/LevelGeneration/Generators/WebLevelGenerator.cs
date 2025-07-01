@@ -3,11 +3,8 @@ using HtmlAgilityPack;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
+
 using UnityEngine;
 
 public class WebLevelGenerator : BaseLevelGenerator
@@ -38,7 +35,6 @@ public class WebLevelGenerator : BaseLevelGenerator
         HtmlNode titleNode = htmlDoc.DocumentNode.SelectSingleNode("//h1");
         if (titleNode != null)
         {
-            // This is the actual location title
             location.Name = this.HtmlDecode(titleNode.InnerText);
             if (StageManager.CurrentLocation.Path == location.Path)
             {
@@ -46,97 +42,142 @@ public class WebLevelGenerator : BaseLevelGenerator
             }
         }
 
-        HtmlNode contentNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@class='mw-parser-output']");
+        HtmlNode contentNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@id='mw-content-text']//div[contains(@class, 'mw-parser-output')]");
+        if (contentNode == null)
+        {
+            Debug.LogWarning("Content node not found in Wikipedia page.");
+            return;
+        }
 
-        HtmlNodeCollection subCategories = contentNode.SelectNodes("h1 | h2 | h3 | p | p/a | .//div/div[@class='thumbinner'] | .//table | .//div[@id='toc']");
-        
+        HtmlNodeCollection subCategories = contentNode.SelectNodes("h1 | h2 | h3 | p | .//div/div[@class='thumbinner'] | .//table | .//div[@id='toc']");
+        if (subCategories == null)
+        {
+            Debug.LogWarning("No subcategories found in content node.");
+            return;
+        }
+
         SubLocation rootSublocation = null;
         Location activeSublocation = null;
-        LocationTextData activeTextData = null;
         location.LocationData.Clear();
         activeSublocation = location;
+
         foreach (HtmlNode node in subCategories)
         {
-            if (node.Name == "h2")
+            switch (node.Name)
             {
-                HtmlNode headline = node.SelectSingleNode("span[@class='mw-headline']");
-                string title = this.HtmlDecode(headline.InnerText);
-                rootSublocation = new SubLocation(location, title);
-                rootSublocation.Anchor = headline.GetAttributeValue("id", "");
-                rootSublocation.LocationData.RawData = location.LocationData.RawData; // TEMP
-                location.LocationData.SubLocations.Add(rootSublocation);
-                activeSublocation = rootSublocation;
+                case "h2":
+                    rootSublocation = ParseH2Node(node, location, location.LocationData.RawData);
+                    activeSublocation = rootSublocation;
+                    break;
+                case "h3":
+                    activeSublocation = ParseH3Node(node, location, rootSublocation, location.LocationData.RawData);
+                    break;
+                case "p":
+                    ParseParagraphNode(node, activeSublocation, currentUri);
+                    break;
+                case "a":
+                    ParseAnchorNode(node, activeSublocation, currentUri);
+                    break;
+                case "div":
+                    ParseDivNode(node, activeSublocation, currentUri);
+                    break;
+                case "table":
+                    ParseTableNode(node, activeSublocation, currentUri);
+                    break;
             }
-            else if (node.Name == "h3")
-            {
-                HtmlNode headline = node.SelectSingleNode("span[@class='mw-headline']");
-                string title = this.HtmlDecode(headline.InnerText);
-                SubLocation subsubLocation = new SubLocation(location, title);
-                subsubLocation.Anchor = headline.GetAttributeValue("id", "");
-                subsubLocation.LocationData.RawData = location.LocationData.RawData; // TEMP
-                rootSublocation.LocationData.SubLocations.Add(subsubLocation);
-                activeSublocation = subsubLocation;
-            }
-            else if (node.Name == "p")
-            {
-                string text = this.HtmlDecode(node.InnerText);
-                activeTextData = new LocationTextData(text);
-                HtmlNodeCollection linkNodes = node.SelectNodes("a");
-                if (linkNodes != null)
-                {
-                    foreach (HtmlNode link in linkNodes)
-                    {
-                        string name = this.HtmlDecode(link.InnerText);
-                        string href = link.GetAttributeValue("href", "");
-                        string url = "http://" + currentUri.Host + "/" + href.TrimStart('/');
-                        activeTextData.LinkedLocationData.Add(new LinkedLocationData(name, url));
-                    }
-                }
+        }
+    }
 
-                activeSublocation.LocationData.LocationText.Add(activeTextData);
-            }
-            else if (node.Name == "a")
+    private SubLocation ParseH2Node(HtmlNode node, MainLocation location, string rawData)
+    {
+        HtmlNode headline = node.SelectSingleNode("span[@class='mw-headline']");
+        if (headline == null) return null;
+        string title = this.HtmlDecode(headline.InnerText);
+        var subLocation = new SubLocation(location, title)
+        {
+            Anchor = headline.GetAttributeValue("id", ""),
+        };
+        subLocation.LocationData.RawData = rawData; // TEMP
+        location.LocationData.SubLocations.Add(subLocation);
+        return subLocation;
+    }
+
+    private SubLocation ParseH3Node(HtmlNode node, MainLocation location, SubLocation rootSublocation, string rawData)
+    {
+        if (rootSublocation == null) return null;
+        HtmlNode headline = node.SelectSingleNode("span[@class='mw-headline']");
+        if (headline == null) return rootSublocation;
+        string title = this.HtmlDecode(headline.InnerText);
+        var subsubLocation = new SubLocation(location, title)
+        {
+            Anchor = headline.GetAttributeValue("id", ""),
+        };
+        subsubLocation.LocationData.RawData = rawData; // TEMP
+        rootSublocation.LocationData.SubLocations.Add(subsubLocation);
+        return subsubLocation;
+    }
+
+    private void ParseParagraphNode(HtmlNode node, Location activeSublocation, Uri currentUri)
+    {
+        string text = this.HtmlDecode(node.InnerText);
+        var activeTextData = new LocationTextData(text);
+        HtmlNodeCollection linkNodes = node.SelectNodes("a");
+        if (linkNodes != null)
+        {
+            foreach (HtmlNode link in linkNodes)
             {
-                // anchor nodes casually strewn about; these are random linked locations.                                
-                string href = node.GetAttributeValue("href", "");
-                string title = node.GetAttributeValue("title", "");
+                string name = this.HtmlDecode(link.InnerText);
+                string href = link.GetAttributeValue("href", "");
                 string url = "http://" + currentUri.Host + "/" + href.TrimStart('/');
-                activeSublocation.LocationData.LinkedLocationData.Add(new LinkedLocationData(title, url));
+                activeTextData.LinkedLocationData.Add(new LinkedLocationData(name, url));
             }
-            else if (node.Name == "div")
+        }
+        activeSublocation.LocationData.LocationText.Add(activeTextData);
+    }
+
+    private void ParseAnchorNode(HtmlNode node, Location activeSublocation, Uri currentUri)
+    {
+        string href = node.GetAttributeValue("href", "");
+        string title = node.GetAttributeValue("title", "");
+        string url = "http://" + currentUri.Host + "/" + href.TrimStart('/');
+        activeSublocation.LocationData.LinkedLocationData.Add(new LinkedLocationData(title, url));
+    }
+
+    private void ParseDivNode(HtmlNode node, Location activeSublocation, Uri currentUri)
+    {
+        if (node.GetAttributeValue("class", "") == "thumbinner")
+        {
+            HtmlNode imgTag = node.SelectSingleNode("a/img");
+            HtmlNode caption = node.SelectSingleNode("div[@class='thumbcaption']");
+            if (caption == null || imgTag == null)
             {
-                if (node.GetAttributeValue("class", "") == "thumbinner")
-                {
-                    // These are embedded thumbnails
-                    HtmlNode imgTag = node.SelectSingleNode("a/img");
-                    HtmlNode caption = node.SelectSingleNode("div[@class='thumbcaption']");
-                    string imageCaption = this.HtmlDecode(caption.InnerText);
-                    string imageUrl = GetImageUrlFromImageTag(imgTag, currentUri.Host);
-                    activeSublocation.LocationData.ImagePaths.Add(new ImagePathData(imageCaption, imageUrl));
-                }
-                else if (node.GetAttributeValue("id", "") == "toc")
-                {
-                    this.ParseTocNode(activeSublocation, node);
-                }
+                return;
             }
-            else if (node.Name == "table")
-            {
-                string className = node.GetAttributeValue("class", "");
-                if (className != null && className.Contains("infobox"))
-                {
-                    this.ParseInfobox(currentUri, activeSublocation, node);
-                }
-            }
+
+            string imageCaption = this.HtmlDecode(caption.InnerText);
+            string imageUrl = GetImageUrlFromImageTag(imgTag, currentUri.Host);
+            activeSublocation.LocationData.ImagePaths.Add(new ImagePathData(imageCaption, imageUrl));
+        }
+        else if (node.GetAttributeValue("id", "") == "toc")
+        {
+            this.ParseTocNode(activeSublocation, node);
+        }
+    }
+
+    private void ParseTableNode(HtmlNode node, Location activeSublocation, Uri currentUri)
+    {
+        string className = node.GetAttributeValue("class", "");
+        if (className != null && className.Contains("infobox"))
+        {
+            this.ParseInfobox(currentUri, activeSublocation, node);
         }
     }
 
     private void ParseInfobox(Uri currentUri, Location location, HtmlNode node)
     {
-        // Get the number of columns in this table
         HtmlNode colspanNode = node.SelectSingleNode(".//th[@colspan] | .//td[@colspan]");
         if (colspanNode == null)
         {
-            // Ignore this one
             return;            
         }
         int colspan;
@@ -155,7 +196,6 @@ public class WebLevelGenerator : BaseLevelGenerator
                 HtmlNode imgNode = row.SelectSingleNode(".//a[@class='image']/img");
                 if (imgNode != null)
                 {
-                    // Row is for an image                    
                     string imageUrl = GetImageUrlFromImageTag(imgNode, currentUri.Host);
                     string imageCaption = this.HtmlDecode((row.InnerText ?? string.Empty).Trim());
                     location.LocationData.PodiumImages.Add(new ImagePathData(imageCaption, imageUrl));                    
@@ -164,11 +204,9 @@ public class WebLevelGenerator : BaseLevelGenerator
                 {
                     if (row.SelectSingleNode(".//table") != null)
                     {
-                        // Beware inner tables; ignore them for now
                         continue;
                     }
 
-                    // Text or section
                     HtmlNodeCollection cells = row.SelectNodes("td | th");
                     if (cells == null)
                     {
@@ -176,7 +214,6 @@ public class WebLevelGenerator : BaseLevelGenerator
                     }
                     else if (cells.Count == 1 && cells[0].Name == "th")
                     {
-                        // Title row
                         data = new InfoBoxData(colspan);
                         data.SectionTitle = this.HtmlDecode(cells[0].InnerText);
                         location.LocationData.InfoBoxData.Add(data);
@@ -189,7 +226,6 @@ public class WebLevelGenerator : BaseLevelGenerator
                             cellData[i] = this.HtmlDecode(cells[i].InnerText);
                         }                        
 
-                        // make sure to ensure at least one item exists first
                         if (!cellData.ToList().All(a => string.IsNullOrEmpty(a)))
                         {
                             data.Rows.Add(cellData);
@@ -207,7 +243,6 @@ public class WebLevelGenerator : BaseLevelGenerator
 
     private void ParseTocNode(Location activeSublocation, HtmlNode node)
     {
-        // Table of contents
         HtmlNodeCollection items = node.SelectNodes(".//li/a");
         foreach (HtmlNode item in items)
         {
@@ -243,9 +278,7 @@ public class WebLevelGenerator : BaseLevelGenerator
     }
 
     protected virtual IEnumerator ProcessImages(Location location)
-    {       
-        Uri currentUri = new Uri(location.Path);
-
+    {
         List<ImagePathData> imagePaths = new List<ImagePathData>();
         imagePaths.AddRange(location.LocationData.ImagePaths);
         imagePaths.AddRange(location.LocationData.PodiumImages);
@@ -323,25 +356,21 @@ public class WebLevelGenerator : BaseLevelGenerator
 
         LevelGenRequirements reqs = new WebLevelGenRequirements();        
 
-        // Create location for previous room
         Location backLocation = this.GetBackLocation(targetLocation);        
         if (backLocation != null)
         {
             reqs.Locations.Enqueue(backLocation);            
         }
 
-        // Find all branch locations and other things in target room
         this.ProcessLocation(targetLocation);                
         reqs.Locations.EnqueueRange(targetLocation.LocationData.SubLocations);
 
-        // Get enqueue the text from the location as a requirement 
         reqs.LocationText.EnqueueRange(targetLocation.LocationData.LocationText);
         reqs.ImagePaths.EnqueueRange(targetLocation.LocationData.ImagePaths);
         reqs.PodiumImages.EnqueueRange(targetLocation.LocationData.PodiumImages);
         reqs.TableOfContents = targetLocation.LocationData.TableOfContents;
         reqs.PodiumText.EnqueueRange(targetLocation.LocationData.InfoBoxData);
 
-        // Populate and initialize list of possible rooms
         List<Room> possibleRooms = null;
         if (StageManager.SceneLoader.RoomPrefabs.Length > 0)
         {
@@ -353,7 +382,6 @@ public class WebLevelGenerator : BaseLevelGenerator
         }
         possibleRooms.ForEach(room => room.PopulateParts());        
 
-        // Pick a starting room
         Room startingRoom = null;
         if (StageManager.SceneLoader.StartingRoomPrefabs.Length > 0)
         {
@@ -367,14 +395,12 @@ public class WebLevelGenerator : BaseLevelGenerator
 
         Location currentLocation = null;
         List<RoomData> rooms = new List<RoomData>();
-        Room currentRoom = startingRoom;
         RoomData currentRoomData = grid.AddFirstRoom(startingRoom);
         
         do
         {
             for (int i = 0; i < currentRoomData.Doors.Count; ++i)
             {
-                // Associate new locations with available doors
                 if (reqs.Locations.Count > 0)
                 {
                     currentLocation = reqs.Locations.Dequeue();
@@ -419,7 +445,6 @@ public class WebLevelGenerator : BaseLevelGenerator
 
             if (!reqs.AllRequirementsMet)
             {
-                // If there are still more requirements left over, create a new room.
                 currentRoomData = grid.AddRoomFromList(possibleRooms);
                 if (currentRoomData != null)
                 {

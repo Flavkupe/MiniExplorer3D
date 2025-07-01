@@ -20,7 +20,6 @@ public class Door : MonoBehaviour, IHasName, IHasLocation
     void Awake()
     {
         this.boxCollider = this.GetComponent<BoxCollider>();
-        DontDestroyOnLoad(transform.gameObject);
     }
 	
 	void FixedUpdate() 
@@ -56,7 +55,7 @@ public class Door : MonoBehaviour, IHasName, IHasLocation
         }
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            bool transitioned = StageManager.AttemptTransition(this.GetLocation());
+            StageManager.AttemptTransition(this.GetLocation());
         }
     }
 

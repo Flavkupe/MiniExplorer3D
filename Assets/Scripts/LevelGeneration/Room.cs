@@ -6,7 +6,7 @@ using System.Linq;
 
 public class Room : MonoBehaviour, IHasName
 {   	
-	private NameTag nametag;
+	private NameTag _nametag;
 
     /// <summary>
     /// X dimension
@@ -49,7 +49,7 @@ public class Room : MonoBehaviour, IHasName
 
 	void Start() 
 	{
-		this.nametag = this.GetComponentInChildren<NameTag>();
+		this._nametag = this.GetComponentInChildren<NameTag>();
 	}
 
 	void Update() {
