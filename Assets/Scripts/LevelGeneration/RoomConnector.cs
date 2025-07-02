@@ -23,7 +23,6 @@ public class RoomConnector : MonoBehaviour
 
     public bool ShouldUseAlternativeDoor = false;
 
-    [EnumFlags]
     public RoomConnectorUsageMode ConnectedUsageBehavior;
 
     public ClosingWall[] EnclosingWalls;

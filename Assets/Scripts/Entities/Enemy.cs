@@ -12,7 +12,6 @@ public enum EnemyType
 
 public class Enemy : GameCharacterBase
 {
-    [EnumFlagsAttribute]
     public EnemyType Type = EnemyType.FollowPlayer;    
     public Rigidbody2D Projectile;				
     public float ProjectileSpeed = 10f;				
@@ -90,9 +89,9 @@ public class Enemy : GameCharacterBase
                 xVelocity *= -1;
             }
             
-            if (this.GetComponent<Rigidbody2D>().velocity.x != xVelocity) 
+            if (this.GetComponent<Rigidbody2D>().linearVelocity.x != xVelocity) 
             {
-                this.GetComponent<Rigidbody2D>().velocity = new Vector2(xVelocity, 0.0f);
+                this.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(xVelocity, 0.0f);
             }
         }
 
@@ -112,7 +111,7 @@ public class Enemy : GameCharacterBase
             {
                 float xVelocity = 0.0f;                            
                 xVelocity = direction * this.Speed;
-                this.GetComponent<Rigidbody2D>().velocity = new Vector2(xVelocity, this.GetComponent<Rigidbody2D>().velocity.y);
+                this.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(xVelocity, this.GetComponent<Rigidbody2D>().linearVelocity.y);
             }
             else if (this.Type == EnemyType.ShootAtPlayer)
             {                
@@ -124,7 +123,7 @@ public class Enemy : GameCharacterBase
                     body.transform.position = this.ShootLocation.position;
 
                     float xVelocity = direction * this.ProjectileSpeed;
-                    body.GetComponent<Rigidbody2D>().velocity = new Vector2(xVelocity, this.ProjectileSpeed);
+                    body.GetComponent<Rigidbody2D>().linearVelocity = new Vector2(xVelocity, this.ProjectileSpeed);
 
                     
                     if (this.animator != null)

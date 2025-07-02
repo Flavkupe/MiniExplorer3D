@@ -1,3 +1,6 @@
 Library/
 Temp/
 .vs/**
+/Logs
+/obj/Debug
+/build

@@ -30,7 +30,6 @@ public class SpawnPointData : IMatchesPrefab
 {
     public SpawnPointType Type = SpawnPointType.NPC;
 
-    [EnumFlagsAttribute]
     public EnemyType EnemyTypes;
 
     public string Entity { get; set; }
