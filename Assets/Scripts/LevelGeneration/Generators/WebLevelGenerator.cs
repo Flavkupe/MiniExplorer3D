@@ -4,8 +4,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class WebLevelGenerator : BaseLevelGenerator
 {    
@@ -286,21 +286,22 @@ public class WebLevelGenerator : BaseLevelGenerator
         foreach (ImagePathData imageData in imagePaths)
         {
             LevelImage levelImage = new LevelImage() { Name = imageData.DisplayName };
-            WWW www = new WWW(imageData.Path);
-            yield return www;
-
-            if (www.error != null)
+            using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imageData.Path))
             {
-                continue;
-            }
+                yield return uwr.SendWebRequest();
 
-            if (www.texture != null)
-            {
-                levelImage.Texture2D = new Texture2D(www.texture.width, www.texture.height);
+                if (uwr.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogWarning($"Image load error: {uwr.error} for {imageData.Path}");
+                    continue;
+                }
 
-                www.LoadImageIntoTexture(levelImage.Texture2D);
-
-                imageData.LoadedImage = levelImage;
+                Texture2D tex = DownloadHandlerTexture.GetContent(uwr);
+                if (tex != null)
+                {
+                    levelImage.Texture2D = tex;
+                    imageData.LoadedImage = levelImage;
+                }
             }
         }        
     }
@@ -324,9 +325,19 @@ public class WebLevelGenerator : BaseLevelGenerator
     {
         if (location.NeedsInitialization)
         {
-            WWW www = new WWW(location.Path);
-            yield return www;
-            location.LocationData.RawData = www.text;
+            using (UnityWebRequest uwr = UnityWebRequest.Get(location.Path))
+            {
+                yield return uwr.SendWebRequest();
+                if (uwr.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogWarning($"Page load error: {uwr.error} for {location.Path}");
+                    location.LocationData.RawData = string.Empty;
+                }
+                else
+                {
+                    location.LocationData.RawData = uwr.downloadHandler.text;
+                }
+            }
         }
 
         this.CallOnAreaGenReady(new AreaGenerationReadyEventArgs() { AreaLocation = StageManager.CurrentLocation });

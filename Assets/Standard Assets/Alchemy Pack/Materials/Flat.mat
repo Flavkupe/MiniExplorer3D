@@ -62,6 +62,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _BandSteps: 3
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -77,11 +78,15 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _Threshold1: 0.4
+    - _Threshold2: 0.7
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 0.9967546, b: 0.88235295, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
+    - _Mid: {r: 0.735849, g: 0.43058994, b: 0.1492524, a: 1}
+    - _Shade: {r: 0.6886792, g: 0.5100443, b: 0.016242431, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

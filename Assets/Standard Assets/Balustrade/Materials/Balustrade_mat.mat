@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Balustrade_mat
-  m_Shader: {fileID: 4, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: e8d4df0b000ad734ea3d9de4abce2f39, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -19,7 +19,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
+  m_LockedProperties: _Shade
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -33,9 +33,15 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Shininess: 0.45051974
+    - _BandSteps: 3
+    - _Shininess: 0.428
+    - _Threshold: 0.5
+    - _Threshold1: 0.25
+    - _Threshold2: 0.75
     m_Colors:
     - _Color: {r: 0.79692906, g: 0.8088235, b: 0.80242515, a: 1}
+    - _Mid: {r: 0.7264151, g: 0.7079121, b: 0.5311054, a: 1}
+    - _Shade: {r: 1, g: 0.69796455, b: 0, a: 1}
     - _SpecColor: {r: 0.46323532, g: 0.46323532, b: 0.46323532, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

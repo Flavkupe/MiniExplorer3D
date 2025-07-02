@@ -8,13 +8,13 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: wall05
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: e8d4df0b000ad734ea3d9de4abce2f39, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
+  m_ValidKeywords: []
+  m_InvalidKeywords:
   - _EMISSION
   - _NORMALMAP
-  m_InvalidKeywords: []
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -67,6 +67,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _BandSteps: 20
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -83,13 +84,17 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _Threshold1: 0.305
+    - _Threshold2: 0.682
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 0.76865673, g: 0.76865673, b: 0.76865673, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
+    - _Mid: {r: 0.3773585, g: 0.36489853, b: 0.36489853, a: 1}
     - _ReflectColor: {r: 1, g: 1, b: 1, a: 0.5}
+    - _Shade: {r: 0.16981131, g: 0.15459237, b: 0.15459237, a: 1}
     - _SpecColor: {r: 0.38805968, g: 0.38805968, b: 0.38805968, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

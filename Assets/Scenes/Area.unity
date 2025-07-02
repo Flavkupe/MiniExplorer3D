@@ -998,12 +998,12 @@ MonoBehaviour:
   Minimap: {fileID: 0}
   Player: {fileID: 1033254598}
   GameDimensionMode: 1
-  InitialLocation: https://en.wikipedia.org/wiki/Hearthstone_(video_game)
+  InitialLocation: https://en.wikipedia.org/wiki/Hearthstone
   Mode: 1
   RoomPrefabs:
-  - {fileID: 114886619103219368, guid: c176d7f487bb92e4ca2364369487d30e, type: 3}
+  - {fileID: 11477982, guid: 6fc892b96105d1c40b32bacf4c85bab4, type: 3}
   StartingRoomPrefabs:
-  - {fileID: 11479754, guid: ac200f66a7d5a0f4fb8bb90c4787a3bd, type: 3}
+  - {fileID: 11479754, guid: 5a19c7eb1adb43a4bb809213e57d6ec6, type: 3}
 --- !u!4 &1822563566
 Transform:
   m_ObjectHideFlags: 0
@@ -1053,8 +1053,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000015259, y: 0.00045152998}
-  m_SizeDelta: {x: 800, y: 406.53}
+  m_AnchoredPosition: {x: -0.000015259, y: 0.0352}
+  m_SizeDelta: {x: 800, y: 508.787}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1978745276
 MonoBehaviour:

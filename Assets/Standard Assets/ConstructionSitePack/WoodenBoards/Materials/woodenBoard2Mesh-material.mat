@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: woodenBoard2Mesh-material
-  m_Shader: {fileID: 4, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: e8d4df0b000ad734ea3d9de4abce2f39, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -33,9 +33,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _BandSteps: 1
     - _Shininess: 0.078125
+    - _Threshold1: 0.282
+    - _Threshold2: 0.727
     m_Colors:
-    - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _Color: {r: 0.4056604, g: 0.18369527, b: 0, a: 1}
+    - _Mid: {r: 0.31132078, g: 0.142059, b: 0, a: 1}
+    - _Shade: {r: 0.17, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

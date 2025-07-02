@@ -3,14 +3,10 @@ using System.Collections;
 using Assets.Scripts.LevelGeneration;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Serialization;
-using System.IO;
-using System.Text;
 using System;
 
 public enum GameDimensionMode
 {
-    TwoD,
     ThreeD,
 };
 
@@ -21,7 +17,7 @@ public class SceneLoader : MonoBehaviour
 
     public AreaMapDrawer Minimap = null;
     public GameObject Player = null;
-    public GameDimensionMode GameDimensionMode = GameDimensionMode.TwoD;
+    public GameDimensionMode GameDimensionMode = GameDimensionMode.ThreeD;
     public string InitialLocation = "C:\\test";
 
     private LoadingView Loading;

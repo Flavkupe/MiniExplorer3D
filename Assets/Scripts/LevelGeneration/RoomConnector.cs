@@ -12,7 +12,8 @@ public enum RoomConnectorUsageMode
 
 public class RoomConnector : MonoBehaviour 
 {    
-    public Room ParentRoom = null;
+    private Room parentRoom = null;
+    public Room ParentRoom => this.GetOrFindParentRoom();
 
     public RoomConnectorData Data = new RoomConnectorData();
 
@@ -27,11 +28,6 @@ public class RoomConnector : MonoBehaviour
 
     public ClosingWall[] EnclosingWalls;
 
-    void Awake()
-    {
-        
-    }
-
     // Use this for initialization
     void Start () {
         
@@ -42,15 +38,57 @@ public class RoomConnector : MonoBehaviour
     
     }
 
+    private Room FindParentRoom()
+    {
+        Transform t = this.transform.parent;
+        while (t != null)
+        {
+            Room room = t.GetComponent<Room>();
+            if (room != null)
+                return room;
+            t = t.parent;
+        }
+        return null;
+    }
+
+    private Room GetOrFindParentRoom()
+    {
+        if (this.parentRoom == null)
+        {
+            this.parentRoom = FindParentRoom();
+            if (this.parentRoom == null)
+            {
+                Debug.LogError("RoomConnector could not find ParentRoom in parent hierarchy.");
+            }
+        }
+        return this.parentRoom;
+    }
+
+    private void AutoDetectPosition()
+    {
+        // Get local position relative to room center
+        Vector3 localPos = ParentRoom.transform.InverseTransformPoint(this.transform.position);
+        float x = localPos.x;
+        float y = localPos.y;
+        float z = localPos.z;
+
+        float absX = Mathf.Abs(x);
+        float absZ = Mathf.Abs(z);
+
+        if (absX > absZ)
+        {
+            Data.Position = x > 0 ? ConnectorPosition.Right : ConnectorPosition.Left;
+        }
+        else
+        {
+            Data.Position = (z > 0 ? ConnectorPosition.Top : ConnectorPosition.Bottom);
+        }
+    }
+
     public string PrefabID 
     { 
         get 
-        {
-            //if (string.IsNullOrEmpty(this.Data.PrefabID))
-            //{
-            //    this.Data.PrefabID = Guid.NewGuid().ToString();
-            //}
-            
+        {            
             return this.Data.PrefabID; 
         } 
     }
@@ -61,10 +99,12 @@ public class RoomConnector : MonoBehaviour
 
     public RoomConnectorData ToRoomConnectorData()
     {
+        // Always auto-detect position before returning data
+        AutoDetectPosition();
         RoomConnectorData data = this.Data.Clone();
-        //data.PrefabID = this.PrefabID;
         data.PrefabID = this.name;
         data.RelativeGridCoords = this.GetRelativeGridCoords();
+        data.Position = this.Data.Position; // ensure position is up to date
         return data;
     }
 
@@ -76,8 +116,6 @@ public class RoomConnector : MonoBehaviour
     /// <returns></returns>
     public Vector2 GetRelativeGridCoords()
     {
-        // Shift location such that room's bottom-left is at 0,0, rather than center at 0,0
-
         Func<float,int,int> GridCoordAdjustment = (float coordLocal, int localDimension) =>
         {
             coordLocal += coordLocal < 0 ? 0.01f : -0.01f; // adjust for exactly 8 or -8
@@ -85,15 +123,6 @@ public class RoomConnector : MonoBehaviour
             loc = loc / StageManager.StepSize;
             return loc;
         };
-
-        // Get the localPos relative to the Room.
-        //Vector3 trueLocal = new Vector3();
-        //Transform current = this.transform;
-        //while (current != null && current.parent != null) // Until current is the room
-        //{
-        //    trueLocal += current.transform.localPosition;
-        //    current = current.parent;
-        //}
 
         Vector3 trueLocal = new Vector3();
         Transform current = this.transform;
@@ -105,17 +134,9 @@ public class RoomConnector : MonoBehaviour
         trueLocal = this.transform.position - current.position;
         
 
-        int locX = GridCoordAdjustment(trueLocal.x, this.ParentRoom.Width);
-        int locY;                       
-        if (StageManager.SceneLoader.GameDimensionMode == GameDimensionMode.TwoD)
-        {
-            locY = GridCoordAdjustment(trueLocal.y, this.ParentRoom.Height);             
-        }
-        else
-        {
-            locY = GridCoordAdjustment(trueLocal.z, this.ParentRoom.Length);                         
-        }
-        
+        int locX = GridCoordAdjustment(trueLocal.x, ParentRoom.Width);
+        int locY = GridCoordAdjustment(trueLocal.z, ParentRoom.Length);                         
+
         return new Vector2(locX, locY);
     }    
 

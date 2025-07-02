@@ -1223,7 +1223,7 @@ MonoBehaviour:
     Position: 2
   DoorAlternative: {fileID: 0}
   ShouldUseAlternativeDoor: 0
-  ConnectedUsageBehavior: -2
+  ConnectedUsageBehavior: 6
   EnclosingWalls:
   - {fileID: 11415966}
 --- !u!1 &130190

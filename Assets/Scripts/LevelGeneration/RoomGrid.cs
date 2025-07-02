@@ -71,15 +71,7 @@ namespace Assets.Scripts.LevelGeneration
             this.rooms.Add(data);
 
             int stepX = data.DimX / StageManager.StepSize;
-            int stepY;
-            if (StageManager.SceneLoader.GameDimensionMode == GameDimensionMode.TwoD)
-            {
-                stepY = data.DimY / StageManager.StepSize;
-            }
-            else
-            {
-                stepY = data.DimZ / StageManager.StepSize;
-            }
+            int stepY = data.DimZ / StageManager.StepSize;
 
             for (int i = x; i < x + stepX; ++i)
             {
@@ -97,6 +89,7 @@ namespace Assets.Scripts.LevelGeneration
                 {
                     Debug.LogError(string.Format("Room {0} connector {1} is off bounds: ({2},{3}) out of ({4},{5})",
                                     data.PrefabID, connector.PrefabID, connectorCoords.x, connectorCoords.y, stepX, stepY));
+                    continue;
                 }
 
                 cellWithConnector.Connectors.Add(connector);
@@ -120,7 +113,7 @@ namespace Assets.Scripts.LevelGeneration
         public bool CanAddRoom(Room room, int x, int y)
         {
             int stepX = room.Width / StageManager.StepSize;            
-            int gridRoomHeight = StageManager.SceneLoader.GameDimensionMode == GameDimensionMode.TwoD ? room.Height : room.Length;
+            int gridRoomHeight = room.Length;
             int stepY = gridRoomHeight / StageManager.StepSize;
 
             for (int i = x; i < x + stepX; ++i)
@@ -228,6 +221,7 @@ namespace Assets.Scripts.LevelGeneration
                 }
             }
             
+            Debug.LogError("No possible room prefabs could be placed to satisfy any open connector. Level generation may be stuck or incomplete.");
             return null;
         }
 
