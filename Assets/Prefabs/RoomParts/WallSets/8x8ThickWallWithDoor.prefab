@@ -311,10 +311,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 6947623672996003703}
-    - targetCorrespondingSourceObject: {fileID: -2818631016347784500, guid: 5c850b916367ca84793ca57c4b6ed6cb,
+    - targetCorrespondingSourceObject: {fileID: -8068073526183931155, guid: 5c850b916367ca84793ca57c4b6ed6cb,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2419685742280325208}
+      addedObject: {fileID: 1929154438542561541}
   m_SourcePrefab: {fileID: 100100000, guid: 5c850b916367ca84793ca57c4b6ed6cb, type: 3}
 --- !u!4 &3362558481527141238 stripped
 Transform:
@@ -340,32 +340,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e45bf271d4b944b44b467ad750f45076, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RemoveOnUnused: 1
+  RemoveOnUnused: 0
   Data:
     DisplayName: 
---- !u!1 &8197319213932265041 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -2818631016347784500, guid: 5c850b916367ca84793ca57c4b6ed6cb,
-    type: 3}
-  m_PrefabInstance: {fileID: 2963522911326672029}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2419685742280325208
+--- !u!114 &1929154438542561541
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8197319213932265041}
+  m_GameObject: {fileID: 4118820848348513904}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5977fecdb08b8ca46b80f27b6cc4f4c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ParentRoom: {fileID: 0}
   Data:
+    Used: 0
     Type: 0
     Position: 0
-  DoorAlternative: {fileID: 6947623672996003703}
-  ShouldUseAlternativeDoor: 1
-  ConnectedUsageBehavior: 4
-  EnclosingWalls: []
+  DoorAlternative: {fileID: 0}
+  ShouldUseAlternativeDoor: 0
+  ConnectedUsageBehavior: 3
+  EnclosingWalls:
+  - {fileID: 2572383603074227685}

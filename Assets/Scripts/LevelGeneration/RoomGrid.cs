@@ -94,9 +94,25 @@ namespace Assets.Scripts.LevelGeneration
 
                 cellWithConnector.Connectors.Add(connector);
                 Vector2 adjacentCoords = this.GetAdjacentConnectorCoords(cellWithConnector, connector);
-                if (this.grid[(int)adjacentCoords.x, (int)adjacentCoords.y] == null)
+                var adjacentCell = this.grid[(int)adjacentCoords.x, (int)adjacentCoords.y];
+                if (adjacentCell == null)
                 {
                     this.openConnections.Add(new OpenConnectorCell(connector, cellWithConnector, (int)adjacentCoords.x, (int)adjacentCoords.y));
+                }
+                else
+                {
+                    // look for matching connector in the adjacent cell that hasn't been used yet
+                    var existingConnector = adjacentCell.Connectors.FirstOrDefault(a => a.IsMatchingConnector(connector));
+                    if (existingConnector != null)
+                    {
+                        existingConnector.Used = true;
+                        connector.Used = true;
+                    }
+                    else
+                    {
+                        // this connector cannot be used, so block it
+                        connector.Used = false;
+                    }
                 }
             }
         }
@@ -161,18 +177,18 @@ namespace Assets.Scripts.LevelGeneration
             return data;
         }
 
-        public Vector3 GetWorldCoordsFromGridCoords(int x, int y, int objWidth, int objHeight, bool threeD)
+        public Vector3 GetWorldCoordsFromGridCoords(int x, int y, int objWidth, int objHeight)
         {
             // Center at 0, 0
             int center = this.dimensions / 2;            
             int xWorld = (x - center) * StageManager.StepSize;
             int yWorld = (y - center) * StageManager.StepSize;
-            int depth = threeD ? 0 : 1;
+            int depth = 0;
             // Center the object from bottom-left to its center
             xWorld = xWorld + objWidth / 2;
             yWorld = yWorld + objHeight / 2;
-            return threeD ? new Vector3(xWorld, depth, yWorld) : new Vector3(xWorld, yWorld, depth);
-        }        
+            return new Vector3(xWorld, depth, yWorld);
+        }
 
         public RoomData AddRoomFromList(List<Room> possibleRooms) 
         {
@@ -200,23 +216,31 @@ namespace Assets.Scripts.LevelGeneration
                         // Find where connectors lie in the grid; offset is relative to the grid coords
                         Vector2 roomOffset = connector.GetRelativeGridCoords();
                         int roomCoordX = currentOpenConnectorCell.X - (int)roomOffset.x;
-                        int roomCoordY = currentOpenConnectorCell.Y - (int)roomOffset.y;                                               
+                        int roomCoordY = currentOpenConnectorCell.Y - (int)roomOffset.y;
 
-                        if (this.CanAddRoom(room, roomCoordX, roomCoordY))
+                        if (!this.CanAddRoom(room, roomCoordX, roomCoordY))
                         {
-                            RoomData data = this.GetRoomData(room, roomCoordX, roomCoordY);
-                            this.AddRoom(data, roomCoordX, roomCoordY);                            
-                            this.openConnections.Remove(currentOpenConnectorCell);
-                            RoomConnectorData usedConnector = data.Connectors.FirstOrDefault(a => a.IsSamePrefab(connector));
-                            System.Diagnostics.Debug.Assert(usedConnector != null, "Unmatching prefab IDs");
-                            if (usedConnector != null)
-                            {
-                                usedConnector.Used = true;
-                                currentOpenConnectorCell.OpenConnector.Used = true;
-                            }
-                            
-                            return data;
+                            continue;
                         }
+
+                        RoomData data = this.GetRoomData(room, roomCoordX, roomCoordY);
+                        this.AddRoom(data, roomCoordX, roomCoordY);                            
+                        this.openConnections.Remove(currentOpenConnectorCell);
+
+                        var currentConnectorData = connector.ToRoomConnectorData();
+                        RoomConnectorData usedConnector = data.Connectors.FirstOrDefault(a => a.IsCloseTo(currentConnectorData));
+
+                        if (usedConnector != null)
+                        {
+                            usedConnector.Used = true;
+                            currentOpenConnectorCell.OpenConnector.Used = true;
+                        }
+                        else
+                        {
+                            Debug.LogError("Unmatching connector");
+                        }
+
+                        return data;
                     }
                 }
             }
@@ -229,10 +253,9 @@ namespace Assets.Scripts.LevelGeneration
         {            
             RoomData data = room.ToRoomData();
             data.RoomReference = room;
-            bool threeD = StageManager.SceneLoader.GameDimensionMode == GameDimensionMode.ThreeD;
-            int height = threeD ? room.Length : room.Height;
+            int height = room.Length;
             
-            data.WorldCoords = this.GetWorldCoordsFromGridCoords(x, y, room.Width, height, threeD);
+            data.WorldCoords = this.GetWorldCoordsFromGridCoords(x, y, room.Width, height);
             data.GridCoords = new Vector2(x, y);
             return data;
         }

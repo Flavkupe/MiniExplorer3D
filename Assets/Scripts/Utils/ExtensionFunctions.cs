@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using UnityEditor.Build;
 using UnityEngine;
 
 
@@ -120,6 +121,16 @@ public static class ExtensionFunctions
                 texture.SetPixel((int)x + i, (int)y + j, color);
             }
         }
+    }
+
+    public static float GetDistance(this Vector2 a, Vector2 b)
+    {
+        return Vector2.Distance(a, b);
+    }
+
+    public static bool IsCloseTo(this Vector2 a, Vector2 b, float threshold = 0.1f)
+    {
+        return a.GetDistance(b) < threshold;
     }
 
     public static bool IsPlayer(this GameObject obj)

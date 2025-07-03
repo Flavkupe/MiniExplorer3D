@@ -579,7 +579,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.9
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 3}
       propertyPath: m_LocalPosition.z
@@ -997,7 +997,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Minimap: {fileID: 0}
   Player: {fileID: 1033254598}
-  GameDimensionMode: 1
+  GameDimensionMode: 0
   InitialLocation: https://en.wikipedia.org/wiki/Hearthstone
   Mode: 1
   RoomPrefabs:

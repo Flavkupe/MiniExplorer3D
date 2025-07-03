@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1125516804232577903}
   m_Layer: 0
-  m_Name: 24x8WallWithDoorSet
+  m_Name: 48x8WallWithDoorSet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

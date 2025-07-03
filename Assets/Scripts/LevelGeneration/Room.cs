@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -121,24 +120,26 @@ public class Room : MonoBehaviour, IHasName
         {
             foreach (RoomConnector instanceConnector in this.Connectors)
             {
-                if (connectorData.IsSamePrefab(instanceConnector))
+                if (!connectorData.IsCloseTo(instanceConnector))
                 {
-                    if (connectorData.Used)
-                    {
-                        instanceConnector.SetUsed();
-                    }
-                    else
-                    {
-                        instanceConnector.SetUnused();
-                        if (instanceConnector.ShouldUseAlternativeDoor)
-                        {
-                            Debug.Assert(instanceConnector.DoorAlternative != null, "Door expected not null!");
-                            doors.Add(instanceConnector.DoorAlternative);
-                        }
-                    }
-
-                    break;
+                    continue;
                 }
+
+                if (connectorData.Used)
+                {
+                    instanceConnector.SetUsed();
+                }
+                else
+                {
+                    instanceConnector.SetUnused();
+                    if (instanceConnector.ShouldUseAlternativeDoor)
+                    {
+                        Debug.Assert(instanceConnector.DoorAlternative != null, "Door expected not null!");
+                        doors.Add(instanceConnector.DoorAlternative);
+                    }
+                }
+
+                break;
             }
         }
 

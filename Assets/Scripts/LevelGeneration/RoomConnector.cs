@@ -64,10 +64,19 @@ public class RoomConnector : MonoBehaviour
         return this.parentRoom;
     }
 
-    private void AutoDetectPosition()
+    private Vector3 GetLocalPosRelativeToParentRoom()     {
+        if (this.ParentRoom == null)
+        {
+            Debug.LogError("RoomConnector has no ParentRoom set.");
+            return Vector3.zero;
+        }
+        return this.ParentRoom.transform.InverseTransformPoint(this.transform.position);
+    }
+
+    private ConnectorPosition DetectRelativePosition()
     {
         // Get local position relative to room center
-        Vector3 localPos = ParentRoom.transform.InverseTransformPoint(this.transform.position);
+        Vector3 localPos = GetLocalPosRelativeToParentRoom();
         float x = localPos.x;
         float y = localPos.y;
         float z = localPos.z;
@@ -77,11 +86,11 @@ public class RoomConnector : MonoBehaviour
 
         if (absX > absZ)
         {
-            Data.Position = x > 0 ? ConnectorPosition.Right : ConnectorPosition.Left;
+            return x > 0 ? ConnectorPosition.Right : ConnectorPosition.Left;
         }
         else
         {
-            Data.Position = (z > 0 ? ConnectorPosition.Top : ConnectorPosition.Bottom);
+            return z > 0 ? ConnectorPosition.Top : ConnectorPosition.Bottom;
         }
     }
 
@@ -100,11 +109,10 @@ public class RoomConnector : MonoBehaviour
     public RoomConnectorData ToRoomConnectorData()
     {
         // Always auto-detect position before returning data
-        AutoDetectPosition();
         RoomConnectorData data = this.Data.Clone();
         data.PrefabID = this.name;
+        data.Position = DetectRelativePosition();
         data.RelativeGridCoords = this.GetRelativeGridCoords();
-        data.Position = this.Data.Position; // ensure position is up to date
         return data;
     }
 
@@ -116,6 +124,7 @@ public class RoomConnector : MonoBehaviour
     /// <returns></returns>
     public Vector2 GetRelativeGridCoords()
     {
+        Vector3 localPos = GetLocalPosRelativeToParentRoom();
         Func<float,int,int> GridCoordAdjustment = (float coordLocal, int localDimension) =>
         {
             coordLocal += coordLocal < 0 ? 0.01f : -0.01f; // adjust for exactly 8 or -8
@@ -124,18 +133,8 @@ public class RoomConnector : MonoBehaviour
             return loc;
         };
 
-        Vector3 trueLocal = new Vector3();
-        Transform current = this.transform;
-        while (current != null && current.parent != null) // Until current is the room
-        {            
-            current = current.parent;
-        }
-
-        trueLocal = this.transform.position - current.position;
-        
-
-        int locX = GridCoordAdjustment(trueLocal.x, ParentRoom.Width);
-        int locY = GridCoordAdjustment(trueLocal.z, ParentRoom.Length);                         
+        int locX = GridCoordAdjustment(localPos.x, ParentRoom.Width);
+        int locY = GridCoordAdjustment(localPos.z, ParentRoom.Length);                         
 
         return new Vector2(locX, locY);
     }    
@@ -184,7 +183,7 @@ public class RoomConnectorData : IMatchesPrefab
 {
     public string PrefabID { get; set; }
 
-    public bool Used { get; set; }
+    public bool Used;
 
     public ConnectorType Type;
 
@@ -197,6 +196,17 @@ public class RoomConnectorData : IMatchesPrefab
         RoomConnectorData data = this.MemberwiseClone() as RoomConnectorData;
         data.PrefabID = this.PrefabID;
         return data;
+    }
+
+    public bool IsCloseTo(RoomConnectorData other)
+    {
+        return this.RelativeGridCoords.IsCloseTo(other.RelativeGridCoords);
+    }
+
+    public bool IsCloseTo(RoomConnector obj)
+    {
+        var data = obj.ToRoomConnectorData();
+        return this.IsCloseTo(data);
     }
 
     public bool IsMatchingConnector(RoomConnectorData other)

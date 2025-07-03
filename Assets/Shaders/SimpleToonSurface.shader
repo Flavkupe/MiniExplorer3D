@@ -13,7 +13,7 @@ Shader "Custom/SimpleToonSurfaceSteppedLerp"
     {
         Tags { "RenderType"="Opaque" }
         CGPROGRAM
-        #pragma surface surf ToonSteppedLerp
+        #pragma surface surf ToonSteppedLerp addshadow fullforwardshadows
 
         fixed4 _Color;
         fixed4 _Mid;
