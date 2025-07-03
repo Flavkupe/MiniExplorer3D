@@ -81,6 +81,7 @@
     <Compile Include="Assets\Scripts\LevelGeneration\ReadingContent.cs" />
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
     <Compile Include="Assets\Scripts\Parts\TableOfContentsPodium.cs" />
+    <Compile Include="Assets\Scripts\Utils\PlayerMenu.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Area.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\TiledSprite.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\SceneLoader.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="Assets\Scripts\Parts\ClickableText.cs" />
     <Compile Include="Assets\Scripts\Parts\Simple3DText.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\WebLevelGenerator.cs" />
+    <Compile Include="Assets\Scripts\Utils\DevWindow.cs" />
     <Compile Include="Assets\Scripts\Entities\NPCAreaCheck.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\ClosingWall.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\LevelImage.cs" />

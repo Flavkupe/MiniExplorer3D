@@ -128,7 +128,7 @@ public class WebLevelGenerator : BaseLevelGenerator
             {
                 string name = this.HtmlDecode(link.InnerText);
                 string href = link.GetAttributeValue("href", "");
-                string url = "http://" + currentUri.Host + "/" + href.TrimStart('/');
+                string url = "https://" + currentUri.Host + "/" + href.TrimStart('/');
                 activeTextData.LinkedLocationData.Add(new LinkedLocationData(name, url));
             }
         }
@@ -155,7 +155,7 @@ public class WebLevelGenerator : BaseLevelGenerator
             }
 
             string imageCaption = this.HtmlDecode(caption.InnerText);
-            string imageUrl = GetImageUrlFromImageTag(imgTag, currentUri.Host);
+            string imageUrl = EnsureHttps(GetImageUrlFromImageTag(imgTag, currentUri.Host));
             activeSublocation.LocationData.ImagePaths.Add(new ImagePathData(imageCaption, imageUrl));
         }
         else if (node.GetAttributeValue("id", "") == "toc")
@@ -196,7 +196,7 @@ public class WebLevelGenerator : BaseLevelGenerator
                 HtmlNode imgNode = row.SelectSingleNode(".//a[@class='image']/img");
                 if (imgNode != null)
                 {
-                    string imageUrl = GetImageUrlFromImageTag(imgNode, currentUri.Host);
+                    string imageUrl = EnsureHttps(GetImageUrlFromImageTag(imgNode, currentUri.Host));
                     string imageCaption = this.HtmlDecode((row.InnerText ?? string.Empty).Trim());
                     location.LocationData.PodiumImages.Add(new ImagePathData(imageCaption, imageUrl));                    
                 }
@@ -269,12 +269,22 @@ public class WebLevelGenerator : BaseLevelGenerator
         string imageSrc = node.GetAttributeValue("src", "");                
         if (imageSrc.StartsWith("//"))
         {
-            return "http://" + imageSrc.TrimStart('/');
+            return "https://" + imageSrc.TrimStart('/');
         }
         else
         {
-            return "http://" + currentUriHost + "/" + imageSrc.TrimStart('/');
+            return "https://" + currentUriHost + "/" + imageSrc.TrimStart('/');
         }
+    }
+
+    private string EnsureHttps(string url)
+    {
+        if (string.IsNullOrEmpty(url)) return url;
+        if (url.StartsWith("http://"))
+            return "https://" + url.Substring(7);
+        if (url.StartsWith("//"))
+            return "https:" + url;
+        return url;
     }
 
     protected virtual IEnumerator ProcessImages(Location location)
@@ -286,7 +296,7 @@ public class WebLevelGenerator : BaseLevelGenerator
         foreach (ImagePathData imageData in imagePaths)
         {
             LevelImage levelImage = new LevelImage() { Name = imageData.DisplayName };
-            using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imageData.Path))
+            using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(EnsureHttps(imageData.Path)))
             {
                 yield return uwr.SendWebRequest();
 
@@ -325,12 +335,14 @@ public class WebLevelGenerator : BaseLevelGenerator
     {
         if (location.NeedsInitialization)
         {
-            using (UnityWebRequest uwr = UnityWebRequest.Get(location.Path))
+            string safeUrl = EnsureHttps(location.Path);
+            using (UnityWebRequest uwr = UnityWebRequest.Get(safeUrl))
             {
+                Debug.Log($"Sending request to {safeUrl}");
                 yield return uwr.SendWebRequest();
                 if (uwr.result != UnityWebRequest.Result.Success)
                 {
-                    Debug.LogWarning($"Page load error: {uwr.error} for {location.Path}");
+                    Debug.LogWarning($"Page load error: {uwr.error} for {safeUrl}");
                     location.LocationData.RawData = string.Empty;
                 }
                 else

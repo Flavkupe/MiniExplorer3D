@@ -137,16 +137,20 @@ public class RoomConnector : MonoBehaviour
         int locY = GridCoordAdjustment(localPos.z, ParentRoom.Length);                         
 
         return new Vector2(locX, locY);
-    }    
+    }
 
     public bool IsMatchingConnector(RoomConnectorData other)
     {
-        return this.Data.IsMatchingConnector(other);
+        var thisData = this.ToRoomConnectorData();
+        return thisData.IsMatchingConnector(other);
     }
 
     public bool IsMatchingConnector(RoomConnector other)
     {
-        return this.Data.IsMatchingConnector(other.Data);
+        var thisData = this.ToRoomConnectorData();
+        var otherData = other.ToRoomConnectorData();
+
+        return thisData.IsMatchingConnector(otherData);
     }
 
     public void SetUsed()

@@ -96,6 +96,20 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator GenerateLevel(Location currentLocation)
     {
+        // 1. Open the Loading UI
+        if (this.Loading != null)
+        {
+            this.Loading.ToggleCamera(true);
+        }
+
+        // 2. Delete the current area
+        if (StageManager.CurrentArea != null)
+        {
+            Destroy(StageManager.CurrentArea.gameObject);
+            StageManager.CurrentArea = null;
+        }
+
+        // 3. Generate the new area as normal
         Area area = Instantiate(ResourceManager.GetEmptyAreaPrefab()) as Area;
         area.name = currentLocation.Name ?? currentLocation.Path;
         area.DisplayName = area.name;
@@ -160,6 +174,29 @@ public class SceneLoader : MonoBehaviour
         MonoBehaviour instance = Instantiate(model);
         instance.gameObject.SetActive(false);
         return instance;
+    }
+
+    public void LoadWikipediaArticle(string articleName)
+    {
+        if (string.IsNullOrEmpty(articleName))
+        {
+            return;
+        }
+
+        // Wikipedia expects underscores for spaces
+        string safeName = articleName.Replace(' ', '_');
+        string url = $"https://en.wikipedia.org/wiki/{safeName}";
+        // Optionally, set the display name to the article name
+        StageManager.CurrentLocation = new MainLocation(url, articleName);
+        // Start the area generation process
+        if (this.levelGenerator.NeedsAreaGenPreparation)
+        {
+            StartCoroutine(this.levelGenerator.PrepareAreaGeneration(StageManager.CurrentLocation, this));
+        }
+        else
+        {
+            StartCoroutine(this.GenerateLevel(StageManager.CurrentLocation));
+        }
     }
 
     void Update () 
