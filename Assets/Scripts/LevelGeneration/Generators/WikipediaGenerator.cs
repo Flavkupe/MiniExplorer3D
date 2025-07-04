@@ -76,6 +76,15 @@ public class WikipediaGenerator : WebLevelGenerator
             {
                 this.HandleThumbinnerDivNode(node);
             }
+            else if (node.Name == "figure")
+            {
+                this.HandleFigureNode(node);
+            }
+            else if ((node.Name == "div" && node.GetAttributeValue("class", "").Contains("gallery")) ||
+                     (node.Name == "ul" && node.GetAttributeValue("class", "").Contains("gallery")))
+            {
+                this.HandleGalleryNode(node);
+            }
         }
         if (this.leadSection.LocationText.Count > 0 || this.leadSection.ImagePaths.Count > 0)
         {
@@ -179,6 +188,50 @@ public class WikipediaGenerator : WebLevelGenerator
                 this.currentSubsection.ImagePaths.Add(imageData);
             else if (this.currentSection != null)
                 this.currentSection.ImagePaths.Add(imageData);
+        }
+    }
+
+    // Handles <figure> tags for images and captions
+    private void HandleFigureNode(HtmlNode node)
+    {
+        var imgTag = node.SelectSingleNode(".//img");
+        var captionNode = node.SelectSingleNode(".//figcaption");
+        if (imgTag != null)
+        {
+            string imageCaption = captionNode != null ? this.HtmlDecode(captionNode.InnerText) : string.Empty;
+            string imageUrl = this.EnsureHttps(this.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
+            var imageData = new ImagePathData(imageCaption, imageUrl);
+            if (!this.foundFirstH2)
+                this.leadSection.ImagePaths.Add(imageData);
+            else if (this.currentSubsection != null)
+                this.currentSubsection.ImagePaths.Add(imageData);
+            else if (this.currentSection != null)
+                this.currentSection.ImagePaths.Add(imageData);
+        }
+    }
+
+    // Handles <div class="gallery"> or <ul class="gallery"> for gallery images
+    private void HandleGalleryNode(HtmlNode node)
+    {
+        // Gallery images are usually in <li class="gallerybox"> or <div class="gallerybox">
+        var galleryItems = node.SelectNodes(".//*[contains(@class, 'gallerybox')]");
+        if (galleryItems == null) return;
+        foreach (var item in galleryItems)
+        {
+            var imgTag = item.SelectSingleNode(".//img");
+            var captionNode = item.SelectSingleNode(".//*[contains(@class, 'gallerytext')]");
+            if (imgTag != null)
+            {
+                string imageCaption = captionNode != null ? this.HtmlDecode(captionNode.InnerText) : string.Empty;
+                string imageUrl = this.EnsureHttps(this.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
+                var imageData = new ImagePathData(imageCaption, imageUrl);
+                if (!this.foundFirstH2)
+                    this.leadSection.ImagePaths.Add(imageData);
+                else if (this.currentSubsection != null)
+                    this.currentSubsection.ImagePaths.Add(imageData);
+                else if (this.currentSection != null)
+                    this.currentSection.ImagePaths.Add(imageData);
+            }
         }
     }
 

@@ -5,8 +5,16 @@ using System.Collections.Generic;
 
 
 public class ReadingContent : MonoBehaviour, ICanLookAtAndInteract
-{    
+{
+    /// <summary>
+    /// Displayed text, floating.
+    /// </summary>
     public ArticleText TextFloat;
+
+    /// <summary>
+    /// Displayed text, on the prefab.
+    /// </summary>
+    public ArticleText TextDisplay;
 
     // Object which holds this one, and can be disabled if we want to not show
     //  anything for this component.
@@ -22,15 +30,23 @@ public class ReadingContent : MonoBehaviour, ICanLookAtAndInteract
 	// Update is called once per frame
 	void Update () 
     {
-        this.TextFloat.gameObject.SetActive(false);
+        if (this.TextFloat != null)
+        {
+            this.TextFloat.gameObject.SetActive(false);
+        }
 	}    
 
     public void AddText(LocationTextData textData)
     {
+        List<string> keyWords = textData.LinkedLocationData.Select(a => a.DisplayName).ToList();
         if (this.TextFloat != null)
         {
-            List<string> keyWords = textData.LinkedLocationData.Select(a => a.DisplayName).ToList();
             this.TextFloat.SetArticleText(textData.Text, keyWords);
+        }
+
+        if (this.TextDisplay != null)
+        {
+            this.TextDisplay.SetArticleText(textData.Text, keyWords);
         }
 
         if (this.LinkBoard != null)

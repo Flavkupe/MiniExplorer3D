@@ -10,17 +10,12 @@ public class ArticleText : MonoBehaviour
 
     public TextMesh textMesh;
 
+    public TMPro.TextMeshPro textMeshPro;
+
     int currentSegment = 0;
     public List<string> textSegments = new List<string>();
 
     public string FullText;
-
-	// Use this for initialization
-	void Awake() 
-    {
-        // Must be activated dynamically
-        this.gameObject.SetActive(false);
-	}
 	
 	// Update is called once per frame
 	void Update () 
@@ -74,8 +69,21 @@ public class ArticleText : MonoBehaviour
         {
             this.SetEmptyText();
         }
-        
-        textMesh.text = this.textSegments[0];
+
+        SetText(this.textSegments[0]);
+    }
+
+    private void SetText(string text)
+    {
+        if (textMeshPro != null)
+        {
+            textMeshPro.text = text;
+        }
+
+        if (textMesh != null)
+        {
+            textMesh.text = text;
+        }
     }
 
     private string HighlightKeywords(string text, List<string> keyWords)
@@ -109,6 +117,6 @@ public class ArticleText : MonoBehaviour
             currentSegment = 0;
         }
 
-        textMesh.text = this.textSegments[currentSegment];
+        SetText(this.textSegments[currentSegment]);
     }
 }
