@@ -5,6 +5,6 @@ using System.Text;
 
 public interface IMatchesPrefab
 {
-    string PrefabID { get; set; }
+    string PrefabID { get; }
 }
 

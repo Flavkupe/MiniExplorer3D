@@ -110,10 +110,10 @@ public static class StageManager
         {
             levelGenerator = new FileLevelGenerator();
         }
-        else if (levelGenerationMode == LevelGenerationMode.Web &&
-            !(levelGenerator is WebLevelGenerator))
+        else if (levelGenerationMode == LevelGenerationMode.Wikipedia &&
+            !(levelGenerator is WikipediaGenerator))
         {
-            levelGenerator = new WebLevelGenerator();
+            levelGenerator = new WikipediaGenerator();
         }
         else if (levelGenerationMode == LevelGenerationMode.Debug && 
             !(levelGenerator is DebugLevelGenerator))

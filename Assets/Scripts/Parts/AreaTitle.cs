@@ -3,14 +3,14 @@ using System.Collections;
 
 public class AreaTitle : MonoBehaviour 
 {
-    private TextMesh childTextMesh;
+    private TMPro.TextMeshPro childTextMesh;
 
     public int MaxRows = 3;
     public int MaxCharsPerRow = 13;
 
 	// Use this for initialization
 	void Awake() {
-        this.childTextMesh = this.GetComponentInChildren<TextMesh>();
+        this.childTextMesh = this.GetComponentInChildren<TMPro.TextMeshPro>();
 	}
 	
 	// Update is called once per frame

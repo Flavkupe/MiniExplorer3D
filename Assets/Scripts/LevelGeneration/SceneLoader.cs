@@ -136,7 +136,7 @@ public class SceneLoader : MonoBehaviour
         {
             // Put each room from grid in its actual location
             Room model = this.GetRoomByPrefabID(roomData.PrefabID, area);
-            Room roomInstance = Instantiate(model) as Room;            
+            Room roomInstance = Instantiate(model);
 
             roomInstance.transform.parent = area.transform;
             roomInstance.transform.position = roomData.WorldCoords;

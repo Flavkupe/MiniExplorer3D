@@ -7,59 +7,48 @@ public class LocationData
 {
     public void Clear()
     {
-        this.locationText.Clear();
-        this.imagePaths.Clear();
+        this.Sections.Clear();
         this.subLocations.Clear();
-        this.linkedLocationData.Clear();
-    }
-
-    private List<LocationTextData> locationText = new List<LocationTextData>();
-    public List<LocationTextData> LocationText
-    {
-        get { return locationText; }
-    }
-
-    private List<ImagePathData> imagePaths = new List<ImagePathData>();
-    public List<ImagePathData> ImagePaths
-    {
-        get { return imagePaths; }
-    }
-
-    private List<ImagePathData> podiumImages = new List<ImagePathData>();
-    public List<ImagePathData> PodiumImages
-    {
-        get { return podiumImages; }
-    }
-
-    
-
-    private List<LinkedLocationData> linkedLocationData = new List<LinkedLocationData>();
-    public List<LinkedLocationData> LinkedLocationData
-    {
-        get { return linkedLocationData; }
     }
 
     public List<Location> subLocations = new List<Location>();
     public List<Location> SubLocations { get { return this.subLocations; } }
-
-    public List<InfoBoxData> infoBoxData = new List<InfoBoxData>();
-    public List<InfoBoxData> InfoBoxData { get { return this.infoBoxData; } }
 
     public TableOfContents TableOfContents { get; set; }
 
     // For stuff like html markup
     public string RawData { get; set; }
 
+    public List<SectionData> Sections { get; set; } = new List<SectionData>();
+
     public LocationData Clone()
     {
         LocationData clone = new LocationData();
         clone.subLocations = this.subLocations.Select(a => a.Clone()).ToList();
-        clone.imagePaths = this.imagePaths.ToList();
-        clone.podiumImages = this.podiumImages.ToList();
-        clone.locationText = this.locationText.ToList();
-        clone.linkedLocationData = this.linkedLocationData.ToList();
         clone.TableOfContents = this.TableOfContents;
+        // Deep copy of Sections
+        clone.Sections = this.Sections.Select(s => CloneSection(s)).ToList();
+        clone.RawData = this.RawData;
         return clone;
+    }
+
+    private SectionData CloneSection(SectionData section)
+    {
+        var newSection = new SectionData
+        {
+            Title = section.Title,
+            Anchor = section.Anchor,
+            SectionType = section.SectionType,
+            RawData = section.RawData,
+            TableOfContents = section.TableOfContents,
+            LocationText = section.LocationText != null ? new List<LocationTextData>(section.LocationText) : null,
+            ImagePaths = section.ImagePaths != null ? new List<ImagePathData>(section.ImagePaths) : null,
+            PodiumImages = section.PodiumImages != null ? new List<ImagePathData>(section.PodiumImages) : null,
+            LinkedLocationData = section.LinkedLocationData != null ? new List<LinkedLocationData>(section.LinkedLocationData) : null,
+            InfoBoxData = section.InfoBoxData != null ? new List<InfoBoxData>(section.InfoBoxData) : null,
+            Subsections = section.Subsections != null ? section.Subsections.Select(s => CloneSection(s)).ToList() : null
+        };
+        return newSection;
     }
 }
 
