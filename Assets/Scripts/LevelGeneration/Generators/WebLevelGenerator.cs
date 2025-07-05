@@ -248,20 +248,14 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
     {
         if (reqs.Locations.Count > 0)
         {
-            Debug.LogWarning("WebLevelGenerator: Missing locations:");
-            foreach (var loc in reqs.Locations)
-            {
-                Debug.LogWarning($" - {loc.LocationKey}");
-            }
+            var locations = string.Join(',', reqs.Locations.Select(a => a.LocationKey));
+            Debug.LogWarning($"WebLevelGenerator: Missing locations: {locations}");
         }
 
         if (reqs.SectionData.Count > 0)
         {
-            Debug.LogWarning("WebLevelGenerator: Missing sections:");
-            foreach (var section in reqs.SectionData)
-            {
-                Debug.LogWarning($" - {section.Title}");
-            }
+            var sections = string.Join(',', reqs.SectionData.Select(a => a.Title));
+            Debug.LogWarning($"WebLevelGenerator: Missing sections: {sections}");
         }
     }
 }

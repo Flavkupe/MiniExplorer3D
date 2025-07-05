@@ -58,6 +58,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SectionTypes: 64
+  ListItemMode: 2
 --- !u!1 &6404357469918190189
 GameObject:
   m_ObjectHideFlags: 0

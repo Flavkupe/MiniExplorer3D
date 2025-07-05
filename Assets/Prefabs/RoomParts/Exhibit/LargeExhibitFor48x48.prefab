@@ -60,6 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SectionTypes: 2
+  ListItemMode: 1
 --- !u!1001 &718059589576873982
 PrefabInstance:
   m_ObjectHideFlags: 0

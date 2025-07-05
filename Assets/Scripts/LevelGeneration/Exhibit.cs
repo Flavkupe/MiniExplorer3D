@@ -63,19 +63,32 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
         this.AreaTitleSign = children.SelectMany(go => go.GetComponents<AreaTitle>()).FirstOrDefault();
         this.SubExhibits = children.SelectMany(go => go.GetComponents<Exhibit>()).Where(e => e != this).ToArray();
         this.Exits = children.SelectMany(go => go.GetComponents<Door>()).ToList();
+        foreach (var exhibit in this.SubExhibits)
+        {
+            exhibit.PopulateParts();
+        }
     }
 
     public bool CanHandleSection(SectionData section)
     {
         if (section == null)
+        {
             return false;
+        }
+
         // SectionType flag check
         if ((SectionTypes & section.SectionType) == 0)
+        {
             return false;
+        }
+
         // Rule 1: AreaTitleSign iff Title is non-empty
         bool hasTitle = !string.IsNullOrEmpty(section.Title);
-        if (hasTitle != (this.AreaTitleSign != null))
+        if (hasTitle && this.AreaTitleSign == null)
+        {
             return false;
+        }
+
         // Rule 2: Enough Reading items for LocationText
         int textCount = section.LocationText != null ? section.LocationText.Count : 0;
         int readingCount = this.Reading != null ? this.Reading.Length : 0;
@@ -90,6 +103,7 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
                 return false;
             }
         }
+
         // Rule 3: Subsections must be handled by subexhibits
         if (section.Subsections != null && section.Subsections.Count > 0)
         {
@@ -284,7 +298,9 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
                             if (!string.IsNullOrWhiteSpace(item.Text))
                             {
                                 if (combined.Length > 0)
+                                {
                                     combined.Append("\n");
+                                }
                                 combined.Append("• ").Append(item.Text);
                             }
                         }

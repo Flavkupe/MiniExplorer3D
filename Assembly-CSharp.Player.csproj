@@ -81,9 +81,9 @@
     <Compile Include="Assets\Scripts\LevelGeneration\LocationData.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Room.cs" />
     <Compile Include="Assets\SnapToGrid.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\Generators\Wikipedia\WikipediaMainPageProcessor.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\ReadingContent.cs" />
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
-    <Compile Include="Assets\Scripts\LevelGeneration\Generators\Wikipedia\WikipediaMainPageProcessor.cs" />
     <Compile Include="Assets\Scripts\Parts\TableOfContentsPodium.cs" />
     <Compile Include="Assets\Scripts\Utils\PlayerMenu.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Area.cs" />
@@ -92,8 +92,8 @@
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\DebugLevelGenerator.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\FileLevelGenerator.cs" />
     <Compile Include="Assets\Scripts\Map\AreaMapDrawer.cs" />
-    <Compile Include="Assets\Scripts\LevelGeneration\IHasLocation.cs" />
     <Compile Include="Assets\Scripts\Utils\Utils.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\IHasLocation.cs" />
     <Compile Include="Assets\Scripts\Parts\NameTag.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\Wikipedia\WikipediaGenerator.cs" />
     <Compile Include="Assets\Scripts\Utils\LoadingView.cs" />
@@ -122,8 +122,8 @@
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\Wikipedia\WikipediaBaseProcessor.cs" />
     <Compile Include="Assets\Scripts\Entities\NPCAreaCheck.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\ClosingWall.cs" />
-    <Compile Include="Assets\Scripts\LevelGeneration\LevelImage.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\Wikipedia\WikipediaArticleProcessor.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\LevelImage.cs" />
     <Compile Include="Assets\Scripts\Parts\InfoBoxDisplay.cs" />
     <Compile Include="Assets\Scripts\Parts\ICanLookAt.cs" />
     <Compile Include="Assets\Scripts\Parts\TiledQuad.cs" />

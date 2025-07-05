@@ -211,6 +211,7 @@ namespace Assets.Scripts.LevelGeneration
                 {
                     if (!room.HasMatchingExhibit(reqs.SectionData))
                     {
+                        Debug.Log($"Room {room.Data.DisplayName} does not have any matching exhibit.");
                         continue;
                     }
 
@@ -226,6 +227,7 @@ namespace Assets.Scripts.LevelGeneration
 
                         if (!this.CanAddRoom(room, roomCoordX, roomCoordY))
                         {
+                            Debug.Log($"Room {room.Data.DisplayName} cannot be added.");
                             continue;
                         }
 
