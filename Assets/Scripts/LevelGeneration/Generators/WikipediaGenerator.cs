@@ -7,18 +7,15 @@ public class WikipediaGenerator : WebLevelGenerator
     // Private fields for shared state
     private SectionData leadSection;
     private SectionData currentSection;
-    private SectionData currentSubsection;
+    private SectionData parentSection;
     private bool foundFirstH2;
-    private MainLocation currentLocation;
     private Uri currentUri;
 
     protected override void ProcessHtmlDocument(MainLocation location, Uri currentUri)
     {
-        this.currentLocation = location;
         this.currentUri = currentUri;
         this.leadSection = new SectionData { SectionType = SectionType.Main };
         this.currentSection = null;
-        this.currentSubsection = null;
         this.foundFirstH2 = false;
 
         HtmlDocument htmlDoc = new HtmlDocument();
@@ -48,21 +45,26 @@ public class WikipediaGenerator : WebLevelGenerator
         {
             if (node.Name == "h2")
             {
-                this.HandleH2Node(node);
+                this.HandleH2Node(node, location);
             }
-            else if (node.Name == "div" && node.GetAttributeValue("class", "").Contains("mw-heading"))
+            else if (node.Name == "div" && node.GetAttributeValue("class", "").Contains("mw-heading2"))
             {
-                // example: <div class="mw-heading mw-heading2"><h2 id="Taxonomy">Taxonomy</h2></div>
                 var h2 = node.SelectSingleNode("h2");
                 if (h2 != null)
                 {
-                    this.HandleH2Node(h2);
+                    this.HandleH2Node(h2, location);
                     continue;
                 }
             }
-            else if (node.Name == "h3")
+
+            else if (node.Name == "div" && node.GetAttributeValue("class", "").Contains("mw-heading3"))
             {
-                this.HandleH3Node(node);
+                var h3 = node.SelectSingleNode("h3");
+                if (h3 != null)
+                {
+                    this.HandleH3Node(h3, location);
+                    continue;
+                }
             }
             else if (node.Name == "p")
             {
@@ -92,12 +94,11 @@ public class WikipediaGenerator : WebLevelGenerator
         }
     }
 
-    private void HandleH2Node(HtmlNode node)
+    private void HandleH2Node(HtmlNode node, MainLocation location)
     {
         this.foundFirstH2 = true;
         string title = string.Empty;
         string anchor = string.Empty;
-        // Try to find span.mw-headline for anchor and title, fallback to h2's own text/id
         var headline = node.SelectSingleNode("span[@class='mw-headline']");
         if (headline != null)
         {
@@ -114,27 +115,41 @@ public class WikipediaGenerator : WebLevelGenerator
             Anchor = anchor,
             SectionType = SectionType.Standard
         };
-        this.currentLocation.LocationData.Sections.Add(this.currentSection);
-        this.currentSubsection = null;
+        this.parentSection = this.currentSection;
+        location.LocationData.Sections.Add(this.currentSection);
     }
 
-    private void HandleH3Node(HtmlNode node)
+    private void HandleH3Node(HtmlNode node, MainLocation location)
     {
-        if (this.currentSection == null)
+        string title = string.Empty;
+        string anchor = string.Empty;
+        var headline = node.SelectSingleNode("span[@class='mw-headline']");
+        if (headline != null)
         {
-            Debug.LogWarning("Encountered h3 node without a preceding h2 section.");
+            title = this.HtmlDecode(headline.InnerText);
+            anchor = headline.GetAttributeValue("id", "");
+        }
+        else
+        {
+            title = this.HtmlDecode(node.InnerText);
+            anchor = node.GetAttributeValue("id", "");
+        }
+        
+        var subsection = new SectionData
+        {
+            Title = title,
+            Anchor = anchor,
+            SectionType = SectionType.Subsection
+        };
+
+        if (this.parentSection == null)
+        {
+            Debug.LogWarning("Parent section is null when trying to add a subsection. This may indicate an issue with the HTML structure.");
             return;
         }
 
-        var headline = node.SelectSingleNode("span[@class='mw-headline']");
-        string title = headline != null ? this.HtmlDecode(headline.InnerText) : "";
-        string anchor = headline != null ? headline.GetAttributeValue("id", "") : "";
-        this.currentSubsection = new SectionData {
-            Title = title,
-            Anchor = anchor,
-            SectionType = SectionType.Standard
-        };
-        this.currentSection.Subsections.Add(this.currentSubsection);
+        this.parentSection.Subsections.Add(subsection);
+        this.currentSection = subsection;
     }
 
     private void HandlePNode(HtmlNode node)
@@ -144,7 +159,6 @@ public class WikipediaGenerator : WebLevelGenerator
         {
             return;
         }
-
         var textData = new LocationTextData(text);
         HtmlNodeCollection linkNodes = node.SelectNodes("a");
         if (linkNodes != null)
@@ -157,19 +171,15 @@ public class WikipediaGenerator : WebLevelGenerator
                 textData.LinkedLocationData.Add(new LinkedLocationData(name, url));
             }
         }
-        if (!this.foundFirstH2)
+        if (!this.foundFirstH2 || this.currentSection == null)
             this.leadSection.LocationText.Add(textData);
-        else if (this.currentSubsection != null)
-            this.currentSubsection.LocationText.Add(textData);
-        else if (this.currentSection != null)
+        else
             this.currentSection.LocationText.Add(textData);
     }
 
     private void HandleTableNode()
     {
-        if (this.currentSubsection != null)
-            this.currentSubsection.SectionType = SectionType.Table;
-        else if (this.currentSection != null)
+        if (this.currentSection != null)
             this.currentSection.SectionType = SectionType.Table;
     }
 
@@ -182,16 +192,13 @@ public class WikipediaGenerator : WebLevelGenerator
             string imageCaption = this.HtmlDecode(caption.InnerText);
             string imageUrl = this.EnsureHttps(this.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
             var imageData = new ImagePathData(imageCaption, imageUrl);
-            if (!this.foundFirstH2)
+            if (!this.foundFirstH2 || this.currentSection == null)
                 this.leadSection.ImagePaths.Add(imageData);
-            else if (this.currentSubsection != null)
-                this.currentSubsection.ImagePaths.Add(imageData);
-            else if (this.currentSection != null)
+            else
                 this.currentSection.ImagePaths.Add(imageData);
         }
     }
 
-    // Handles <figure> tags for images and captions
     private void HandleFigureNode(HtmlNode node)
     {
         var imgTag = node.SelectSingleNode(".//img");
@@ -201,19 +208,15 @@ public class WikipediaGenerator : WebLevelGenerator
             string imageCaption = captionNode != null ? this.HtmlDecode(captionNode.InnerText) : string.Empty;
             string imageUrl = this.EnsureHttps(this.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
             var imageData = new ImagePathData(imageCaption, imageUrl);
-            if (!this.foundFirstH2)
+            if (!this.foundFirstH2 || this.currentSection == null)
                 this.leadSection.ImagePaths.Add(imageData);
-            else if (this.currentSubsection != null)
-                this.currentSubsection.ImagePaths.Add(imageData);
-            else if (this.currentSection != null)
+            else
                 this.currentSection.ImagePaths.Add(imageData);
         }
     }
 
-    // Handles <div class="gallery"> or <ul class="gallery"> for gallery images
     private void HandleGalleryNode(HtmlNode node)
     {
-        // Gallery images are usually in <li class="gallerybox"> or <div class="gallerybox">
         var galleryItems = node.SelectNodes(".//*[contains(@class, 'gallerybox')]");
         if (galleryItems == null) return;
         foreach (var item in galleryItems)
@@ -225,11 +228,9 @@ public class WikipediaGenerator : WebLevelGenerator
                 string imageCaption = captionNode != null ? this.HtmlDecode(captionNode.InnerText) : string.Empty;
                 string imageUrl = this.EnsureHttps(this.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
                 var imageData = new ImagePathData(imageCaption, imageUrl);
-                if (!this.foundFirstH2)
+                if (!this.foundFirstH2 || this.currentSection == null)
                     this.leadSection.ImagePaths.Add(imageData);
-                else if (this.currentSubsection != null)
-                    this.currentSubsection.ImagePaths.Add(imageData);
-                else if (this.currentSection != null)
+                else
                     this.currentSection.ImagePaths.Add(imageData);
             }
         }

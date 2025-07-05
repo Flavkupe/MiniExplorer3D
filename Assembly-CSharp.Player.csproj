@@ -95,6 +95,7 @@
     <Compile Include="Assets\Scripts\Parts\NameTag.cs" />
     <Compile Include="Assets\Scripts\Utils\LoadingView.cs" />
     <Compile Include="Assets\Scripts\Parts\LinkHolder.cs" />
+    <Compile Include="Assets\Scripts\Cache\SimpleCache.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\ExhibitData.cs" />
     <Compile Include="Assets\Scripts\Managers\ResourceManager.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\SectionData.cs" />

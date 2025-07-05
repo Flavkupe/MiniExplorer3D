@@ -5,6 +5,12 @@ using System.Text;
 
 public class ArticleText : MonoBehaviour 
 {
+    /// <summary>
+    /// Whether to split the text by lines. Should
+    /// be disabled when using TMPro, which handles this for us.
+    /// </summary>
+    public bool SplitLines = true;
+
     public int WordsPerLine = 8;
     public int LinesPerSegment = 5;
 
@@ -29,7 +35,16 @@ public class ArticleText : MonoBehaviour
             this.SetEmptyText();
         }
 
-        this.FullText = allText;
+        string highlighted = HighlightKeywords(allText, keyWords);
+        this.FullText = highlighted;
+
+        if (!SplitLines)
+        {
+            textSegments.Add(highlighted);
+            SetText(this.textSegments[0]);
+            return;
+        }
+
         int wordCounter = 0;
         int lineCounter = 0;
         StringBuilder segment = new StringBuilder();
@@ -41,8 +56,7 @@ public class ArticleText : MonoBehaviour
                 if (++lineCounter >= LinesPerSegment)
                 {
                     segment.Append(" [...]");
-                    string highlighted = HighlightKeywords(segment.ToString(), keyWords);
-                    textSegments.Add(highlighted);
+                    textSegments.Add(segment.ToString());
                     segment = new StringBuilder();
                     lineCounter = 0;
                 }
@@ -61,8 +75,7 @@ public class ArticleText : MonoBehaviour
 
         if (segment.Length > 0)
         {
-            string highlighted = HighlightKeywords(segment.ToString(), keyWords);
-            textSegments.Add(highlighted);
+            textSegments.Add(segment.ToString());
         }
 
         if (this.textSegments.Count == 0)

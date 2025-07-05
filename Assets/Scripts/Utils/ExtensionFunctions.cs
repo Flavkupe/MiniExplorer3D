@@ -8,25 +8,24 @@ using System.Text;
 using UnityEditor.Build;
 using UnityEngine;
 
-
 public static class ExtensionFunctions
 {
-    private static System.Random rand = new System.Random(); 
+    private static System.Random rand = new System.Random();
 
     public static T GetRandom<T>(this IEnumerable<T> list)
     {
         List<T> items = list.ToList();
 
-        if (items.Count == 0) 
+        if (items.Count == 0)
         {
             return default(T);
-        }                      
+        }
 
         int index = rand.Next(0, items.Count);
-        return items[index];           
+        return items[index];
     }
 
-    public static Queue<T> ToQueue<T>(this IEnumerable<T> list) 
+    public static Queue<T> ToQueue<T>(this IEnumerable<T> list)
     {
         Queue<T> queue = new Queue<T>();
         foreach (T item in list)
@@ -56,9 +55,9 @@ public static class ExtensionFunctions
             list[k] = list[n];
             list[n] = value;
         }
-    }    
+    }
 
-    public static void EnqueueRange<T>(this Queue<T> queue, IEnumerable<T> list) 
+    public static void EnqueueRange<T>(this Queue<T> queue, IEnumerable<T> list)
     {
         foreach (T item in list)
         {
@@ -112,7 +111,7 @@ public static class ExtensionFunctions
         return false;
     }
 
-    public static void SetPixel(this Texture2D texture, int x, int y, Color color, int radius) 
+    public static void SetPixel(this Texture2D texture, int x, int y, Color color, int radius)
     {
         for (int i = -radius; i <= radius; ++i)
         {
@@ -166,5 +165,16 @@ public static class ExtensionFunctions
             return (T)formatter.Deserialize(stream);
         }
     }
-    
+
+    // Returns all components of type T on the immediate children of a Transform
+    public static IEnumerable<T> GetComponentsInDirectChildren<T>(this Transform parent) where T : Component
+    {
+        for (int i = 0; i < parent.childCount; ++i)
+        {
+            var child = parent.GetChild(i);
+            var component = child.GetComponent<T>();
+            if (component != null)
+                yield return component;
+        }
+    }
 }

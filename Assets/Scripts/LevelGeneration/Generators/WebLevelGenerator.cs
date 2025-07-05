@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using Assets.Scripts.LevelGeneration;
-
+using System.Text;
 using HtmlAgilityPack;
 
 public abstract class WebLevelGenerator : BaseLevelGenerator
@@ -60,21 +60,34 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
         foreach (ImagePathData imageData in imagePaths)
         {
             LevelImage levelImage = new LevelImage() { Name = imageData.DisplayName };
-            using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(EnsureHttps(imageData.Path)))
+            string imageUrl = EnsureHttps(imageData.Path);
+            byte[] cachedData;
+            if (SimpleCache.TryGetCached(imageUrl, out cachedData))
             {
-                yield return uwr.SendWebRequest();
-
-                if (uwr.result != UnityWebRequest.Result.Success)
+                Texture2D tex = new Texture2D(2, 2);
+                tex.LoadImage(cachedData);
+                levelImage.Texture2D = tex;
+                imageData.LoadedImage = levelImage;
+            }
+            else
+            {
+                using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imageUrl))
                 {
-                    Debug.LogWarning($"Image load error: {uwr.error} for {imageData.Path}");
-                    continue;
-                }
+                    yield return uwr.SendWebRequest();
 
-                Texture2D tex = DownloadHandlerTexture.GetContent(uwr);
-                if (tex != null)
-                {
-                    levelImage.Texture2D = tex;
-                    imageData.LoadedImage = levelImage;
+                    if (uwr.result != UnityWebRequest.Result.Success)
+                    {
+                        Debug.LogWarning($"Image load error: {uwr.error} for {imageData.Path}");
+                        continue;
+                    }
+
+                    Texture2D tex = DownloadHandlerTexture.GetContent(uwr);
+                    if (tex != null)
+                    {
+                        levelImage.Texture2D = tex;
+                        imageData.LoadedImage = levelImage;
+                        SimpleCache.SaveToCache(imageUrl, uwr.downloadHandler.data);
+                    }
                 }
             }
         }
@@ -114,18 +127,27 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
         if (location.NeedsInitialization)
         {
             string safeUrl = EnsureHttps(location.Path);
-            using (UnityWebRequest uwr = UnityWebRequest.Get(safeUrl))
+            byte[] cachedData;
+            if (SimpleCache.TryGetCached(safeUrl, out cachedData))
             {
-                Debug.Log($"Sending request to {safeUrl}");
-                yield return uwr.SendWebRequest();
-                if (uwr.result != UnityWebRequest.Result.Success)
+                location.LocationData.RawData = Encoding.UTF8.GetString(cachedData);
+            }
+            else
+            {
+                using (UnityWebRequest uwr = UnityWebRequest.Get(safeUrl))
                 {
-                    Debug.LogWarning($"Page load error: {uwr.error} for {safeUrl}");
-                    location.LocationData.RawData = string.Empty;
-                }
-                else
-                {
-                    location.LocationData.RawData = uwr.downloadHandler.text;
+                    Debug.Log($"Sending request to {safeUrl}");
+                    yield return uwr.SendWebRequest();
+                    if (uwr.result != UnityWebRequest.Result.Success)
+                    {
+                        Debug.LogWarning($"Page load error: {uwr.error} for {safeUrl}");
+                        location.LocationData.RawData = string.Empty;
+                    }
+                    else
+                    {
+                        location.LocationData.RawData = uwr.downloadHandler.text;
+                        SimpleCache.SaveToCache(safeUrl, Encoding.UTF8.GetBytes(location.LocationData.RawData));
+                    }
                 }
             }
         }
@@ -293,6 +315,4 @@ public class WebLevelGenRequirements : LevelGenRequirements
     {
         return new WebLevelGenRequirements();
     }
-
-    // Optionally override TraverseSection here if you want to extract more from SectionData
 }

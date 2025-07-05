@@ -11,7 +11,7 @@ public enum SectionType
     Infobox = 1 << 3,
     Gallery = 1 << 4,
     Other = 1 << 5,
-    // Add more as needed
+    Subsection = 1 << 6,
 }
 
 public class SectionData

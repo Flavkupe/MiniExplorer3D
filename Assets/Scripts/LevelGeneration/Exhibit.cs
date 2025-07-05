@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Linq;
+using System.Collections.Generic;
 
 public class Exhibit : MonoBehaviour, IMatchesPrefab
 {
@@ -19,16 +20,22 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
     private Placeholder[] DisplayPodiums = new Placeholder[] { };
     private Placeholder TOCPodium = null;
     private AreaTitle AreaTitleSign = null;
+    public Exhibit[] SubExhibits { get; private set; } = new Exhibit[] { };
 
     public void PopulateParts()
     {
-        var allPlaceholders = this.GetComponentsInChildren<Placeholder>(true).ToList();
-        this.Paintings = this.GetComponentsInChildren<RoomImageFrame>(true).Where(a => a.FrameType == RoomImageFrame.ImageFrameType.Painting).ToArray();
+        // Only get immediate children for Placeholders, RoomImageFrame, and SubExhibits
+        var children = new List<GameObject>();
+        for (int i = 0; i < transform.childCount; ++i)
+            children.Add(transform.GetChild(i).gameObject);
+        this.Paintings = children.SelectMany(go => go.GetComponents<RoomImageFrame>()).Where(a => a.FrameType == RoomImageFrame.ImageFrameType.Painting).ToArray();
+        var allPlaceholders = children.SelectMany(go => go.GetComponents<Placeholder>()).ToList();
         this.Reading = allPlaceholders.Where(a => a.PartType == Placeholder.RoomPartType.Reading).ToArray();
         this.DisplayPodiums = allPlaceholders.Where(a => a.PartType == Placeholder.RoomPartType.DisplayPodium ||
                                                          a.PartType == Placeholder.RoomPartType.TextPodium).ToArray();
         this.TOCPodium = allPlaceholders.FirstOrDefault(a => a.PartType == Placeholder.RoomPartType.TableOfContentsPodium);
-        this.AreaTitleSign = this.GetComponentInChildren<AreaTitle>();
+        this.AreaTitleSign = children.SelectMany(go => go.GetComponents<AreaTitle>()).FirstOrDefault();
+        this.SubExhibits = children.SelectMany(go => go.GetComponents<Exhibit>()).Where(e => e != this).ToArray();
     }
 
     public bool CanHandleSection(SectionData section)
@@ -49,7 +56,6 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
         {
             if (textCount > SkipContentLimit)
             {
-                // Arbitrary limit for reading content
                 Debug.LogWarning($"Exhibit {this.name} has too many reading items ({textCount}) for the available placeholders ({readingCount}). Skipping some content.");
             }
             else
@@ -57,7 +63,25 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
                 return false;
             }
         }
-            
+        // Rule 3: Subsections must be handled by subexhibits
+        if (section.Subsections != null && section.Subsections.Count > 0)
+        {
+            if (SubExhibits == null || SubExhibits.Length == 0)
+            {
+                return false;
+            }
+
+            // Each subsection must be handled by at least one subexhibit
+            foreach (var subSection in section.Subsections)
+            {
+                bool handled = SubExhibits.Any(sub => sub.CanHandleSection(subSection));
+                if (!handled)
+                {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 
@@ -65,6 +89,13 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
     {
         assignedSection = null;
         IsAssigned = false;
+        if (SubExhibits != null)
+        {
+            foreach (var sub in SubExhibits)
+            {
+                sub.ClearAssignment();
+            }
+        }
     }
 
     // Populate the exhibit's parts (text, images, etc.) from the SectionData
@@ -153,6 +184,24 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
             {
                 bookPlaceholder.gameObject.SetActive(false);
             }
+        }
+
+        // Populate subexhibits recursively
+
+        if (SubExhibits.Length < data.SubExhibitData.Count)
+        {
+            Debug.LogWarning($"Exhibit {this.name} has fewer subexhibits ({SubExhibits.Length}) than required by the data ({data.SubExhibitData.Count}). Some data will not match a subexhibit.");
+        }
+
+        for (int i = 0; i < SubExhibits.Length; ++i)
+        {
+            if (data.SubExhibitData.Count <= i || data.SubExhibitData[i] == null)
+            {
+                SubExhibits[i].ClearAssignment();
+                SubExhibits[i].gameObject.SetActive(false);
+                continue;
+            }
+            SubExhibits[i].PopulateExhibit(data.SubExhibitData[i]);
         }
     }
 }

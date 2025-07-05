@@ -105,8 +105,7 @@ public class Room : MonoBehaviour, IHasName
                                                          a.PartType == Placeholder.RoomPartType.TextPodium).ToArray();
         this.TOCPodium = allPlaceholders.FirstOrDefault(a => a.PartType == Placeholder.RoomPartType.TableOfContentsPodium);
         this.AreaTitleSign = this.transform.GetComponentInChildren<AreaTitle>();
-
-        this.Exhibits = this.GetComponentsInChildren<Exhibit>(true);
+        this.Exhibits = this.transform.GetComponentsInChildren<Exhibit>().Where(exhibit => !exhibit.SectionTypes.HasFlag(SectionType.Subsection)).ToArray();
         foreach (var exhibit in this.Exhibits)
         {
             exhibit.PopulateParts();
@@ -182,11 +181,11 @@ public class Room : MonoBehaviour, IHasName
                 Location currentLoc = roomData.Requirements.Locations.Dequeue();
                 door.SetLocation(currentLoc);
                 door.SetName(currentLoc.Name);
-                if (StageManager.PreviousLocation != null && 
+                if (StageManager.PreviousLocation != null &&
                     currentLoc.LocationKey == StageManager.PreviousLocation.LocationKey &&
                     StageManager.SceneLoader != null && StageManager.SceneLoader.Player != null)
-                {                    
-                    door.TeleportObjectToFront(StageManager.SceneLoader.Player);                    
+                {
+                    door.TeleportObjectToFront(StageManager.SceneLoader.Player);
                 }
             }
         }
