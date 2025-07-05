@@ -19,7 +19,7 @@ public class LocationData
     // For stuff like html markup
     public string RawData { get; set; }
 
-    public List<SectionData> Sections { get; set; } = new List<SectionData>();
+    public List<SectionData> Sections { get; private set; } = new List<SectionData>();
 
     public LocationData Clone()
     {
@@ -27,28 +27,9 @@ public class LocationData
         clone.subLocations = this.subLocations.Select(a => a.Clone()).ToList();
         clone.TableOfContents = this.TableOfContents;
         // Deep copy of Sections
-        clone.Sections = this.Sections.Select(s => CloneSection(s)).ToList();
+        clone.Sections = this.Sections.Select(s => s.Clone()).ToList();
         clone.RawData = this.RawData;
         return clone;
-    }
-
-    private SectionData CloneSection(SectionData section)
-    {
-        var newSection = new SectionData
-        {
-            Title = section.Title,
-            Anchor = section.Anchor,
-            SectionType = section.SectionType,
-            RawData = section.RawData,
-            TableOfContents = section.TableOfContents,
-            LocationText = section.LocationText != null ? new List<LocationTextData>(section.LocationText) : null,
-            ImagePaths = section.ImagePaths != null ? new List<ImagePathData>(section.ImagePaths) : null,
-            PodiumImages = section.PodiumImages != null ? new List<ImagePathData>(section.PodiumImages) : null,
-            LinkedLocationData = section.LinkedLocationData != null ? new List<LinkedLocationData>(section.LinkedLocationData) : null,
-            InfoBoxData = section.InfoBoxData != null ? new List<InfoBoxData>(section.InfoBoxData) : null,
-            Subsections = section.Subsections != null ? section.Subsections.Select(s => CloneSection(s)).ToList() : null
-        };
-        return newSection;
     }
 }
 
@@ -178,6 +159,11 @@ public class InfoBoxData
     public InfoBoxData(int columns) 
     {
         this.Columns = columns;        
+    }
+
+    public InfoBoxData Clone()
+    {
+        return this.MemberwiseClone() as InfoBoxData;
     }
 }
 

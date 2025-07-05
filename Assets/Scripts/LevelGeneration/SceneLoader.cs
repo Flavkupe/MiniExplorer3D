@@ -22,7 +22,7 @@ public class SceneLoader : MonoBehaviour
 
     private LoadingView Loading;
 
-    public LevelGenerationMode Mode = LevelGenerationMode.File;
+    public LevelGenerationMode Mode = LevelGenerationMode.Wikipedia;
 
     private AreaGenerationReadyEventArgs delayedAreaLoadArgs = null;
 

@@ -18,11 +18,9 @@ public class RoomConnector : MonoBehaviour
     public RoomConnectorData Data = new RoomConnectorData();
 
     /// <summary>
-    /// Door to use if this is unused.
+    /// Door to use if this is unused. Ignored if null.
     /// </summary>
     public Door DoorAlternative;
-
-    public bool ShouldUseAlternativeDoor = false;
 
     public RoomConnectorUsageMode ConnectedUsageBehavior;
 
@@ -94,13 +92,7 @@ public class RoomConnector : MonoBehaviour
         }
     }
 
-    public string PrefabID 
-    { 
-        get 
-        {            
-            return this.Data.PrefabID; 
-        } 
-    }
+    public string PrefabID => this.name;
 
     public ConnectorType Type { get { return this.Data.Type; } }
 
@@ -164,7 +156,7 @@ public class RoomConnector : MonoBehaviour
     public void SetUnused()
     {
 
-        if ((this.ConnectedUsageBehavior & RoomConnectorUsageMode.EncloseSurroundingWallsOnUnused) != 0)
+        if (this.ConnectedUsageBehavior.HasFlag(RoomConnectorUsageMode.EncloseSurroundingWallsOnUnused))
         {
             foreach (ClosingWall wall in this.EnclosingWalls)
             {
@@ -172,12 +164,10 @@ public class RoomConnector : MonoBehaviour
                 this.gameObject.SetActive(false);
             }
         }
-
-        if ((this.ConnectedUsageBehavior & RoomConnectorUsageMode.ReplaceWithDoorOnUnused) != 0)
+        else if (this.ConnectedUsageBehavior.HasFlag(RoomConnectorUsageMode.ReplaceWithDoorOnUnused) && this.DoorAlternative != null)
         {
-            this.ShouldUseAlternativeDoor = true;
             this.DoorAlternative.gameObject.SetActive(true);
-            //this.gameObject.SetActive(false);
+            this.gameObject.SetActive(false);
         }
     }
 }

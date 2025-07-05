@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using UnityEditor.Build;
 using UnityEngine;
 
 public static class ExtensionFunctions
@@ -175,6 +173,32 @@ public static class ExtensionFunctions
             var component = child.GetComponent<T>();
             if (component != null)
                 yield return component;
+        }
+    }
+
+    /// <summary>
+    /// Returns the element in the sequence that yields the maximum value from the selector function.
+    /// Returns default(T) if the sequence is empty.
+    /// </summary>
+    public static T MaxValue<T, R>(this IEnumerable<T> source, Func<T, R> selector) where R : IComparable<R>
+    {
+        if (source == null) throw new ArgumentNullException(nameof(source));
+        using (var enumerator = source.GetEnumerator())
+        {
+            if (!enumerator.MoveNext())
+                return default(T);
+            T maxItem = enumerator.Current;
+            R maxValue = selector(maxItem);
+            while (enumerator.MoveNext())
+            {
+                R value = selector(enumerator.Current);
+                if (value.CompareTo(maxValue) > 0)
+                {
+                    maxValue = value;
+                    maxItem = enumerator.Current;
+                }
+            }
+            return maxItem;
         }
     }
 }

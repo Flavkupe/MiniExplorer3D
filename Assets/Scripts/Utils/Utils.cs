@@ -1,6 +1,3 @@
-
-
-
 using HtmlAgilityPack;
 
 public static class Utils
@@ -26,5 +23,18 @@ public static class Utils
         {
             return "https://" + currentUriHost + "/" + imageSrc.TrimStart('/');
         }
+    }
+}
+
+public class RatingResult
+{
+    public float Score { get; set; }
+    public bool IsValid { get; set; }
+    public static RatingResult NoMatch { get; } = new RatingResult(0, false);
+
+    public RatingResult(float score, bool isValid = true)
+    {
+        Score = score;
+        IsValid = isValid;
     }
 }

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
-using UnityEngine.LightTransport.PostProcessing;
 
 namespace Assets.Scripts.LevelGeneration
 {
@@ -191,7 +189,43 @@ namespace Assets.Scripts.LevelGeneration
             return new Vector3(xWorld, depth, yWorld);
         }
 
-        public RoomData AddRoomFromList(List<Room> possibleRooms, LevelGenRequirements reqs) 
+        private List<RoomAndConnector> GetPossibleRooms(OpenConnectorCell openConnectorCell, List<Room> allRooms, LevelGenRequirements reqs)
+        {
+            var possibleRooms = new List<RoomAndConnector>();
+            foreach (var room in allRooms)
+            {
+                // Must have a matching exhibit
+                if (!room.HasMatchingExhibit(reqs.SectionData))
+                {
+                    continue;
+                }
+
+                // Must have a connector that matches the open connector
+                var matchingConnectors = room.Connectors.Where(connector => connector.IsMatchingConnector(openConnectorCell.OpenConnector)).ToList();
+                matchingConnectors.Shuffle();
+                if (matchingConnectors.Count == 0)
+                {
+                    continue;
+                }
+                
+                // At least one matching connector must allow the room to be placed
+                foreach (var connector in matchingConnectors)
+                {
+                    Vector2 roomOffset = connector.GetRelativeGridCoords();
+                    int roomCoordX = openConnectorCell.X - (int)roomOffset.x;
+                    int roomCoordY = openConnectorCell.Y - (int)roomOffset.y;
+                    if (this.CanAddRoom(room, roomCoordX, roomCoordY))
+                    {
+                        possibleRooms.Add(new RoomAndConnector(room, connector, roomCoordX, roomCoordY));
+                        break;
+                    }
+                }
+            }
+
+            return possibleRooms;
+        }
+
+        public RoomData AddRoomFromList(List<Room> allRooms, LevelGenRequirements reqs) 
         {
             Queue<OpenConnectorCell> openConnectors = new Queue<OpenConnectorCell>();
             foreach (OpenConnectorCell connector in this.openConnections)
@@ -201,56 +235,33 @@ namespace Assets.Scripts.LevelGeneration
 
             while (openConnectors.Count > 0)
             {
-                // Get list of rooms that have a connector that can match any of the currently open connectors
                 OpenConnectorCell currentOpenConnectorCell = openConnectors.Dequeue();
-                List<Room> viableRooms = possibleRooms.Where(room => room.Connectors.Any(connector => connector.IsMatchingConnector(currentOpenConnectorCell.OpenConnector))).ToList();
-                
-                // TODO: select rooms more intelligently, based on list of room requirements
-                viableRooms.Shuffle();
-                foreach (Room room in viableRooms)
+                List<RoomAndConnector> possibleRooms = GetPossibleRooms(currentOpenConnectorCell, allRooms, reqs);
+
+                if (possibleRooms.Count == 0)
                 {
-                    if (!room.HasMatchingExhibit(reqs.SectionData))
-                    {
-                        Debug.Log($"Room {room.Data.DisplayName} does not have any matching exhibit.");
-                        continue;
-                    }
-
-                    // For each room, find connectors that can fit with an existing connector
-                    List<RoomConnector> viableConnectors = room.Connectors.Where(connector => connector.IsMatchingConnector(currentOpenConnectorCell.OpenConnector)).ToList();
-                    viableConnectors.Shuffle();
-                    foreach (RoomConnector connector in viableConnectors)
-                    {
-                        // Find where connectors lie in the grid; offset is relative to the grid coords
-                        Vector2 roomOffset = connector.GetRelativeGridCoords();
-                        int roomCoordX = currentOpenConnectorCell.X - (int)roomOffset.x;
-                        int roomCoordY = currentOpenConnectorCell.Y - (int)roomOffset.y;
-
-                        if (!this.CanAddRoom(room, roomCoordX, roomCoordY))
-                        {
-                            Debug.Log($"Room {room.Data.DisplayName} cannot be added.");
-                            continue;
-                        }
-
-                        RoomData data = this.GetRoomData(room, roomCoordX, roomCoordY);
-                        this.AddRoom(data, roomCoordX, roomCoordY);
-                        this.openConnections.Remove(currentOpenConnectorCell);
-
-                        var currentConnectorData = connector.ToRoomConnectorData();
-                        RoomConnectorData usedConnector = data.Connectors.FirstOrDefault(a => a.IsCloseTo(currentConnectorData));
-
-                        if (usedConnector != null)
-                        {
-                            usedConnector.Used = true;
-                            currentOpenConnectorCell.OpenConnector.Used = true;
-                        }
-                        else
-                        {
-                            Debug.LogError("Unmatching connector");
-                        }
-
-                        return data;
-                    }
+                    continue;
                 }
+
+                // get the room with the highest score based on requirements matching
+                var roomAndConnector = possibleRooms.MaxValue(a => a.Room.RateRequirementsMatch(reqs).Score);
+
+                var x = roomAndConnector.CoordX;
+                var y = roomAndConnector.CoordY;
+                RoomData data = this.GetRoomData(roomAndConnector.Room, x, y);
+                this.AddRoom(data, x, y);
+                this.openConnections.Remove(currentOpenConnectorCell);
+                RoomConnectorData usedConnector = data.Connectors.FirstOrDefault(a => a.IsSamePrefab(roomAndConnector.Connector));
+                if (usedConnector != null)
+                {
+                    usedConnector.Used = true;
+                    currentOpenConnectorCell.OpenConnector.Used = true;
+                }
+                else
+                {
+                    Debug.LogError("Unmatching connector");
+                }
+                return data;
             }
 
             Debug.LogError("No possible room prefabs could be placed to satisfy any open connector or condition. Level generation may be stuck or incomplete.");
@@ -266,6 +277,27 @@ namespace Assets.Scripts.LevelGeneration
             data.WorldCoords = this.GetWorldCoordsFromGridCoords(x, y, room.Width, height);
             data.GridCoords = new Vector2(x, y);
             return data;
+        }
+
+        private class RoomAndConnector
+        {
+            public Room Room { get; private set; }
+            public RoomConnector Connector { get; private set; }
+            public int CoordX { get; private set; }
+            public int CoordY { get; private set; }
+
+            /// <summary>
+            /// A room with a connector that can lead to this room. Used to find
+            /// viable rooms and the connector that can lead to them. CoordX and CoordY
+            /// are the grid coords for where the room will be placed in this scenario.
+            /// </summary>
+            public RoomAndConnector(Room room, RoomConnector connector, int coordX, int coordY)
+            {
+                this.Room = room;
+                this.Connector = connector;
+                this.CoordX = coordX;
+                this.CoordY = coordY;
+            }
         }
     }
 }

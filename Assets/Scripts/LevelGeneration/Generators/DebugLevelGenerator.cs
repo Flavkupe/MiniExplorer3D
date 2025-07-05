@@ -1,13 +1,6 @@
-﻿using Assets.Scripts.LevelGeneration;
-using HtmlAgilityPack;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class DebugLevelGenerator : WebLevelGenerator
@@ -75,13 +68,12 @@ public class DebugLevelGenerator : WebLevelGenerator
     {               
         // Traverse SectionData for all images
         List<ImagePathData> imagePaths = new List<ImagePathData>();
-        if (location.LocationData?.Sections != null)
+        
+        foreach (var section in location.LocationData.Sections)
         {
-            foreach (var section in location.LocationData.Sections)
-            {
-                CollectImagesFromSection(section, imagePaths);
-            }
+            CollectImagesFromSection(section, imagePaths);
         }
+
         foreach (ImagePathData imageData in imagePaths)
         {
             LevelImage levelImage = new LevelImage() { Name = imageData.DisplayName };

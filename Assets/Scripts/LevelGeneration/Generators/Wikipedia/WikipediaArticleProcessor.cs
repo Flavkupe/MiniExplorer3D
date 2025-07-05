@@ -179,8 +179,7 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
 
     private void HandleTableNode()
     {
-        if (this.currentSection != null)
-            this.currentSection.SectionType = SectionType.Table;
+        // TODO
     }
 
     private void HandleThumbinnerDivNode(HtmlNode node)

@@ -25,7 +25,6 @@ public enum ExhibitListItemMode
 
 public class Exhibit : MonoBehaviour, IMatchesPrefab
 {
-
     // Arbitrary limit for reading content
     const int SkipContentLimit = 8;
 
@@ -37,7 +36,20 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
     [Tooltip("How list items are displayed.")]
     public ExhibitListItemMode ListItemMode = ExhibitListItemMode.Skip;
 
-    public string PrefabID => this.name;
+    public string PrefabID
+    {
+        get
+        {
+            var parent = this.transform.parent.GetComponent<Exhibit>();
+            if (parent != null && parent != this)
+            {
+                // If this is a subexhibit, use the parent's ID
+                return $"{parent.PrefabID}_{this.name}";
+            }
+
+            return this.name;
+        }
+    }
 
     private RoomImageFrame[] Paintings = new RoomImageFrame[] { };
     private Placeholder[] Reading = new Placeholder[] { };
@@ -90,8 +102,8 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
         }
 
         // Rule 2: Enough Reading items for LocationText
-        int textCount = section.LocationText != null ? section.LocationText.Count : 0;
-        int readingCount = this.Reading != null ? this.Reading.Length : 0;
+        int textCount = section.LocationText.Count;
+        int readingCount = this.Reading.Length;
         if (readingCount < textCount)
         {
             if (textCount > SkipContentLimit)
@@ -105,7 +117,7 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
         }
 
         // Rule 3: Subsections must be handled by subexhibits
-        if (section.Subsections != null && section.Subsections.Count > 0)
+        if (section.Subsections.Count > 0)
         {
             if (SubExhibits == null || SubExhibits.Length == 0)
             {
@@ -307,9 +319,131 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
                     }
                 }
                 if (combined.Length > 0)
+                {
                     section.LocationText.Add(new LocationTextData(combined.ToString()));
+                }
+
                 section.Lists.Clear();
                 break;
+        }
+    }
+
+    /// <summary>
+    /// Rates how well this Exhibit matches the given SectionData, including subexhibits. Does not mutate the Exhibit.
+    /// </summary>
+    public RatingResult RateSectionMatch(SectionData section)
+    {
+        if (section == null)
+        {
+            return RatingResult.NoMatch;
+        }
+
+        float score = 5f;
+
+        // SectionType match is required
+        if ((SectionTypes & section.SectionType) == 0)
+        {
+            return RatingResult.NoMatch;
+        }
+
+        // Title/AreaTitleSign
+        bool hasTitle = !string.IsNullOrEmpty(section.Title);
+        if (hasTitle && this.AreaTitleSign != null)
+        {
+            score += 3f;
+        }
+        else if (hasTitle)
+        {
+            score -= 3f;
+        }
+
+        // Reading placeholders vs LocationText
+        int textCount = section.LocationText?.Count ?? 0;
+        int readingCount = this.Reading?.Length ?? 0;
+        score += ScoreCountMatch(readingCount, textCount, 2f);
+
+        score += ScoreCountMatch(this.Paintings.Length, section.ImagePaths.Count, 1f);
+        score += ScoreCountMatch(this.DisplayPodiums.Length, section.PodiumImages.Count, 1f);
+        score += ScoreCountMatch(this.Exits.Count, section.Exits.Count, 2f);
+
+        // Subsections and subexhibits
+        score += ScoreSubsections(section);
+
+        return new RatingResult(score, true);
+    }
+
+    private float ScoreSubsections(SectionData section)
+    {
+        var score = 0.0f;
+        if (section.Subsections.Count > 0)
+        {
+            return score;
+        }
+
+        if (SubExhibits.Length == 0)
+        {
+            // dock points for missing subsections
+            score -= section.Subsections.Count;
+            return score;
+        }
+        float subScore = 0f;
+        int matched = 0;
+        foreach (var subSection in section.Subsections)
+        {
+            float best = 0f;
+            foreach (var sub in SubExhibits)
+            {
+                var result = sub.RateSectionMatch(subSection);
+                if (!result.IsValid)
+                {
+                    // skip invalid results
+                    continue;
+                }
+
+                if (result.Score > best)
+                {
+                    best = result.Score;
+                }
+            }
+            subScore += best;
+            if (best > 0)
+            {
+                matched++;
+            }
+        }
+
+        score += subScore;
+        if (matched == section.Subsections.Count)
+        {
+            score += 1f;
+        }
+       
+        return score;
+    }
+
+    /// <summary>
+    /// Helper to score how well two counts match. Prefers exact match, then too many, then too few. The more difference, the worse the score.
+    /// </summary>
+    private float ScoreCountMatch(int exhibitCount, int requiredCount, float weight)
+    {
+        if (requiredCount == 0)
+        {
+            return 0f;
+        }
+        int diff = exhibitCount - requiredCount;
+        if (diff == 0)
+        {
+            return weight; // perfect match
+        }
+        else if (diff > 0)
+        {
+            // Too many: small penalty per extra
+            return weight - (0.25f * diff * weight);
+        }
+        else
+        {
+            // Too few: larger penalty per missing
+            return weight - (0.5f * -diff * weight);
         }
     }
 }

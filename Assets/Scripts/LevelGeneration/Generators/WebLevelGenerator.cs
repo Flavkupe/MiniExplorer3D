@@ -27,13 +27,12 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
     {
         // Traverse SectionData for all images
         List<ImagePathData> imagePaths = new List<ImagePathData>();
-        if (location.LocationData?.Sections != null)
+        
+        foreach (var section in location.LocationData.Sections)
         {
-            foreach (var section in location.LocationData.Sections)
-            {
-                CollectImagesFromSection(section, imagePaths);
-            }
+            CollectImagesFromSection(section, imagePaths);
         }
+
         foreach (ImagePathData imageData in imagePaths)
         {
             LevelImage levelImage = new LevelImage() { Name = imageData.DisplayName };
@@ -178,7 +177,6 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
 
         Room startingRoom = this.GetFirstRoom(targetLocation);
 
-        Location currentLocation = null;
         List<RoomData> rooms = new List<RoomData>();
         RoomData currentRoomData = grid.AddFirstRoom(startingRoom);
 
@@ -186,16 +184,6 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
 
         do
         {
-            for (int i = 0; i < currentRoomData.Doors.Count; ++i)
-            {
-                if (reqs.Locations.Count > 0)
-                {
-                    currentLocation = reqs.Locations.Dequeue();
-                    Location loc = currentLocation.Clone();
-                    currentRoomData.Requirements.Locations.Enqueue(loc);
-                }
-            }
-
             foreach (var exhibit in currentRoomData.RoomReference.Exhibits)
             {
                 foreach (var section in reqs.SectionData.ToList())
@@ -203,7 +191,7 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
                     if (exhibit.CanHandleSection(section))
                     {
                         // If the exhibit can handle the section, add it to the room data
-                        currentRoomData.Requirements.ExhibitData.Enqueue(new ExhibitData(exhibit.PrefabID, section));
+                        currentRoomData.ExhibitData.Add(new ExhibitData(exhibit.PrefabID, section));
                         reqs.SectionData.Remove(section);
                         
                         // break since the exhibit has handled a section already.
@@ -212,11 +200,12 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
                 }
             }
 
-            if (currentRoomData.RoomReference.TOCPodium != null)
-            {
-                currentRoomData.Requirements.TableOfContents = reqs.TableOfContents;
-                reqs.TableOfContents = null;
-            }
+            // TODO: TOC
+            //if (currentRoomData.RoomReference.TOCPodium != null)
+            //{
+            //    currentRoomData.TableOfContents = reqs.TableOfContents;
+            //    reqs.TableOfContents = null;
+            //}
 
             if (!reqs.AllRequirementsMet)
             {

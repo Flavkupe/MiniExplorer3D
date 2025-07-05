@@ -72,20 +72,12 @@ MonoBehaviour:
     DimZ: 48
     DisplayName: 
   PlayerSpawn: {fileID: 6074210590931766745}
-  Doors:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 8055006371212249988}
   SpawnPoints: []
   Connectors:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  Paintings: []
-  Reading: []
-  DisplayPodiums: []
   TOCPodium: {fileID: 0}
   AreaTitleSign: {fileID: 0}
   Exhibits: []
@@ -2639,7 +2631,7 @@ PrefabInstance:
     - target: {fileID: 8182004204878985728, guid: 0896f5290a3dc0c4dbf9604059e2475a,
         type: 3}
       propertyPath: m_Name
-      value: 48x8WallAndCornersSet (1)
+      value: 48x8WallAndCornersSet
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2929,6 +2921,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4645949318798456448, guid: 0896f5290a3dc0c4dbf9604059e2475a,
+        type: 3}
+      propertyPath: m_Name
+      value: 8x8Wall
+      objectReference: {fileID: 0}
     - target: {fileID: 8182004204878985728, guid: 0896f5290a3dc0c4dbf9604059e2475a,
         type: 3}
       propertyPath: m_Name
@@ -3024,18 +3021,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 5314551792176218604}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8055006371212249988 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2740498838674016872, guid: 77cf638acf7608d41ae4104129916fca,
-    type: 3}
-  m_PrefabInstance: {fileID: 5314551792176218604}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e45bf271d4b944b44b467ad750f45076, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &5339376552061292236
 PrefabInstance:
   m_ObjectHideFlags: 0

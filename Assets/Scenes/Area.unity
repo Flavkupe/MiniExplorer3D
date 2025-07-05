@@ -2799,7 +2799,7 @@ MonoBehaviour:
   Minimap: {fileID: 0}
   Player: {fileID: 1033254598}
   GameDimensionMode: 0
-  InitialLocation: https://en.wikipedia.org/wiki/Main_Page
+  InitialLocation: https://en.wikipedia.org/wiki/Penguin
   Mode: 1
   RoomPrefabs:
   - {fileID: 11477982, guid: 6fc892b96105d1c40b32bacf4c85bab4, type: 3}

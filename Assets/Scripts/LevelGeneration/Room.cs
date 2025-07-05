@@ -26,17 +26,9 @@ public class Room : MonoBehaviour, IHasName
 
     public Transform PlayerSpawn;
 
-	public Door[] Doors = new Door[] {};
-
     public SpawnPoint[] SpawnPoints = new SpawnPoint[] { }; 
 
     public RoomConnector[] Connectors = new RoomConnector[] { };
-
-    public RoomImageFrame[] Paintings = new RoomImageFrame[] { };
-
-    public Placeholder[] Reading = new Placeholder[] { };
-
-    public Placeholder[] DisplayPodiums = new Placeholder[] { };
 
     public Placeholder TOCPodium = null;
 
@@ -62,11 +54,6 @@ public class Room : MonoBehaviour, IHasName
     public RoomData ToRoomData()
     {
         RoomData data = this.Data.Clone(true);
-        foreach (Door door in this.Doors) 
-        {
-            data.Doors.Add(door.ToDoorData()); 
-        }
-
         foreach (RoomConnector connector in this.Connectors)
         {
             data.Connectors.Add(connector.ToRoomConnectorData()); 
@@ -85,14 +72,8 @@ public class Room : MonoBehaviour, IHasName
     {
         List<Placeholder> allPlaceholders = this.GetComponentsInChildren<Placeholder>(true).ToList();
 
-        this.Doors = this.transform.GetComponentsInChildren<Door>(true);
         this.Connectors = this.transform.GetComponentsInChildren<RoomConnector>(true);
         this.SpawnPoints = this.transform.GetComponentsInChildren<SpawnPoint>(true);
-        this.Paintings = this.transform.GetComponentsInChildren<RoomImageFrame>(true).Where(a => a.FrameType == RoomImageFrame.ImageFrameType.Painting).ToArray();
-        this.Reading = allPlaceholders.Where(a => a.PartType == Placeholder.RoomPartType.Reading).ToArray();
-
-        this.DisplayPodiums = allPlaceholders.Where(a => a.PartType == Placeholder.RoomPartType.DisplayPodium ||
-                                                         a.PartType == Placeholder.RoomPartType.TextPodium).ToArray();
         this.TOCPodium = allPlaceholders.FirstOrDefault(a => a.PartType == Placeholder.RoomPartType.TableOfContentsPodium);
         this.AreaTitleSign = this.transform.GetComponentInChildren<AreaTitle>();
         this.Exhibits = this.transform.GetComponentsInChildren<Exhibit>().Where(exhibit => !exhibit.SectionTypes.HasFlag(SectionType.Subsection)).ToArray();
@@ -112,7 +93,7 @@ public class Room : MonoBehaviour, IHasName
 
         foreach (var exhibit in this.Exhibits)
         {
-            var matchingExhibitData = roomData.Requirements.ExhibitData.FirstOrDefault(a => a.PrefabID == exhibit.PrefabID);
+            var matchingExhibitData = roomData.ExhibitData.FirstOrDefault(a => a.PrefabID == exhibit.PrefabID);
             if (matchingExhibitData != null)
             {
                 exhibit.PopulateExhibit(matchingExhibitData);
@@ -123,8 +104,6 @@ public class Room : MonoBehaviour, IHasName
                 exhibit.gameObject.SetActive(false);
             }
         }
-
-        List<Door> doors = new List<Door>();
 
         // Toggle the connector visuals
         foreach (RoomConnectorData connectorData in roomData.Connectors)
@@ -143,18 +122,11 @@ public class Room : MonoBehaviour, IHasName
                 else
                 {
                     instanceConnector.SetUnused();
-                    if (instanceConnector.ShouldUseAlternativeDoor)
-                    {
-                        Debug.Assert(instanceConnector.DoorAlternative != null, "Door expected not null!");
-                        doors.Add(instanceConnector.DoorAlternative);
-                    }
                 }
 
                 break;
             }
         }
-
-        doors.AddRange(this.Doors);
 
         // TODO: handle creating doors for "return" locations, and lobby
         // Create the doors        
@@ -192,5 +164,71 @@ public class Room : MonoBehaviour, IHasName
             }
         }
         return false;
+    }
+
+    /// <summary>
+    /// Rates how well this Room matches the given LevelGenRequirements (sections only, skips TOC). Uses Exhibit.RateSectionMatch for each section.
+    /// </summary>
+    public RatingResult RateRequirementsMatch(LevelGenRequirements reqs)
+    {
+        if (reqs == null || reqs.SectionData == null || reqs.SectionData.Count == 0)
+        {
+            return RatingResult.NoMatch;
+        }
+
+        float totalScore = 0f;
+        foreach (var section in reqs.SectionData)
+        {
+            float bestScore = float.MinValue;
+            bool foundValid = false;
+            foreach (var exhibit in this.Exhibits)
+            {
+                var result = exhibit.RateSectionMatch(section);
+                if (!result.IsValid)
+                {
+                    continue;
+                }
+
+                foundValid = true;
+                if (result.Score > bestScore)
+                {
+                    bestScore = result.Score;
+                }
+                
+            }
+            if (!foundValid)
+            {
+                return RatingResult.NoMatch;
+            }
+            totalScore += bestScore;
+        }
+        return new RatingResult(totalScore, true);
+    }
+
+    /// <summary>
+    /// Validates that all child Exhibits and Connectors have unique names. Logs warnings if duplicates are found.
+    /// </summary>
+    public void ValidateUniqueNames()
+    {
+        // Validate Exhibits
+        var exhibits = this.GetComponentsInChildren<Exhibit>(true);
+        var exhibitGroups = exhibits.GroupBy(e => e.PrefabID).Where(g => g.Count() > 1);
+        foreach (var group in exhibitGroups)
+        {
+            Debug.LogWarning($"Room '{this.name}': Multiple Exhibit objects found with the name '{group.Key}'. Count: {group.Count()}");
+        }
+
+        // Validate Connectors
+        var connectors = this.GetComponentsInChildren<RoomConnector>(true);
+        var connectorGroups = connectors.GroupBy(c => c.PrefabID).Where(g => g.Count() > 1);
+        foreach (var group in connectorGroups)
+        {
+            Debug.LogWarning($"Room '{this.name}': Multiple RoomConnector objects found with the name '{group.Key}'. Count: {group.Count()}");
+        }
+    }
+
+    void OnValidate()
+    {
+        ValidateUniqueNames();
     }
 }

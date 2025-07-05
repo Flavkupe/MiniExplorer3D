@@ -18,7 +18,6 @@ public class RoomData : IMatchesPrefab
     private List<ExhibitData> exhibitData = new List<ExhibitData>();
     public RoomData() { }
     public List<DoorData> Doors { get { return doors; } }
-    public LevelGenRequirements Requirements { get { return requirements; } }
     public List<RoomConnectorData> Connectors { get { return connectors; } }
     public List<SpawnPointData> SpawnPoints { get { return spawnPoints; } }
 
@@ -39,13 +38,8 @@ public class RoomData : IMatchesPrefab
         data.connectors = new List<RoomConnectorData>();
         data.spawnPoints = new List<SpawnPointData>();
         data.RoomReference = this.RoomReference;
-        data.Requirements.Clone(deepCopy);
         if (deepCopy)
         {
-            foreach (DoorData door in this.Doors)
-            {
-                data.Doors.Add(door.Clone());
-            }
             foreach (RoomConnectorData connector in this.Connectors)
             {
                 data.Connectors.Add(connector.Clone());

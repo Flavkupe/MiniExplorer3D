@@ -51,4 +51,9 @@ public class FileLevelGenerator : BaseLevelGenerator
         // TODO
         return AreaTheme.Circuit;
     }
+
+    public override RoomGrid GenerateRoomGrid(Location targetLocation)
+    {
+        throw new System.NotImplementedException();
+    }
 }

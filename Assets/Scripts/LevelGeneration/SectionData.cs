@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using static System.Collections.Specialized.BitVector32;
 
 [Flags]
 public enum SectionType
@@ -19,13 +22,39 @@ public class SectionData
     public string Title { get; set; }
     public string Anchor { get; set; }
     public SectionType SectionType { get; set; }
-    public List<SectionData> Subsections { get; set; } = new List<SectionData>();
-    public List<LocationTextData> LocationText { get; set; } = new List<LocationTextData>();
-    public List<ImagePathData> ImagePaths { get; set; } = new List<ImagePathData>();
-    public List<ImagePathData> PodiumImages { get; set; } = new List<ImagePathData>();
-    public List<LinkedLocationData> LinkedLocationData { get; set; } = new List<LinkedLocationData>();
-    public List<InfoBoxData> InfoBoxData { get; set; } = new List<InfoBoxData>();
+    public List<SectionData> Subsections { get; private set; } = new List<SectionData>();
+    public List<LocationTextData> LocationText { get; private set; } = new List<LocationTextData>();
+    public List<ImagePathData> ImagePaths { get; private set; } = new List<ImagePathData>();
+    public List<ImagePathData> PodiumImages { get; private set; } = new List<ImagePathData>();
+    public List<LinkedLocationData> LinkedLocationData { get; private set; } = new List<LinkedLocationData>();
+    public List<InfoBoxData> InfoBoxData { get; private set; } = new List<InfoBoxData>();
     public TableOfContents TableOfContents { get; set; }
     public string RawData { get; set; }
     public List<ListItemsData> Lists { get; set; } = new List<ListItemsData>();
+
+    public ReadOnlyCollection<LinkedLocationData> Exits
+    {
+        get
+        {
+            return new ReadOnlyCollection<LinkedLocationData>(LinkedLocationData.Where(a => a.Type == LinkedLocationDataType.DoorLink).ToList());
+        }
+    }
+
+    public SectionData Clone()
+    {
+        return new SectionData
+        {
+            Title = Title,
+            Anchor = Anchor,
+            SectionType = SectionType,
+            RawData = RawData,
+            TableOfContents = TableOfContents,
+            LocationText = LocationText.Select(a => a.Clone()).ToList(),
+            ImagePaths = ImagePaths.Select(a => a.Clone()).ToList(),
+            PodiumImages = PodiumImages.Select(a => a.Clone()).ToList(),
+            LinkedLocationData = LinkedLocationData.Select(a => a.Clone()).ToList(),
+            InfoBoxData = InfoBoxData.Select(a => a.Clone()).ToList(),
+            Subsections = Subsections.Select(a => a.Clone()).ToList(),
+        };
+    }
 }
