@@ -30,6 +30,7 @@ public class SceneLoader : MonoBehaviour
 
     public Room[] RoomPrefabs;
     public Room[] StartingRoomPrefabs;
+    public Room[] EntranceRoomPrefabs;
 
     void Awake() 
     {        
@@ -78,6 +79,7 @@ public class SceneLoader : MonoBehaviour
     {
         List<Room> linked = new List<Room>();
         linked.AddRange(this.StartingRoomPrefabs);
+        linked.AddRange(this.EntranceRoomPrefabs);
         linked.AddRange(this.RoomPrefabs);
 
         Room room = linked.FirstOrDefault(a => string.Equals(a.name, id, System.StringComparison.OrdinalIgnoreCase));

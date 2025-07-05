@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 11477982}
   - component: {fileID: 6569868}
   m_Layer: 0
-  m_Name: 48x48 Room 4 Connectors B (new)
+  m_Name: 48x48 Room 4 Connectors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

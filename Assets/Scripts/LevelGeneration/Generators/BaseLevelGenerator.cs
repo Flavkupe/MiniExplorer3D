@@ -9,6 +9,13 @@ using UnityEngine;
 
 public abstract class BaseLevelGenerator : ILevelGenerator
 {
+    protected virtual Room GetFirstRoom(Location targetLocation)
+    {
+        Room startingRoom = StageManager.SceneLoader.StartingRoomPrefabs.GetRandom();
+        startingRoom.PopulateParts();
+        return startingRoom;
+    }
+
     public virtual RoomGrid GenerateRoomGrid(Location targetLocation)
     {                
         RoomGrid grid = new RoomGrid(StageManager.RoomGridDimensions);
@@ -51,16 +58,7 @@ public abstract class BaseLevelGenerator : ILevelGenerator
         }
 
         // Pick a starting room
-        Room startingRoom = null;
-        if (StageManager.SceneLoader.StartingRoomPrefabs.Length > 0)
-        {
-            startingRoom = StageManager.SceneLoader.StartingRoomPrefabs.GetRandom();
-        }
-        else
-        {
-            startingRoom = possibleRooms.GetRandom();
-        }
-        startingRoom.PopulateParts();
+        Room startingRoom = this.GetFirstRoom(targetLocation);
 
         Location currentLocation = null;
         List<RoomData> rooms = new List<RoomData>();

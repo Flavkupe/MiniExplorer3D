@@ -57,16 +57,6 @@ public class Room : MonoBehaviour, IHasName
 
 	}
 
-	public void SetName(string name) 
-	{ 
-		this.Data.DisplayName = name; 		
-
-		foreach (Door door in this.Doors) 
-		{
-			door.SetName(name);
-		}
-	}
-
 	public string GetName() { return this.Data.DisplayName; }
 
     public RoomData ToRoomData()
@@ -166,29 +156,30 @@ public class Room : MonoBehaviour, IHasName
 
         doors.AddRange(this.Doors);
 
+        // TODO: handle creating doors for "return" locations, and lobby
         // Create the doors        
-        foreach (Door door in doors)
-        {
-            if (roomData.Requirements.Locations.Count == 0)
-            {
-                if (door.RemoveOnUnused)
-                {
-                    door.gameObject.SetActive(false);
-                }
-            }
-            else
-            {
-                Location currentLoc = roomData.Requirements.Locations.Dequeue();
-                door.SetLocation(currentLoc);
-                door.SetName(currentLoc.Name);
-                if (StageManager.PreviousLocation != null &&
-                    currentLoc.LocationKey == StageManager.PreviousLocation.LocationKey &&
-                    StageManager.SceneLoader != null && StageManager.SceneLoader.Player != null)
-                {
-                    door.TeleportObjectToFront(StageManager.SceneLoader.Player);
-                }
-            }
-        }
+        //foreach (Door door in doors)
+        //{
+        //    if (roomData.Requirements.Locations.Count == 0)
+        //    {
+        //        if (door.RemoveOnUnused)
+        //        {
+        //            door.gameObject.SetActive(false);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Location currentLoc = roomData.Requirements.Locations.Dequeue();
+        //        door.SetLocation(currentLoc);
+        //        door.SetName(currentLoc.Name);
+        //        if (StageManager.PreviousLocation != null &&
+        //            currentLoc.LocationKey == StageManager.PreviousLocation.LocationKey &&
+        //            StageManager.SceneLoader != null && StageManager.SceneLoader.Player != null)
+        //        {
+        //            door.TeleportObjectToFront(StageManager.SceneLoader.Player);
+        //        }
+        //    }
+        //}
     }
 
     public bool HasMatchingExhibit(List<SectionData> sections)

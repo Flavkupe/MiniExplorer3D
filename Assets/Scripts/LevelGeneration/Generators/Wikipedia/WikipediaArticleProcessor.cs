@@ -1,8 +1,8 @@
+using HtmlAgilityPack;
 using System;
 using UnityEngine;
-using HtmlAgilityPack;
 
-public class WikipediaGenerator : WebLevelGenerator
+public class WikipediaArticleProcessor : WikipediaBaseProcessor
 {
     // Private fields for shared state
     private SectionData leadSection;
@@ -11,15 +11,12 @@ public class WikipediaGenerator : WebLevelGenerator
     private bool foundFirstH2;
     private Uri currentUri;
 
-    protected override void ProcessHtmlDocument(MainLocation location, Uri currentUri)
+    public override void ProcessHtml(MainLocation location, HtmlDocument htmlDoc, Uri currentUri)
     {
         this.currentUri = currentUri;
         this.leadSection = new SectionData { SectionType = SectionType.Main };
         this.currentSection = null;
         this.foundFirstH2 = false;
-
-        HtmlDocument htmlDoc = new HtmlDocument();
-        htmlDoc.LoadHtml(location.LocationData.RawData);
 
         HtmlNode titleNode = htmlDoc.DocumentNode.SelectSingleNode("//h1");
         if (titleNode != null)
@@ -70,6 +67,10 @@ public class WikipediaGenerator : WebLevelGenerator
             {
                 this.HandlePNode(node);
             }
+            else if (node.Name == "ul" || node.Name == "ol")
+            {
+                this.HandleListNode(node);
+            }
             else if (node.Name == "table")
             {
                 this.HandleTableNode();
@@ -83,7 +84,7 @@ public class WikipediaGenerator : WebLevelGenerator
                 this.HandleFigureNode(node);
             }
             else if ((node.Name == "div" && node.GetAttributeValue("class", "").Contains("gallery")) ||
-                     (node.Name == "ul" && node.GetAttributeValue("class", "").Contains("gallery")))
+                        (node.Name == "ul" && node.GetAttributeValue("class", "").Contains("gallery")))
             {
                 this.HandleGalleryNode(node);
             }
@@ -110,7 +111,8 @@ public class WikipediaGenerator : WebLevelGenerator
             title = this.HtmlDecode(node.InnerText);
             anchor = node.GetAttributeValue("id", "");
         }
-        this.currentSection = new SectionData {
+        this.currentSection = new SectionData
+        {
             Title = title,
             Anchor = anchor,
             SectionType = SectionType.Standard
@@ -134,7 +136,7 @@ public class WikipediaGenerator : WebLevelGenerator
             title = this.HtmlDecode(node.InnerText);
             anchor = node.GetAttributeValue("id", "");
         }
-        
+
         var subsection = new SectionData
         {
             Title = title,
@@ -160,21 +162,19 @@ public class WikipediaGenerator : WebLevelGenerator
             return;
         }
         var textData = new LocationTextData(text);
-        HtmlNodeCollection linkNodes = node.SelectNodes("a");
-        if (linkNodes != null)
-        {
-            foreach (HtmlNode link in linkNodes)
-            {
-                string name = this.HtmlDecode(link.InnerText);
-                string href = link.GetAttributeValue("href", "");
-                string url = this.EnsureHttps("https://" + this.currentUri.Host + "/" + href.TrimStart('/'));
-                textData.LinkedLocationData.Add(new LinkedLocationData(name, url));
-            }
-        }
+        ExtractLinks(node, textData, (!this.foundFirstH2 || this.currentSection == null) ? this.leadSection : this.currentSection, this.currentUri.Host);
         if (!this.foundFirstH2 || this.currentSection == null)
             this.leadSection.LocationText.Add(textData);
         else
             this.currentSection.LocationText.Add(textData);
+    }
+
+    private void HandleListNode(HtmlNode node)
+    {
+        if (!this.foundFirstH2 || this.currentSection == null)
+            HandleListNode(node, this.leadSection, this.currentUri.Host);
+        else
+            HandleListNode(node, this.currentSection, this.currentUri.Host);
     }
 
     private void HandleTableNode()
@@ -190,7 +190,7 @@ public class WikipediaGenerator : WebLevelGenerator
         if (caption != null && imgTag != null)
         {
             string imageCaption = this.HtmlDecode(caption.InnerText);
-            string imageUrl = this.EnsureHttps(this.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
+            string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
             var imageData = new ImagePathData(imageCaption, imageUrl);
             if (!this.foundFirstH2 || this.currentSection == null)
                 this.leadSection.ImagePaths.Add(imageData);
@@ -206,7 +206,7 @@ public class WikipediaGenerator : WebLevelGenerator
         if (imgTag != null)
         {
             string imageCaption = captionNode != null ? this.HtmlDecode(captionNode.InnerText) : string.Empty;
-            string imageUrl = this.EnsureHttps(this.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
+            string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
             var imageData = new ImagePathData(imageCaption, imageUrl);
             if (!this.foundFirstH2 || this.currentSection == null)
                 this.leadSection.ImagePaths.Add(imageData);
@@ -226,7 +226,7 @@ public class WikipediaGenerator : WebLevelGenerator
             if (imgTag != null)
             {
                 string imageCaption = captionNode != null ? this.HtmlDecode(captionNode.InnerText) : string.Empty;
-                string imageUrl = this.EnsureHttps(this.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
+                string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
                 var imageData = new ImagePathData(imageCaption, imageUrl);
                 if (!this.foundFirstH2 || this.currentSection == null)
                     this.leadSection.ImagePaths.Add(imageData);
@@ -234,10 +234,5 @@ public class WikipediaGenerator : WebLevelGenerator
                     this.currentSection.ImagePaths.Add(imageData);
             }
         }
-    }
-
-    private string HtmlDecode(string text)
-    {
-        return string.IsNullOrEmpty(text) ? string.Empty : HtmlEntity.DeEntitize(text).Trim();
     }
 }

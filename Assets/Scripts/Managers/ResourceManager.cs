@@ -30,7 +30,14 @@ public static class ResourceManager
         Room room = null;
         if (!roomPrefabsByID.ContainsKey(prefabID))
         {
-            room = Resources.Load<Room>("Prefabs/Rooms/" + theme.ToString() + "/" + prefabID);
+            var path = "Prefabs/Rooms/" + theme.ToString() + "/" + prefabID;
+            room = Resources.Load<Room>(path);
+            if (room == null)
+            {
+                Debug.LogError($"Room prefab with ID '{prefabID}' not found in theme '{theme}'.");
+                return null;
+            }
+
             roomPrefabsByID[prefabID] = room;
         }
         else 

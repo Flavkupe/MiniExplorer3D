@@ -32,6 +32,12 @@ public class RoomImageFrame : MonoBehaviour, ICanLookAt
 
     public void SetLevelImage(LevelImage newLevelImage)
     {
+        if (newLevelImage == null || newLevelImage.Texture2D == null)
+        {
+            Debug.LogError("RoomImageFrame: SetLevelImage called with null or invalid LevelImage.");
+            return;
+        }
+
         if (this.GetComponent<Renderer>() != null && this.GetComponent<Renderer>() is SpriteRenderer)
         {
             this.gameObject.SetActive(true);

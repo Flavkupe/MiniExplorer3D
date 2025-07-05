@@ -9,7 +9,6 @@ public abstract class Location
 {
 	public string Path;
 	public string Name;
-
     public string Anchor { get; set; }
 
     private LocationData locationData = new LocationData();
@@ -31,6 +30,7 @@ public abstract class Location
 
     public abstract bool NeedsInitialization { get; }
     public abstract bool IsBackLocation { get; }
+
     public abstract string LocationKey { get; }
     public abstract Location Clone(bool deepClone = false);
 

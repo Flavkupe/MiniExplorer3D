@@ -27,4 +27,5 @@ public class SectionData
     public List<InfoBoxData> InfoBoxData { get; set; } = new List<InfoBoxData>();
     public TableOfContents TableOfContents { get; set; }
     public string RawData { get; set; }
+    public List<ListItemsData> Lists { get; set; } = new List<ListItemsData>();
 }

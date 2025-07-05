@@ -6,6 +6,9 @@ public class Door : MonoBehaviour, IHasName, IHasLocation
 {
 	private NameTag nametag;
 
+    [Tooltip("TMP object that will optionally show name of the door, if provided.")]
+    public TMPro.TextMeshPro label;
+
     private BoxCollider boxCollider;
 
     public bool RemoveOnUnused = true;
@@ -15,7 +18,12 @@ public class Door : MonoBehaviour, IHasName, IHasLocation
 	void Start() 
 	{
 		this.nametag = this.GetComponentInChildren<NameTag>();
-	}
+        this.label = this.GetComponentInChildren<TMPro.TextMeshPro>();
+        if (this.label != null)
+        {
+            this.label.text = this.Data.DisplayName;
+        }
+    }
 
     void Awake()
     {
@@ -62,11 +70,22 @@ public class Door : MonoBehaviour, IHasName, IHasLocation
 	public void SetName(string name) 
 	{ 
 		this.Data.DisplayName = name;
-	}
+        if (this.label != null)
+        {
+            this.label.text = name;
+        }
+    }
 
 	public string GetName() { return this.Data.DisplayName; }
 
     public void SetLocation(Location location) { this.Data.Location = location; }
+
+    public void SetLocationData(LinkedLocationData data)
+    {
+        this.Data.Location = new MainLocation(data.Path, data.DisplayName);
+        this.SetName(data.DisplayName);
+    }
+
     public Location GetLocation() { return this.Data.Location; }
 
     public DoorData ToDoorData()

@@ -23,29 +23,6 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
 
     protected abstract void ProcessHtmlDocument(MainLocation location, Uri currentUri);
 
-    protected string GetImageUrlFromImageTag(HtmlNode node, string currentUriHost)
-    {
-        string imageSrc = node.GetAttributeValue("src", "");
-        if (imageSrc.StartsWith("//"))
-        {
-            return "https://" + imageSrc.TrimStart('/');
-        }
-        else
-        {
-            return "https://" + currentUriHost + "/" + imageSrc.TrimStart('/');
-        }
-    }
-
-    protected string EnsureHttps(string url)
-    {
-        if (string.IsNullOrEmpty(url)) return url;
-        if (url.StartsWith("http://"))
-            return "https://" + url.Substring(7);
-        if (url.StartsWith("//"))
-            return "https:" + url;
-        return url;
-    }
-
     protected virtual IEnumerator ProcessImages(Location location)
     {
         // Traverse SectionData for all images
@@ -60,7 +37,7 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
         foreach (ImagePathData imageData in imagePaths)
         {
             LevelImage levelImage = new LevelImage() { Name = imageData.DisplayName };
-            string imageUrl = EnsureHttps(imageData.Path);
+            string imageUrl = Utils.EnsureHttps(imageData.Path);
             byte[] cachedData;
             if (SimpleCache.TryGetCached(imageUrl, out cachedData))
             {
@@ -126,7 +103,7 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
     {
         if (location.NeedsInitialization)
         {
-            string safeUrl = EnsureHttps(location.Path);
+            string safeUrl = Utils.EnsureHttps(location.Path);
             byte[] cachedData;
             if (SimpleCache.TryGetCached(safeUrl, out cachedData))
             {
@@ -199,16 +176,7 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
         }
         possibleRooms.ForEach(room => room.PopulateParts());
 
-        Room startingRoom = null;
-        if (StageManager.SceneLoader.StartingRoomPrefabs.Length > 0)
-        {
-            startingRoom = StageManager.SceneLoader.StartingRoomPrefabs.GetRandom();
-        }
-        else
-        {
-            startingRoom = possibleRooms.GetRandom();
-        }
-        startingRoom.PopulateParts();
+        Room startingRoom = this.GetFirstRoom(targetLocation);
 
         Location currentLocation = null;
         List<RoomData> rooms = new List<RoomData>();

@@ -91,19 +91,56 @@ public class LocationTextData
     }
 }
 
+public class ListItemsData
+{
+    private List<LocationTextData> items = new List<LocationTextData>();
+    public List<LocationTextData> Items { get { return this.items; } }
+
+    public ListItemsData() { }
+
+    public ListItemsData(List<LocationTextData> items)
+    {
+        this.items = items ?? new List<LocationTextData>();
+    }
+
+    public ListItemsData Clone()
+    {
+        ListItemsData clone = new ListItemsData();
+        clone.items = this.items.Select(item => item.Clone()).ToList();
+        return clone;
+    }
+}
+
+public enum LinkedLocationDataType
+{
+    /// <summary>
+    /// A link shown as part of the text.
+    /// </summary>
+    TextLink,
+
+    /// <summary>
+    /// A more prominent link, that appears as a door that can be clicked on.
+    /// </summary>
+    DoorLink,
+}
+
 public class LinkedLocationData
 {
     public string DisplayName { get; set; }
     public string Path { get; set; }
-    public LinkedLocationData(string display, string path)
+
+    public LinkedLocationDataType Type { get; private set; } = LinkedLocationDataType.TextLink;
+
+    public LinkedLocationData(string display, string path, LinkedLocationDataType type = LinkedLocationDataType.TextLink)
     {
         this.DisplayName = display;
         this.Path = path;
+        this.Type = type;
     }
 
     public LinkedLocationData Clone()
     {
-        return new LinkedLocationData(this.DisplayName, this.Path);
+        return new LinkedLocationData(this.DisplayName, this.Path, this.Type);
     }
 }
 

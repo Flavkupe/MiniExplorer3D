@@ -251,6 +251,7 @@ MonoBehaviour:
   - {fileID: 11422824, guid: 32d128c29981042449ff93eb62b812c5, type: 3}
   StartingRoomPrefabs:
   - {fileID: 11479754, guid: ac200f66a7d5a0f4fb8bb90c4787a3bd, type: 3}
+  EntranceRoomPrefabs: []
 --- !u!4 &136667493
 Transform:
   m_ObjectHideFlags: 0
@@ -1218,6 +1219,7 @@ MonoBehaviour:
   - {fileID: 11422824, guid: 32d128c29981042449ff93eb62b812c5, type: 3}
   StartingRoomPrefabs:
   - {fileID: 11479754, guid: ac200f66a7d5a0f4fb8bb90c4787a3bd, type: 3}
+  EntranceRoomPrefabs: []
 --- !u!4 &609380914
 Transform:
   m_ObjectHideFlags: 0
@@ -1902,6 +1904,7 @@ MonoBehaviour:
   - {fileID: 11422824, guid: 32d128c29981042449ff93eb62b812c5, type: 3}
   StartingRoomPrefabs:
   - {fileID: 11479754, guid: ac200f66a7d5a0f4fb8bb90c4787a3bd, type: 3}
+  EntranceRoomPrefabs: []
 --- !u!4 &1187944679
 Transform:
   m_ObjectHideFlags: 0
@@ -2796,12 +2799,14 @@ MonoBehaviour:
   Minimap: {fileID: 0}
   Player: {fileID: 1033254598}
   GameDimensionMode: 0
-  InitialLocation: https://en.wikipedia.org/wiki/Emperor_penguin
+  InitialLocation: https://en.wikipedia.org/wiki/Main_Page
   Mode: 1
   RoomPrefabs:
   - {fileID: 11477982, guid: 6fc892b96105d1c40b32bacf4c85bab4, type: 3}
   StartingRoomPrefabs:
   - {fileID: 11479754, guid: 5a19c7eb1adb43a4bb809213e57d6ec6, type: 3}
+  EntranceRoomPrefabs:
+  - {fileID: 11477982, guid: 76a0fe6812bbe9e4ba1c2b5ebe74da3d, type: 3}
 --- !u!4 &1822563566
 Transform:
   m_ObjectHideFlags: 0

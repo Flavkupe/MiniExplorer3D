@@ -9,8 +9,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{973707AA-3A4C-B6DA-9ADB-06517456B2B8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -72,10 +71,10 @@
     <Compile Include="Assets\Scripts\IHasName.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\SpawnPoint.cs" />
     <Compile Include="Assets\SceneGrid.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\Generators\Wikipedia\WikipediaHtmlUtils.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Location.cs" />
     <Compile Include="Assets\Scripts\Pair.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Door.cs" />
-    <Compile Include="Assets\Scripts\LevelGeneration\Generators\WikipediaGenerator.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\RoomGrid.cs" />
     <Compile Include="Assets\Scripts\Entities\Enemy.cs" />
     <Compile Include="Assets\Scripts\Parts\FloatyText.cs" />
@@ -84,6 +83,7 @@
     <Compile Include="Assets\SnapToGrid.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\ReadingContent.cs" />
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\Generators\Wikipedia\WikipediaMainPageProcessor.cs" />
     <Compile Include="Assets\Scripts\Parts\TableOfContentsPodium.cs" />
     <Compile Include="Assets\Scripts\Utils\PlayerMenu.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Area.cs" />
@@ -93,7 +93,9 @@
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\FileLevelGenerator.cs" />
     <Compile Include="Assets\Scripts\Map\AreaMapDrawer.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\IHasLocation.cs" />
+    <Compile Include="Assets\Scripts\Utils\Utils.cs" />
     <Compile Include="Assets\Scripts\Parts\NameTag.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\Generators\Wikipedia\WikipediaGenerator.cs" />
     <Compile Include="Assets\Scripts\Utils\LoadingView.cs" />
     <Compile Include="Assets\Scripts\Parts\LinkHolder.cs" />
     <Compile Include="Assets\Scripts\Cache\SimpleCache.cs" />
@@ -117,9 +119,11 @@
     <Compile Include="Assets\Scripts\Parts\Simple3DText.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\WebLevelGenerator.cs" />
     <Compile Include="Assets\Scripts\Utils\DevWindow.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\Generators\Wikipedia\WikipediaBaseProcessor.cs" />
     <Compile Include="Assets\Scripts\Entities\NPCAreaCheck.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\ClosingWall.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\LevelImage.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\Generators\Wikipedia\WikipediaArticleProcessor.cs" />
     <Compile Include="Assets\Scripts\Parts\InfoBoxDisplay.cs" />
     <Compile Include="Assets\Scripts\Parts\ICanLookAt.cs" />
     <Compile Include="Assets\Scripts\Parts\TiledQuad.cs" />
