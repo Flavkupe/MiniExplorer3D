@@ -2,19 +2,41 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using static System.Collections.Specialized.BitVector32;
 
 [Flags]
 public enum SectionType
 {
     None = 0,
+
+    /// <summary>
+    /// Main room, usually content under the main h1 header.
+    /// </summary>
     Main = 1 << 0,
+
+    /// <summary>
+    /// A full exhibit that is not the main room;
+    /// Usually inside an h2 header.
+    /// </summary>
     Standard = 1 << 1,
     Table = 1 << 2,
     Infobox = 1 << 3,
     Gallery = 1 << 4,
     Other = 1 << 5,
+    
+    /// <summary>
+    /// Section meant for a sub-exhibit
+    /// </summary>
     Subsection = 1 << 6,
+
+    /// <summary>
+    /// See also sections of articles, and similar
+    /// </summary>
+    SeeAlso = 1 << 7,
+
+    /// <summary>
+    /// Exhibit for segments like references or external links, or similar
+    /// </summary>
+    References = 1 << 8,
 }
 
 public class SectionData

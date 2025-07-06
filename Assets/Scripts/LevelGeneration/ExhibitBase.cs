@@ -11,11 +11,15 @@ public abstract class ExhibitBase : MonoBehaviour, IMatchesPrefab
     {
         get
         {
-            var parent = this.transform.parent.GetComponent<ExhibitBase>();
-            if (parent != null && parent != this)
+
+            if (this.transform.parent != null)
             {
-                // If this is a subexhibit, use the parent's ID
-                return $"{parent.PrefabID}_{this.name}";
+                var parent = this.transform.parent.GetComponent<ExhibitBase>();
+                if (parent != null)
+                {
+                    // If this is a subexhibit, use the parent's ID
+                    return $"{parent.PrefabID}_{this.name}";
+                }
             }
 
             return this.name;

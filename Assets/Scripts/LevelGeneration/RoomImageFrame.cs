@@ -46,9 +46,9 @@ public class RoomImageFrame : MonoBehaviour, ICanLookAt
             spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width * BaseWidthMultiplier, texture.height * BaseWidthMultiplier), Vector2.zero, 100 * BasePPUMultiplier);
             this.IsUsed = true;
         }
-        else if (this.GetComponent<MeshRenderer>() != null)
+        else if (this.GetComponentInChildren<MeshRenderer>() != null)
         {
-            MeshRenderer meshRenderer = this.GetComponent<MeshRenderer>();
+            MeshRenderer meshRenderer = this.GetComponentInChildren<MeshRenderer>();
             int materialIndex = 0;
             if (meshRenderer.materials.Length > 1)
             {

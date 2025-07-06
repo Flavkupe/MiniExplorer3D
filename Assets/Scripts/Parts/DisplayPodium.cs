@@ -46,7 +46,7 @@ public class DisplayPodium : MonoBehaviour
     }
 
     public bool CanSetImage { get { return this.ImageFrame != null; } }
-    public bool CanSetText { get { return this.InfoBoxDisplay != null; } }
+    public bool CanSetText { get { return this.InfoBoxDisplay != null || this.TextContent != null; } }
 
 	// Use this for initialization
 	void Start () {

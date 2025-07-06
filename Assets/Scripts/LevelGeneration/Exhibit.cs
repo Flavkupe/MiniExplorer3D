@@ -92,20 +92,20 @@ public class Exhibit : ExhibitBase
             return false;
         }
 
-        // Rule 2: Enough Reading items for LocationText
-        int textCount = section.LocationText.Count;
-        int readingCount = this.GetReadingCount();
-        if (readingCount < textCount)
-        {
-            if (textCount > SkipContentLimit)
-            {
-                Debug.LogWarning($"Exhibit {this.name} has too many reading items ({textCount}) for the available placeholders ({readingCount}). Skipping some content.");
-            }
-            else
-            {
-                return false;
-            }
-        }
+        //// Rule 2: Enough Reading items for LocationText
+        //int textCount = section.LocationText.Count;
+        //int readingCount = this.GetReadingCount();
+        //if (readingCount < textCount)
+        //{
+        //    if (textCount > SkipContentLimit)
+        //    {
+        //        Debug.LogWarning($"Exhibit {this.PrefabID} has too many reading items ({textCount}) for the available placeholders ({readingCount}). Skipping some content.");
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
 
         // Rule 3: Subsections must be handled by subexhibits
         if (section.Subsections.Count > 0)
@@ -342,17 +342,17 @@ public class Exhibit : ExhibitBase
         bool hasTitle = !string.IsNullOrEmpty(section.Title);
         if (hasTitle)
         {
-            score += this.SupportsTitle() ? 3f : -3f;
+            score += this.SupportsTitle() ? 1f : -1f;
         }
 
         // Reading placeholders vs LocationText
         int textCount = section.LocationText?.Count ?? 0;
         int readingCount = this.GetReadingCount();
-        score += ScoreCountMatch(readingCount, textCount, 2f);
+        score += ScoreCountMatch(readingCount, textCount, 1f);
 
         int imagePodiumCount = this.DisplayPodiums.Count(a => a.CanHandlePodiumImage);
-        score += ScoreCountMatch(this.Paintings.Length, section.ImagePaths.Count, 1f);
-        score += ScoreCountMatch(imagePodiumCount, section.PodiumImages.Count, 1f);
+        score += ScoreCountMatch(this.Paintings.Length, section.ImagePaths.Count, 2f);
+        score += ScoreCountMatch(imagePodiumCount, section.PodiumImages.Count, 2f);
         score += ScoreCountMatch(this.Exits.Count, section.Exits.Count, 2f);
 
         // Subsections and subexhibits
@@ -430,6 +430,13 @@ public class Exhibit : ExhibitBase
         {
             return 0f;
         }
+
+        if (requiredCount > 0 && exhibitCount == 0)
+        {
+            // If required count is > 0 but we have none, this is a bad match
+            return -weight;
+        }
+
         int diff = exhibitCount - requiredCount;
         if (diff == 0)
         {
@@ -443,7 +450,7 @@ public class Exhibit : ExhibitBase
         else
         {
             // Too few: larger penalty per missing
-            return weight - (0.5f * -diff * weight);
+            return weight - (0.5f * diff * weight);
         }
     }
 }

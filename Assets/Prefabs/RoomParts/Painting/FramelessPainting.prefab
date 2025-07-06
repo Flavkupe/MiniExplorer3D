@@ -11,9 +11,8 @@ GameObject:
   - component: {fileID: 987691477612926750}
   - component: {fileID: 987691477615823496}
   - component: {fileID: 987691477615121614}
-  - component: {fileID: 987691477606160022}
   m_Layer: 0
-  m_Name: DisplayPodiumImage
+  m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,9 +26,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 987691477612858952}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 1, y: -0.00000004371139, z: -0.00000004371139, w: 1.9106855e-15}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 987691477612977744}
@@ -87,23 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &987691477606160022
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 987691477612858952}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0709f14deb634b4a85e72960cf7dabb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FrameType: 0
-  textObject: {fileID: 0}
-  BaseWidthMultiplier: 1
-  BaseHeightMultiplier: 1
-  BasePPUMultiplier: 2
 --- !u!1 &987691477612881148
 GameObject:
   m_ObjectHideFlags: 0
@@ -113,6 +95,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 987691477612977744}
+  - component: {fileID: 5525753765576960378}
   m_Layer: 0
   m_Name: FramelessPainting
   m_TagString: Untagged
@@ -136,3 +119,20 @@ Transform:
   - {fileID: 987691477612926750}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -63.269997, y: 180, z: 0}
+--- !u!114 &5525753765576960378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987691477612881148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0709f14deb634b4a85e72960cf7dabb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FrameType: 0
+  textObject: {fileID: 0}
+  BaseWidthMultiplier: 1
+  BaseHeightMultiplier: 1
+  BasePPUMultiplier: 2

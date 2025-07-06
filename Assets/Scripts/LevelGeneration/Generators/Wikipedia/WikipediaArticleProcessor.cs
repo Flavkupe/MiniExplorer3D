@@ -1,5 +1,6 @@
 using HtmlAgilityPack;
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class WikipediaArticleProcessor : WikipediaBaseProcessor
@@ -37,6 +38,17 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
         }
 
         location.LocationData.Sections.Clear();
+
+        // 
+        var infoboxNode = contentNode.SelectSingleNode(".//table[contains(@class, 'infobox')]");
+        if (infoboxNode != null)
+        {
+            var infoboxSection = ParseInfoboxTable(infoboxNode, location.Name);
+            if (infoboxSection != null)
+            {
+                location.LocationData.Sections.Add(infoboxSection);
+            }
+        }
 
         foreach (var node in contentNode.ChildNodes)
         {
@@ -233,5 +245,100 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
                     this.currentSection.ImagePaths.Add(imageData);
             }
         }
+    }
+
+    private SectionData ParseInfoboxTable(HtmlNode infoboxNode, string locationName)
+    {
+        var infoboxSection = new SectionData
+        {
+            Title = locationName,
+            SectionType = SectionType.Infobox | SectionType.Main
+        };
+
+        var rows = infoboxNode.SelectNodes(".//tr");
+        if (rows == null) return null;
+
+        SectionData currentSubsection = null;
+        int subsectionCount = 0;
+
+        foreach (var row in rows)
+        {
+            var th = row.SelectSingleNode("th");
+            var td = row.SelectSingleNode("td");
+            var tds = row.SelectNodes("td");
+            bool isHeaderRow = th != null && td == null;
+            bool isDataRow = tds != null && tds.Count > 0;
+
+            if (isHeaderRow)
+            {
+                // Start a new subsection for this header
+                currentSubsection = new SectionData
+                {
+                    Title = this.HtmlDecode(th.InnerText),
+                    SectionType = SectionType.Subsection
+                };
+                infoboxSection.Subsections.Add(currentSubsection);
+                subsectionCount++;
+            }
+            else if (isDataRow)
+            {
+                // If no header yet, create a default subsection
+                if (currentSubsection == null)
+                {
+                    currentSubsection = new SectionData
+                    {
+                        Title = string.Empty,
+                        SectionType = SectionType.Subsection
+                    };
+                    infoboxSection.Subsections.Add(currentSubsection);
+                    subsectionCount++;
+                }
+
+                // If this row has a th and tds, treat th as label
+                string label = th != null ? this.HtmlDecode(th.InnerText) : null;
+                string value = string.Empty;
+                if (tds.Count > 1)
+                {
+                    value = string.Join(" ", tds.Cast<HtmlNode>().Select(cell => this.HtmlDecode(cell.InnerText)).Where(s => !string.IsNullOrWhiteSpace(s)));
+                }
+                else
+                {
+                    value = this.HtmlDecode(tds[0].InnerText);
+                }
+
+                // Add as text or list
+                if (!string.IsNullOrWhiteSpace(label))
+                {
+                    currentSubsection.LocationText.Add(new LocationTextData($"{label}: {value}"));
+                }
+                else if (!string.IsNullOrWhiteSpace(value))
+                {
+                    currentSubsection.LocationText.Add(new LocationTextData(value));
+                }
+
+                // Handle all images in all tds
+                foreach (var cell in tds.Cast<HtmlNode>())
+                {
+                    var imgTags = cell.SelectNodes(".//img");
+                    if (imgTags != null)
+                    {
+                        foreach (var imgTag in imgTags)
+                        {
+                            string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
+                            currentSubsection.ImagePaths.Add(new ImagePathData(string.Empty, imageUrl));
+                        }
+                    }
+
+                    // Handle lists in td
+                    var listNode = cell.SelectSingleNode("ul") ?? cell.SelectSingleNode("ol");
+                    if (listNode != null)
+                    {
+                        HandleListNode(listNode, currentSubsection, this.currentUri.Host);
+                    }
+                }
+            }
+        }
+
+        return infoboxSection;
     }
 }
