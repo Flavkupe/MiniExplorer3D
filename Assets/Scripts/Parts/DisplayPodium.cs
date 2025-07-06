@@ -1,11 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class DisplayPodium : MonoBehaviour 
 {
     public RoomImageFrame ImageFrame;
 
+    [Tooltip("DEPRECATED: Use TextMeshPro")]
     public InfoBoxDisplay InfoBoxDisplay;
+
+    public TMPro.TextMeshPro TextContent;
+
+    public TMPro.TextMeshPro Title;
 
     public void SetImage(LevelImage image)
     {
@@ -14,6 +20,19 @@ public class DisplayPodium : MonoBehaviour
             this.ImageFrame.SetLevelImage(image);
             this.ImageFrame.gameObject.SetActive(true);
             this.IsUsed = true;
+        }
+    }
+
+    public void SetText(LocationTextData text, string title)
+    {
+        if (TextContent != null)
+        {
+            TextContent.text = text.Text;
+        }
+
+        if (Title != null)
+        {
+            Title.text = title;
         }
     }
 

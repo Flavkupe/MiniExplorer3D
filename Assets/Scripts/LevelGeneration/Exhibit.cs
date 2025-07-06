@@ -23,33 +23,15 @@ public enum ExhibitListItemMode
     // TODO: eventually, add actual specific displays for list items
 }
 
-public class Exhibit : MonoBehaviour, IMatchesPrefab
+public class Exhibit : ExhibitBase
 {
     // Arbitrary limit for reading content
     const int SkipContentLimit = 8;
 
-    public SectionType SectionTypes;
-
     private SectionData section;
-    public bool IsAssigned { get; private set; }
 
     [Tooltip("How list items are displayed.")]
     public ExhibitListItemMode ListItemMode = ExhibitListItemMode.Skip;
-
-    public string PrefabID
-    {
-        get
-        {
-            var parent = this.transform.parent.GetComponent<Exhibit>();
-            if (parent != null && parent != this)
-            {
-                // If this is a subexhibit, use the parent's ID
-                return $"{parent.PrefabID}_{this.name}";
-            }
-
-            return this.name;
-        }
-    }
 
     private RoomImageFrame[] Paintings = new RoomImageFrame[] { };
     private Placeholder[] Reading = new Placeholder[] { };
@@ -58,10 +40,17 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
     private AreaTitle AreaTitleSign = null;
     private List<Door> Exits = new();
 
-    public Exhibit[] SubExhibits { get; private set; } = new Exhibit[] { };
+    public ExhibitBase[] SubExhibits { get; private set; } = new ExhibitBase[] { };
 
-    public void PopulateParts()
+    private bool isPopulated = false;
+
+    public override void PopulateParts()
     {
+        if (isPopulated)
+        {
+            return;
+        }
+
         // Only get immediate children for Placeholders, RoomImageFrame, and SubExhibits
         var children = new List<GameObject>();
         for (int i = 0; i < transform.childCount; ++i)
@@ -73,7 +62,7 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
                                                          a.PartType == Placeholder.RoomPartType.TextPodium).ToArray();
         this.TOCPodium = allPlaceholders.FirstOrDefault(a => a.PartType == Placeholder.RoomPartType.TableOfContentsPodium);
         this.AreaTitleSign = children.SelectMany(go => go.GetComponents<AreaTitle>()).FirstOrDefault();
-        this.SubExhibits = children.SelectMany(go => go.GetComponents<Exhibit>()).Where(e => e != this).ToArray();
+        this.SubExhibits = children.SelectMany(go => go.GetComponents<ExhibitBase>()).Where(e => e != this).ToArray();
         this.Exits = children.SelectMany(go => go.GetComponents<Door>()).ToList();
         foreach (var exhibit in this.SubExhibits)
         {
@@ -81,8 +70,10 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
         }
     }
 
-    public bool CanHandleSection(SectionData section)
+    public override bool CanHandleSection(SectionData section)
     {
+        PopulateParts();
+
         if (section == null)
         {
             return false;
@@ -96,14 +87,14 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
 
         // Rule 1: AreaTitleSign iff Title is non-empty
         bool hasTitle = !string.IsNullOrEmpty(section.Title);
-        if (hasTitle && this.AreaTitleSign == null)
+        if (hasTitle && !this.SupportsTitle())
         {
             return false;
         }
 
         // Rule 2: Enough Reading items for LocationText
         int textCount = section.LocationText.Count;
-        int readingCount = this.Reading.Length;
+        int readingCount = this.GetReadingCount();
         if (readingCount < textCount)
         {
             if (textCount > SkipContentLimit)
@@ -138,7 +129,7 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
         return true;
     }
 
-    public void ClearAssignment()
+    public override void ClearAssignment()
     {
         section = null;
         IsAssigned = false;
@@ -152,7 +143,7 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
     }
 
     // Populate the exhibit's parts (text, images, etc.) from the SectionData
-    public virtual void PopulateExhibit(ExhibitData data)
+    public override void PopulateExhibit(ExhibitData data)
     {
         PopulateParts();
         this.section = data?.SectionData;
@@ -193,18 +184,18 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
         // Place the podium images and text
         foreach (Placeholder podiumPlaceholder in this.DisplayPodiums)
         {
-            if (podiumPlaceholder.PartType == Placeholder.RoomPartType.DisplayPodium && section.PodiumImages != null && section.PodiumImages.Count > 0)
+            if (podiumPlaceholder.PartType == Placeholder.RoomPartType.DisplayPodium && section.PodiumImages.Count > 0)
             {
                 DisplayPodium podium = podiumPlaceholder.GetInstance<DisplayPodium>();
                 LevelImage image = section.PodiumImages[0].LoadedImage;
                 podium.SetImage(image);
                 section.PodiumImages.RemoveAt(0);
             }
-            else if (podiumPlaceholder.PartType == Placeholder.RoomPartType.TextPodium && section.InfoBoxData != null && section.InfoBoxData.Count > 0)
+            else if (podiumPlaceholder.PartType == Placeholder.RoomPartType.TextPodium && section.LocationText.Count > 0)
             {
                 DisplayPodium podium = podiumPlaceholder.GetInstance<DisplayPodium>();
-                podium.SetText(section.InfoBoxData[0]);
-                section.InfoBoxData.RemoveAt(0);
+                podium.SetText(section.LocationText[0], section.Title);
+                section.LocationText.RemoveAt(0);
             }
             else
             {
@@ -328,10 +319,11 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
         }
     }
 
+
     /// <summary>
     /// Rates how well this Exhibit matches the given SectionData, including subexhibits. Does not mutate the Exhibit.
     /// </summary>
-    public RatingResult RateSectionMatch(SectionData section)
+    public override RatingResult RateSectionMatch(SectionData section)
     {
         if (section == null)
         {
@@ -341,35 +333,43 @@ public class Exhibit : MonoBehaviour, IMatchesPrefab
         float score = 5f;
 
         // SectionType match is required
-        if ((SectionTypes & section.SectionType) == 0)
+        if (!CanHandleSection(section))
         {
             return RatingResult.NoMatch;
         }
 
         // Title/AreaTitleSign
         bool hasTitle = !string.IsNullOrEmpty(section.Title);
-        if (hasTitle && this.AreaTitleSign != null)
+        if (hasTitle)
         {
-            score += 3f;
-        }
-        else if (hasTitle)
-        {
-            score -= 3f;
+            score += this.SupportsTitle() ? 3f : -3f;
         }
 
         // Reading placeholders vs LocationText
         int textCount = section.LocationText?.Count ?? 0;
-        int readingCount = this.Reading?.Length ?? 0;
+        int readingCount = this.GetReadingCount();
         score += ScoreCountMatch(readingCount, textCount, 2f);
 
+        int imagePodiumCount = this.DisplayPodiums.Count(a => a.CanHandlePodiumImage);
         score += ScoreCountMatch(this.Paintings.Length, section.ImagePaths.Count, 1f);
-        score += ScoreCountMatch(this.DisplayPodiums.Length, section.PodiumImages.Count, 1f);
+        score += ScoreCountMatch(imagePodiumCount, section.PodiumImages.Count, 1f);
         score += ScoreCountMatch(this.Exits.Count, section.Exits.Count, 2f);
 
         // Subsections and subexhibits
         score += ScoreSubsections(section);
 
         return new RatingResult(score, true);
+    }
+
+    private bool SupportsTitle()
+    {
+        return this.AreaTitleSign != null ||
+            this.DisplayPodiums.Any(p => p.PartType == Placeholder.RoomPartType.TextPodium);
+    }
+
+    private int GetReadingCount()
+    {
+        return this.Reading.Length + this.DisplayPodiums.Count(a => a.CanHandleText);
     }
 
     private float ScoreSubsections(SectionData section)

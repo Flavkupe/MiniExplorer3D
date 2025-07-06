@@ -16,8 +16,16 @@ public class Placeholder : MonoBehaviour
 
     public GameObject[] PossibleItems;
 
-	// Use this for initialization
-	void Start () {
+    public bool CanHandleText => 
+        this.PartType == RoomPartType.TextPodium ||
+        this.PartType == RoomPartType.Reading;
+
+    // TODO: combine this with ImageFrame
+    public bool CanHandlePodiumImage =>
+        this.PartType == RoomPartType.DisplayPodium;
+
+    // Use this for initialization
+    void Start () {
 	
 	}
 	

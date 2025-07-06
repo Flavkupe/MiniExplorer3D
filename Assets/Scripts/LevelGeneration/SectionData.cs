@@ -27,7 +27,6 @@ public class SectionData
     public List<ImagePathData> ImagePaths { get; private set; } = new List<ImagePathData>();
     public List<ImagePathData> PodiumImages { get; private set; } = new List<ImagePathData>();
     public List<LinkedLocationData> LinkedLocationData { get; private set; } = new List<LinkedLocationData>();
-    public List<InfoBoxData> InfoBoxData { get; private set; } = new List<InfoBoxData>();
     public TableOfContents TableOfContents { get; set; }
     public string RawData { get; set; }
     public List<ListItemsData> Lists { get; set; } = new List<ListItemsData>();
@@ -53,7 +52,6 @@ public class SectionData
             ImagePaths = ImagePaths.Select(a => a.Clone()).ToList(),
             PodiumImages = PodiumImages.Select(a => a.Clone()).ToList(),
             LinkedLocationData = LinkedLocationData.Select(a => a.Clone()).ToList(),
-            InfoBoxData = InfoBoxData.Select(a => a.Clone()).ToList(),
             Subsections = Subsections.Select(a => a.Clone()).ToList(),
         };
     }

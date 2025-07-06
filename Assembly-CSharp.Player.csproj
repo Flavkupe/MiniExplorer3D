@@ -112,6 +112,7 @@
     <Compile Include="Assets\Scripts\Parts\LinkBoard.cs" />
     <Compile Include="Assets\Scripts\Utils\Interfaces.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\RoomConnector.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\ExhibitPlaceholder.cs" />
     <Compile Include="Assets\Scripts\Managers\StageManager.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\BaseLevelGenerator.cs" />
     <Compile Include="Assets\Scripts\Parts\AreaTitle.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="Assets\Scripts\Parts\Simple3DText.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\WebLevelGenerator.cs" />
     <Compile Include="Assets\Scripts\Utils\DevWindow.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\ExhibitBase.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\Wikipedia\WikipediaBaseProcessor.cs" />
     <Compile Include="Assets\Scripts\Entities\NPCAreaCheck.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\ClosingWall.cs" />

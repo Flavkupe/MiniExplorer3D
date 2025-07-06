@@ -34,7 +34,7 @@ public class Room : MonoBehaviour, IHasName
 
     public AreaTitle AreaTitleSign = null;
 
-    public Exhibit[] Exhibits = new Exhibit[] { };
+    public ExhibitBase[] Exhibits = new ExhibitBase[] { };
 
     void Awake()
     {        
