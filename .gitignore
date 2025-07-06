@@ -2,6 +2,6 @@ Library/
 Temp/
 .vs/**
 /Logs
-/obj/Debug
+/obj
 /build
-/.vs/MiniExplorer3D/v17/.suo
+/.vs/MiniExplorer3D/v17/.suoleProcess

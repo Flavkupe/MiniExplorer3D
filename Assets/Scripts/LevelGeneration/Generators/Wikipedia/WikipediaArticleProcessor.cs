@@ -12,6 +12,17 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
     private bool foundFirstH2;
     private Uri currentUri;
 
+    private static readonly string[] SkippedSectionTitles = new[] {
+        "references", "external links", "bibliography", "further reading", "notes"
+    };
+
+    private bool IsSkippedSectionTitle(string title)
+    {
+        if (string.IsNullOrWhiteSpace(title)) return false;
+        string lower = title.Trim().ToLowerInvariant();
+        return SkippedSectionTitles.Any(skip => lower == skip);
+    }
+
     public override void ProcessHtml(MainLocation location, HtmlDocument htmlDoc, Uri currentUri)
     {
         this.currentUri = currentUri;
@@ -122,6 +133,12 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
         {
             title = this.HtmlDecode(node.InnerText);
             anchor = node.GetAttributeValue("id", "");
+        }
+        // Skip unwanted sections
+        if (IsSkippedSectionTitle(title)) {
+            this.currentSection = null;
+            this.parentSection = null;
+            return;
         }
         this.currentSection = new SectionData
         {
