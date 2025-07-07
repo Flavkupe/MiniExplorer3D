@@ -30,18 +30,13 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
         this.currentSection = null;
         this.foundFirstH2 = false;
 
-        HtmlNode titleNode = htmlDoc.DocumentNode.SelectSingleNode("//h1");
-        if (titleNode != null)
+        this.leadSection.Title = location.Name;
+        if (StageManager.CurrentLocation.Path == location.Path)
         {
-            location.Name = this.HtmlDecode(titleNode.InnerText);
-            this.leadSection.Title = location.Name;
-            if (StageManager.CurrentLocation.Path == location.Path)
-            {
-                StageManager.CurrentLocation.Name = location.Name;
-            }
+            StageManager.CurrentLocation.Name = location.Name;
         }
 
-        HtmlNode contentNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@id='mw-content-text']//div[contains(@class, 'mw-parser-output')]");
+        HtmlNode contentNode = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class, 'mw-parser-output')]");
         if (contentNode == null)
         {
             Debug.LogWarning("Content node not found in Wikipedia page.");

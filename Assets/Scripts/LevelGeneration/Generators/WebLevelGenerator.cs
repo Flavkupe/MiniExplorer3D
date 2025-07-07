@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Assets.Scripts.LevelGeneration;
 using System.Text;
-using HtmlAgilityPack;
+using Newtonsoft.Json.Linq;
 
 public abstract class WebLevelGenerator : BaseLevelGenerator
 {
@@ -102,34 +102,109 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
     {
         if (location.NeedsInitialization)
         {
-            string safeUrl = Utils.EnsureHttps(location.Path);
-            byte[] cachedData;
-            if (SimpleCache.TryGetCached(safeUrl, out cachedData))
+            // Extract the Wikipedia page title from the URL
+            string pageTitle = null;
+            try
             {
-                location.LocationData.RawData = Encoding.UTF8.GetString(cachedData);
+                var uri = new Uri(location.Path);
+                // Wikipedia URLs are like https://en.wikipedia.org/wiki/Page_Title
+                var segments = uri.Segments;
+                if (segments.Length > 0)
+                {
+                    pageTitle = segments.Last().TrimEnd('/');
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"Failed to parse Wikipedia URL: {location.Path} ({ex.Message})");
+            }
+
+            if (string.IsNullOrEmpty(pageTitle))
+            {
+                Debug.LogWarning($"Could not determine Wikipedia page title from URL: {location.Path}");
+                location.LocationData.RawData = string.Empty;
             }
             else
             {
-                using (UnityWebRequest uwr = UnityWebRequest.Get(safeUrl))
+                var page = UnityWebRequest.EscapeURL(pageTitle);
+                string apiUrl = $"https://en.wikipedia.org/w/api.php?action=parse&page={page}&format=json&origin=*";
+                
+                string json = string.Empty;
+                byte[] cachedData;
+                if (SimpleCache.TryGetCached(apiUrl, out cachedData))
                 {
-                    Debug.Log($"Sending request to {safeUrl}");
-                    yield return uwr.SendWebRequest();
-                    if (uwr.result != UnityWebRequest.Result.Success)
+                    // Parse JSON and extract HTML
+                    json = Encoding.UTF8.GetString(cachedData);
+                }
+                else
+                {
+                    using (UnityWebRequest uwr = UnityWebRequest.Get(apiUrl))
                     {
-                        Debug.LogWarning($"Page load error: {uwr.error} for {safeUrl}");
-                        location.LocationData.RawData = string.Empty;
-                    }
-                    else
-                    {
-                        location.LocationData.RawData = uwr.downloadHandler.text;
-                        SimpleCache.SaveToCache(safeUrl, Encoding.UTF8.GetBytes(location.LocationData.RawData));
+                        Debug.Log($"Sending request to {apiUrl}");
+                        yield return uwr.SendWebRequest();
+                        if (uwr.result != UnityWebRequest.Result.Success)
+                        {
+                            Debug.LogWarning($"Page load error: {uwr.error} for {apiUrl}");
+                            location.LocationData.RawData = string.Empty;
+                        }
+                        else
+                        {
+                            json = uwr.downloadHandler.text;
+                            SimpleCache.SaveToCache(apiUrl, Encoding.UTF8.GetBytes(json));
+                        }
                     }
                 }
+
+                if (json == string.Empty)
+                {
+                    Debug.LogWarning($"No data received from Wikipedia API for {pageTitle}");
+                    location.LocationData.RawData = string.Empty;
+                    yield break;
+                }
+
+                string html = ExtractHtmlFromWikipediaApiJson(json);
+                string title = ExtractTitleFromWikipediaApiJson(json);
+                location.LocationData.RawData = html;
+                location.Name = title;
             }
         }
 
         this.CallOnAreaGenReady(new AreaGenerationReadyEventArgs() { AreaLocation = StageManager.CurrentLocation });
         yield return null;
+    }
+
+    // Helper to extract the HTML from the Wikipedia API JSON response
+    private string ExtractHtmlFromWikipediaApiJson(string json)
+    {
+        if (string.IsNullOrEmpty(json)) return string.Empty;
+        try
+        {
+            var obj = JObject.Parse(json);
+            var html = obj["parse"]?["text"]?["*"]?.ToString();
+            return html ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"Failed to parse Wikipedia API JSON: {ex.Message}");
+            return string.Empty;
+        }
+    }
+
+    // Helper to extract the title from the Wikipedia API JSON response
+    protected string ExtractTitleFromWikipediaApiJson(string json)
+    {
+        if (string.IsNullOrEmpty(json)) return string.Empty;
+        try
+        {
+            var obj = JObject.Parse(json);
+            var title = obj["parse"]?["title"]?.ToString();
+            return title ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"Failed to parse Wikipedia API JSON for title: {ex.Message}");
+            return string.Empty;
+        }
     }
 
     public override IEnumerator AreaPostProcessing(Location location, MonoBehaviour caller)

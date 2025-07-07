@@ -437,7 +437,7 @@ public class Exhibit : ExhibitBase
             return -weight;
         }
 
-        int diff = exhibitCount - requiredCount;
+        int diff = Math.Abs(exhibitCount - requiredCount);
         if (diff == 0)
         {
             return weight; // perfect match

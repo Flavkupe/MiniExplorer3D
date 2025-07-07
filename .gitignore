@@ -5,3 +5,4 @@ Temp/
 /obj
 /build
 /.vs/MiniExplorer3D/v17/.suoleProcess
+node_modules

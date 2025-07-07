@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.842.0",
+    "mime": "^4.0.7"
+  }
+}
