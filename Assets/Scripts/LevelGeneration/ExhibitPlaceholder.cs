@@ -1,5 +1,6 @@
 
 
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -13,7 +14,20 @@ public class ExhibitPlaceholder : ExhibitBase
 
     public override bool CanHandleSection(SectionData section)
     {
-        return Exhibits.Any(exhibit => exhibit.CanHandleSection(section));
+        foreach (var exhibit in Exhibits)
+        {
+            if (exhibit == null)
+            {
+                Debug.LogError($"Null Exhibit in {this.PrefabID}");
+                continue;
+            }
+
+            if (exhibit.CanHandleSection(section))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public override void ClearAssignment()

@@ -15,10 +15,14 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
     protected override void ProcessLocation(Location parentLocation)
     {
         if (!(parentLocation is MainLocation))
+        {
             return;
+        }
+
         MainLocation location = parentLocation as MainLocation;
         Uri currentUri = new Uri(location.Path);
         this.ProcessHtmlDocument(location, currentUri);
+        location.LocationData.RemoveEmptySections();
     }
 
     protected abstract void ProcessHtmlDocument(MainLocation location, Uri currentUri);
@@ -253,35 +257,12 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
         Room startingRoom = this.GetFirstRoom(targetLocation);
 
         List<RoomData> rooms = new List<RoomData>();
-        RoomData currentRoomData = grid.AddFirstRoom(startingRoom);
+        RoomData currentRoomData = grid.AddFirstRoom(startingRoom, reqs);
 
         int failsafeCount = 0;
 
         do
         {
-            foreach (var exhibit in currentRoomData.RoomReference.Exhibits)
-            {
-                foreach (var section in reqs.SectionData.ToList())
-                {
-                    if (exhibit.CanHandleSection(section))
-                    {
-                        // If the exhibit can handle the section, add it to the room data
-                        currentRoomData.ExhibitData.Add(new ExhibitData(exhibit.PrefabID, section));
-                        reqs.SectionData.Remove(section);
-                        
-                        // break since the exhibit has handled a section already.
-                        break;
-                    }
-                }
-            }
-
-            // TODO: TOC
-            //if (currentRoomData.RoomReference.TOCPodium != null)
-            //{
-            //    currentRoomData.TableOfContents = reqs.TableOfContents;
-            //    reqs.TableOfContents = null;
-            //}
-
             if (!reqs.AllRequirementsMet)
             {
                 currentRoomData = grid.AddRoomFromList(possibleRooms, reqs);
@@ -333,7 +314,8 @@ public class WebLevelGenRequirements : LevelGenRequirements
     {
         get
         {
-            return this.Locations.Count == 0 && this.SectionData.Count == 0;
+            // The "or" is correct here; if we match all the sections we are done
+            return this.Locations.Count == 0 || this.SectionData.Count == 0;
         }
     }
 

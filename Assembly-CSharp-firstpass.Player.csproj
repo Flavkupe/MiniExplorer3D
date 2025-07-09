@@ -75,6 +75,7 @@
     <None Include="Assets\Standard Assets\RetroLamps\Shaders\Lamps_rimShader_specular.shader" />
     <None Include="Assets\Standard Assets\RetroLamps\Shaders\Lamps_rimShaderSpecEmi.shader" />
     <None Include="Assets\Plugins\HtmlAgilityPack.dll" />
+    <None Include="Assets\Plugins\Borodar\RainbowFolders\NOTICES.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

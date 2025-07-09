@@ -25,20 +25,17 @@ public enum ExhibitListItemMode
 
 public class Exhibit : ExhibitBase
 {
-    // Arbitrary limit for reading content
-    const int SkipContentLimit = 8;
-
     private SectionData section;
 
     [Tooltip("How list items are displayed.")]
     public ExhibitListItemMode ListItemMode = ExhibitListItemMode.Skip;
 
-    private RoomImageFrame[] Paintings = new RoomImageFrame[] { };
-    private Placeholder[] Reading = new Placeholder[] { };
-    private Placeholder[] DisplayPodiums = new Placeholder[] { };
-    private Placeholder TOCPodium = null;
-    private AreaTitle AreaTitleSign = null;
-    private List<Door> Exits = new();
+    public RoomImageFrame[] Paintings = new RoomImageFrame[] { };
+    public Placeholder[] Reading = new Placeholder[] { };
+    public Placeholder[] DisplayPodiums = new Placeholder[] { };
+    public Placeholder TOCPodium = null;
+    public AreaTitle[] AreaTitleSigns = new AreaTitle[] { };
+    public List<Door> Exits = new();
 
     public ExhibitBase[] SubExhibits { get; private set; } = new ExhibitBase[] { };
 
@@ -61,7 +58,7 @@ public class Exhibit : ExhibitBase
         this.DisplayPodiums = allPlaceholders.Where(a => a.PartType == Placeholder.RoomPartType.DisplayPodium ||
                                                          a.PartType == Placeholder.RoomPartType.TextPodium).ToArray();
         this.TOCPodium = allPlaceholders.FirstOrDefault(a => a.PartType == Placeholder.RoomPartType.TableOfContentsPodium);
-        this.AreaTitleSign = children.SelectMany(go => go.GetComponents<AreaTitle>()).FirstOrDefault();
+        this.AreaTitleSigns = children.SelectMany(go => go.GetComponents<AreaTitle>()).ToArray();
         this.SubExhibits = children.SelectMany(go => go.GetComponents<ExhibitBase>()).Where(e => e != this).ToArray();
         this.Exits = children.SelectMany(go => go.GetComponents<Door>()).ToList();
         foreach (var exhibit in this.SubExhibits)
@@ -158,9 +155,9 @@ public class Exhibit : ExhibitBase
         HandleListItems();
 
         // Example: Set AreaTitle if present
-        if (this.AreaTitleSign != null && !string.IsNullOrEmpty(section.Title))
+        foreach (var titleSign in this.AreaTitleSigns)
         {
-            this.AreaTitleSign.SetTitle(section.Title);
+            titleSign.SetTitle(section.Title ?? string.Empty);
         }
 
         // Place the images
@@ -252,7 +249,7 @@ public class Exhibit : ExhibitBase
         // Populate subexhibits recursively
         if (SubExhibits.Length < data.SubExhibitData.Count)
         {
-            Debug.LogWarning($"Exhibit {this.name} has fewer subexhibits ({SubExhibits.Length}) than required by the data ({data.SubExhibitData.Count}). Some data will not match a subexhibit.");
+            Debug.LogWarning($"Exhibit {this.PrefabID} has fewer subexhibits ({SubExhibits.Length}) than required by the data ({data.SubExhibitData.Count}). Some data will not match a subexhibit.");
         }
 
         for (int i = 0; i < SubExhibits.Length; ++i)
@@ -278,7 +275,7 @@ public class Exhibit : ExhibitBase
         switch (ListItemMode)
         {
             case ExhibitListItemMode.Skip:
-                Debug.LogWarning($"Exhibit {this.name}: List items present in section '{section.Title}' but ExhibitListItemMode is Skip. Lists will be ignored.");
+                Debug.LogWarning($"Exhibit {this.PrefabID}: List items present in section '{section.Title}' but ExhibitListItemMode is Skip. Lists will be ignored.");
                 break;
             case ExhibitListItemMode.CombineWithParagraphs:
                 // Each list item becomes a paragraph (LocationTextData)
@@ -325,132 +322,18 @@ public class Exhibit : ExhibitBase
     /// </summary>
     public override RatingResult RateSectionMatch(SectionData section)
     {
-        if (section == null)
-        {
-            return RatingResult.NoMatch;
-        }
-
-        float score = 5f;
-
-        // SectionType match is required
-        if (!CanHandleSection(section))
-        {
-            return RatingResult.NoMatch;
-        }
-
-        // Title/AreaTitleSign
-        bool hasTitle = !string.IsNullOrEmpty(section.Title);
-        if (hasTitle)
-        {
-            score += this.SupportsTitle() ? 1f : -1f;
-        }
-
-        // Reading placeholders vs LocationText
-        int textCount = section.LocationText?.Count ?? 0;
-        int readingCount = this.GetReadingCount();
-        score += ScoreCountMatch(readingCount, textCount, 1f);
-
-        int imagePodiumCount = this.DisplayPodiums.Count(a => a.CanHandlePodiumImage);
-        score += ScoreCountMatch(this.Paintings.Length, section.ImagePaths.Count, 2f);
-        score += ScoreCountMatch(imagePodiumCount, section.PodiumImages.Count, 2f);
-        score += ScoreCountMatch(this.Exits.Count, section.Exits.Count, 2f);
-
-        // Subsections and subexhibits
-        score += ScoreSubsections(section);
-
-        return new RatingResult(score, true);
+        return RatingProcessor.RateExhibitMatch(this, section);
     }
 
-    private bool SupportsTitle()
+    public bool SupportsTitle()
     {
-        return this.AreaTitleSign != null ||
+        return this.AreaTitleSigns.Length > 0 ||
             this.DisplayPodiums.Any(p => p.PartType == Placeholder.RoomPartType.TextPodium);
     }
 
-    private int GetReadingCount()
+    public int GetReadingCount()
     {
         return this.Reading.Length + this.DisplayPodiums.Count(a => a.CanHandleText);
     }
 
-    private float ScoreSubsections(SectionData section)
-    {
-        var score = 0.0f;
-        if (section.Subsections.Count > 0)
-        {
-            return score;
-        }
-
-        if (SubExhibits.Length == 0)
-        {
-            // dock points for missing subsections
-            score -= section.Subsections.Count;
-            return score;
-        }
-        float subScore = 0f;
-        int matched = 0;
-        foreach (var subSection in section.Subsections)
-        {
-            float best = 0f;
-            foreach (var sub in SubExhibits)
-            {
-                var result = sub.RateSectionMatch(subSection);
-                if (!result.IsValid)
-                {
-                    // skip invalid results
-                    continue;
-                }
-
-                if (result.Score > best)
-                {
-                    best = result.Score;
-                }
-            }
-            subScore += best;
-            if (best > 0)
-            {
-                matched++;
-            }
-        }
-
-        score += subScore;
-        if (matched == section.Subsections.Count)
-        {
-            score += 1f;
-        }
-       
-        return score;
-    }
-
-    /// <summary>
-    /// Helper to score how well two counts match. Prefers exact match, then too many, then too few. The more difference, the worse the score.
-    /// </summary>
-    private float ScoreCountMatch(int exhibitCount, int requiredCount, float weight)
-    {
-        if (requiredCount == 0)
-        {
-            return 0f;
-        }
-
-        if (requiredCount > 0 && exhibitCount == 0)
-        {
-            // If required count is > 0 but we have none, this is a bad match
-            return -weight;
-        }
-
-        int diff = Math.Abs(exhibitCount - requiredCount);
-        if (diff == 0)
-        {
-            return weight; // perfect match
-        }
-        else if (diff > 0)
-        {
-            // Too many: small penalty per extra
-            return weight - (0.25f * diff * weight);
-        }
-        else
-        {
-            // Too few: larger penalty per missing
-            return weight - (0.5f * diff * weight);
-        }
-    }
 }

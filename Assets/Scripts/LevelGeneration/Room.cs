@@ -171,38 +171,7 @@ public class Room : MonoBehaviour, IHasName
     /// </summary>
     public RatingResult RateRequirementsMatch(LevelGenRequirements reqs)
     {
-        if (reqs == null || reqs.SectionData == null || reqs.SectionData.Count == 0)
-        {
-            return RatingResult.NoMatch;
-        }
-
-        float totalScore = 0f;
-        foreach (var section in reqs.SectionData)
-        {
-            float bestScore = float.MinValue;
-            bool foundValid = false;
-            foreach (var exhibit in this.Exhibits)
-            {
-                var result = exhibit.RateSectionMatch(section);
-                if (!result.IsValid)
-                {
-                    continue;
-                }
-
-                foundValid = true;
-                if (result.Score > bestScore)
-                {
-                    bestScore = result.Score;
-                }
-                
-            }
-            if (!foundValid)
-            {
-                return RatingResult.NoMatch;
-            }
-            totalScore += bestScore;
-        }
-        return new RatingResult(totalScore, true);
+        return RatingProcessor.RateRoomMatch(this, reqs);
     }
 
     /// <summary>

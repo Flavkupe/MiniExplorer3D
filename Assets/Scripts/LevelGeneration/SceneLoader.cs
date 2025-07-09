@@ -133,6 +133,7 @@ public class SceneLoader : MonoBehaviour
         }
 
         Vector3? spawnPos = null;
+        Quaternion? spawnRotation = null;
         List<Room> instances = new List<Room>();
         foreach (RoomData roomData in grid.Rooms)
         {
@@ -148,6 +149,7 @@ public class SceneLoader : MonoBehaviour
             if (roomInstance.PlayerSpawn != null)
             {
                 spawnPos = roomInstance.PlayerSpawn.position;
+                spawnRotation = roomInstance.PlayerSpawn.rotation;
             }
 
             instances.Add(roomInstance);
@@ -166,6 +168,7 @@ public class SceneLoader : MonoBehaviour
         if (spawnPos != null)
         {
             this.Player.transform.position = spawnPos.Value;
+            this.Player.transform.rotation = spawnRotation ?? Quaternion.identity;
         }
 
         yield return null;         

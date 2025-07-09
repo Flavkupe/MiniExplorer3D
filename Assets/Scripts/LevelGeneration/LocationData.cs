@@ -31,6 +31,19 @@ public class LocationData
         clone.RawData = this.RawData;
         return clone;
     }
+
+    public void RemoveEmptySections()
+    {
+        this.Sections.RemoveAll(section => section.IsEmpty());
+        foreach (var section in this.Sections)
+        {
+            section.Subsections.RemoveAll(a => a.IsEmpty());
+        }
+        foreach (var subLocation in this.subLocations)
+        {
+            subLocation.LocationData.RemoveEmptySections();
+        }
+    }
 }
 
 public class ImagePathData

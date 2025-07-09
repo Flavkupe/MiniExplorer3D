@@ -73,6 +73,7 @@
     <Compile Include="Assets\SceneGrid.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\Wikipedia\WikipediaHtmlUtils.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Location.cs" />
+    <Compile Include="Assets\Scripts\Utils\LoggerConfig.cs" />
     <Compile Include="Assets\Scripts\Pair.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Door.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\RoomGrid.cs" />
@@ -86,10 +87,12 @@
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
     <Compile Include="Assets\Scripts\Parts\TableOfContentsPodium.cs" />
     <Compile Include="Assets\Scripts\Utils\PlayerMenu.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\RatingProcessor.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Area.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\TiledSprite.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\SceneLoader.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\DebugLevelGenerator.cs" />
+    <Compile Include="Assets\Scripts\Utils\DebugLogger.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\FileLevelGenerator.cs" />
     <Compile Include="Assets\Scripts\Map\AreaMapDrawer.cs" />
     <Compile Include="Assets\Scripts\Utils\Utils.cs" />

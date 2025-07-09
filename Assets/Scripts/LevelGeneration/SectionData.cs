@@ -61,6 +61,17 @@ public class SectionData
         }
     }
 
+    public bool IsEmpty()
+    {
+        return this.Subsections.Count == 0 &&
+            this.LocationText.Count == 0 &&
+            this.ImagePaths.Count == 0 &&
+            this.PodiumImages.Count == 0 &&
+            this.LinkedLocationData.Count == 0 &&
+            this.TableOfContents == null &&
+            this.Lists.Count == 0;
+    }
+
     public SectionData Clone()
     {
         return new SectionData

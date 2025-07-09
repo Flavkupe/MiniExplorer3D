@@ -50,6 +50,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SectionTypes: 9
   ListItemMode: 0
+  Paintings: []
+  Reading: []
+  DisplayPodiums: []
+  TOCPodium: {fileID: 0}
+  AreaTitleSigns: []
+  Exits: []
 --- !u!1001 &550985206407408796
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -58,6 +64,36 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3527428277385772019}
     m_Modifications:
+    - target: {fileID: 79179949180927203, guid: dda5c3704da1aa246acfca2b72d11b46,
+        type: 3}
+      propertyPath: 'Exhibits.Array.data[0]'
+      value: 
+      objectReference: {fileID: 3282174837209614414, guid: 5d12db031affdad44a9c842ecbc63aae,
+        type: 3}
+    - target: {fileID: 79179949180927203, guid: dda5c3704da1aa246acfca2b72d11b46,
+        type: 3}
+      propertyPath: 'Exhibits.Array.data[1]'
+      value: 
+      objectReference: {fileID: 3282174837209614414, guid: 56c6fb55fcacf0349b667369ade18607,
+        type: 3}
+    - target: {fileID: 79179949180927203, guid: dda5c3704da1aa246acfca2b72d11b46,
+        type: 3}
+      propertyPath: 'Exhibits.Array.data[3]'
+      value: 
+      objectReference: {fileID: 3282174837209614414, guid: 4b5247ba285d51244bfe9e76b24b9d66,
+        type: 3}
+    - target: {fileID: 79179949180927203, guid: dda5c3704da1aa246acfca2b72d11b46,
+        type: 3}
+      propertyPath: 'Exhibits.Array.data[4]'
+      value: 
+      objectReference: {fileID: 3282174837209614414, guid: 5f8e0e7d25ed6724993823334df5e405,
+        type: 3}
+    - target: {fileID: 79179949180927203, guid: dda5c3704da1aa246acfca2b72d11b46,
+        type: 3}
+      propertyPath: 'Exhibits.Array.data[5]'
+      value: 
+      objectReference: {fileID: 3282174837209614414, guid: 0cbb6ff9693f230458a258f93fa7366d,
+        type: 3}
     - target: {fileID: 2207322636209696268, guid: dda5c3704da1aa246acfca2b72d11b46,
         type: 3}
       propertyPath: m_Name
@@ -251,6 +287,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3527428277385772019}
     m_Modifications:
+    - target: {fileID: 79179949180927203, guid: dda5c3704da1aa246acfca2b72d11b46,
+        type: 3}
+      propertyPath: 'Exhibits.Array.data[3]'
+      value: 
+      objectReference: {fileID: 3282174837209614414, guid: 4b5247ba285d51244bfe9e76b24b9d66,
+        type: 3}
+    - target: {fileID: 79179949180927203, guid: dda5c3704da1aa246acfca2b72d11b46,
+        type: 3}
+      propertyPath: 'Exhibits.Array.data[5]'
+      value: 
+      objectReference: {fileID: 3282174837209614414, guid: 0cbb6ff9693f230458a258f93fa7366d,
+        type: 3}
     - target: {fileID: 2207322636209696268, guid: dda5c3704da1aa246acfca2b72d11b46,
         type: 3}
       propertyPath: m_Name
@@ -325,6 +373,36 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3527428277385772019}
     m_Modifications:
+    - target: {fileID: 79179949180927203, guid: dda5c3704da1aa246acfca2b72d11b46,
+        type: 3}
+      propertyPath: 'Exhibits.Array.data[0]'
+      value: 
+      objectReference: {fileID: 3282174837209614414, guid: 5d12db031affdad44a9c842ecbc63aae,
+        type: 3}
+    - target: {fileID: 79179949180927203, guid: dda5c3704da1aa246acfca2b72d11b46,
+        type: 3}
+      propertyPath: 'Exhibits.Array.data[1]'
+      value: 
+      objectReference: {fileID: 3282174837209614414, guid: 56c6fb55fcacf0349b667369ade18607,
+        type: 3}
+    - target: {fileID: 79179949180927203, guid: dda5c3704da1aa246acfca2b72d11b46,
+        type: 3}
+      propertyPath: 'Exhibits.Array.data[3]'
+      value: 
+      objectReference: {fileID: 3282174837209614414, guid: 4b5247ba285d51244bfe9e76b24b9d66,
+        type: 3}
+    - target: {fileID: 79179949180927203, guid: dda5c3704da1aa246acfca2b72d11b46,
+        type: 3}
+      propertyPath: 'Exhibits.Array.data[4]'
+      value: 
+      objectReference: {fileID: 3282174837209614414, guid: 5f8e0e7d25ed6724993823334df5e405,
+        type: 3}
+    - target: {fileID: 79179949180927203, guid: dda5c3704da1aa246acfca2b72d11b46,
+        type: 3}
+      propertyPath: 'Exhibits.Array.data[5]'
+      value: 
+      objectReference: {fileID: 3282174837209614414, guid: 0cbb6ff9693f230458a258f93fa7366d,
+        type: 3}
     - target: {fileID: 2207322636209696268, guid: dda5c3704da1aa246acfca2b72d11b46,
         type: 3}
       propertyPath: m_Name

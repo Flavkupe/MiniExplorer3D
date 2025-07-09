@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Android;
 
 namespace Assets.Scripts.LevelGeneration
 {
@@ -168,14 +169,6 @@ namespace Assets.Scripts.LevelGeneration
             return true;
         }
 
-        public RoomData AddFirstRoom(Room room)
-        {
-            int center = this.dimensions / 2;
-            RoomData data = this.GetRoomData(room, center, center);                                   
-            this.AddRoom(data, center, center);
-            return data;
-        }
-
         public Vector3 GetWorldCoordsFromGridCoords(int x, int y, int objWidth, int objHeight)
         {
             // Center at 0, 0
@@ -225,6 +218,68 @@ namespace Assets.Scripts.LevelGeneration
             return possibleRooms;
         }
 
+        public RoomData AddFirstRoom(Room room, LevelGenRequirements reqs)
+        {
+            int center = this.dimensions / 2;
+            RoomData data = this.GetRoomData(room, center, center);
+            this.AddRoom(data, center, center);
+            
+            // Use rating system to select the best matching sections for the room
+            var rating = room.RateRequirementsMatch(reqs);
+            if (!rating.IsValid)
+            {
+                // TODO: how to actually handle this?
+                Debug.LogError("First room does not match requirements");
+            }
+
+            TransferMatchesToRoomData(rating.MatchedSections, reqs, data);
+
+            return data;
+        }
+
+        private RoomAndConnector FindBestRoom(List<RoomAndConnector> possibleRooms, LevelGenRequirements reqs, out RatingResult ratingResult)
+        {
+            RoomAndConnector bestRoom = null;
+            ratingResult = null;
+            foreach (var roomAndConnector in possibleRooms)
+            {
+                var rating = roomAndConnector.Room.RateRequirementsMatch(reqs);
+                if (!rating.IsValid)
+                {
+                    continue;
+                }
+
+                if (ratingResult == null || rating.Score > ratingResult.Score)
+                {
+                    bestRoom = roomAndConnector;
+                    ratingResult = rating;
+                }
+            }
+
+            return bestRoom;
+        }
+
+        /// <summary>
+        /// Given a list of matches from room/exhibit selection, removes them from
+        /// reqs and puts them into the room data to populate rooms later.
+        /// </summary>
+        private void TransferMatchesToRoomData(List<RatingResultMatch> matches, LevelGenRequirements reqs, RoomData roomData)
+        {
+            // Transfer section requirements to the room data
+            foreach (var match in matches)
+            {
+                if (reqs.SectionData.Contains(match.SectionData))
+                {
+                    roomData.ExhibitData.Add(new ExhibitData(match.PrefabID, match.SectionData));
+                    reqs.SectionData.Remove(match.SectionData);
+                }
+                else
+                {
+                    Debug.LogWarning($"Section data {match.SectionData.Title} not found in requirements, cannot transfer to room data.");
+                }
+            }
+        }
+
         public RoomData AddRoomFromList(List<Room> allRooms, LevelGenRequirements reqs) 
         {
             Queue<OpenConnectorCell> openConnectors = new Queue<OpenConnectorCell>();
@@ -243,15 +298,22 @@ namespace Assets.Scripts.LevelGeneration
                     continue;
                 }
 
-                // get the room with the highest score based on requirements matching
-                var roomAndConnector = possibleRooms.MaxValue(a => a.Room.RateRequirementsMatch(reqs).Score);
+                RatingResult ratingResult = null;
+                var bestRoom = this.FindBestRoom(possibleRooms, reqs, out ratingResult);
+                if (bestRoom == null || ratingResult == null || !ratingResult.IsValid)
+                {
+                    // no viable room available for connector; this is not necessarily an error
+                    continue;
+                }
 
-                var x = roomAndConnector.CoordX;
-                var y = roomAndConnector.CoordY;
-                RoomData data = this.GetRoomData(roomAndConnector.Room, x, y);
+                var x = bestRoom.CoordX;
+                var y = bestRoom.CoordY;
+                RoomData data = this.GetRoomData(bestRoom.Room, x, y);
+                TransferMatchesToRoomData(ratingResult.MatchedSections, reqs, data);
+
                 this.AddRoom(data, x, y);
                 this.openConnections.Remove(currentOpenConnectorCell);
-                RoomConnectorData usedConnector = data.Connectors.FirstOrDefault(a => a.IsSamePrefab(roomAndConnector.Connector));
+                RoomConnectorData usedConnector = data.Connectors.FirstOrDefault(a => a.IsSamePrefab(bestRoom.Connector));
                 if (usedConnector != null)
                 {
                     usedConnector.Used = true;

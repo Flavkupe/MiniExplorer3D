@@ -1,5 +1,6 @@
 using HtmlAgilityPack;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -45,7 +46,6 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
 
         location.LocationData.Sections.Clear();
 
-        // 
         var infoboxNode = contentNode.SelectSingleNode(".//table[contains(@class, 'infobox')]");
         if (infoboxNode != null)
         {
@@ -62,7 +62,7 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
             {
                 this.HandleH2Node(node, location);
             }
-            else if (node.Name == "div" && node.GetAttributeValue("class", "").Contains("mw-heading2"))
+            else if (IsNodeH2Wrapper(node))
             {
                 var h2 = node.SelectSingleNode("h2");
                 if (h2 != null)
@@ -72,7 +72,7 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
                 }
             }
 
-            else if (node.Name == "div" && node.GetAttributeValue("class", "").Contains("mw-heading3"))
+            else if (IsNodeH3Wrapper(node))
             {
                 var h3 = node.SelectSingleNode("h3");
                 if (h3 != null)
@@ -93,7 +93,7 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
             {
                 this.HandleTableNode();
             }
-            else if (node.Name == "div" && node.GetAttributeValue("class", "") == "thumbinner")
+            else if (node.Name == "div" && NodeHasClass(node, "thumbinner"))
             {
                 this.HandleThumbinnerDivNode(node);
             }
@@ -101,8 +101,8 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
             {
                 this.HandleFigureNode(node);
             }
-            else if ((node.Name == "div" && node.GetAttributeValue("class", "").Contains("gallery")) ||
-                        (node.Name == "ul" && node.GetAttributeValue("class", "").Contains("gallery")))
+            else if ((node.Name == "div" && NodeHasClass(node, "gallery")) ||
+                        (node.Name == "ul" && NodeHasClass(node, "gallery")))
             {
                 this.HandleGalleryNode(node);
             }
@@ -135,14 +135,24 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
             this.parentSection = null;
             return;
         }
-        this.currentSection = new SectionData
+
+        this.parentSection = new SectionData
         {
             Title = title,
             Anchor = anchor,
             SectionType = SectionType.Standard
         };
-        this.parentSection = this.currentSection;
-        location.LocationData.Sections.Add(this.currentSection);
+
+        // empty section directly under h2, before the first h3
+        this.currentSection = new SectionData
+        {
+            Title = string.Empty,
+            Anchor = string.Empty,
+            SectionType = SectionType.Subsection,
+        };
+
+        this.parentSection.Subsections.Add(this.currentSection);
+        location.LocationData.Sections.Add(this.parentSection);
     }
 
     private void HandleH3Node(HtmlNode node, MainLocation location)
@@ -186,24 +196,37 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
             return;
         }
         var textData = new LocationTextData(text);
-        ExtractLinks(node, textData, (!this.foundFirstH2 || this.currentSection == null) ? this.leadSection : this.currentSection, this.currentUri.Host);
-        if (!this.foundFirstH2 || this.currentSection == null)
+        ExtractLinks(node, textData, (IsInLeadSectionNode()) ? this.leadSection : this.currentSection, this.currentUri.Host);
+        if (IsInLeadSectionNode())
+        {
             this.leadSection.LocationText.Add(textData);
+        }
         else
+        {
             this.currentSection.LocationText.Add(textData);
+        }
     }
 
     private void HandleListNode(HtmlNode node)
     {
-        if (!this.foundFirstH2 || this.currentSection == null)
+        if (IsInLeadSectionNode())
+        {
             HandleListNode(node, this.leadSection, this.currentUri.Host);
+        }
         else
+        {
             HandleListNode(node, this.currentSection, this.currentUri.Host);
+        }
     }
 
     private void HandleTableNode()
     {
         // TODO
+    }
+
+    private bool IsInLeadSectionNode()
+    {
+        return !this.foundFirstH2 || this.currentSection == null;
     }
 
     private void HandleThumbinnerDivNode(HtmlNode node)
@@ -215,10 +238,14 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
             string imageCaption = this.HtmlDecode(caption.InnerText);
             string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
             var imageData = new ImagePathData(imageCaption, imageUrl);
-            if (!this.foundFirstH2 || this.currentSection == null)
+            if (IsInLeadSectionNode())
+            {
                 this.leadSection.ImagePaths.Add(imageData);
+            }
             else
+            {
                 this.currentSection.ImagePaths.Add(imageData);
+            }
         }
     }
 
@@ -231,10 +258,14 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
             string imageCaption = captionNode != null ? this.HtmlDecode(captionNode.InnerText) : string.Empty;
             string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
             var imageData = new ImagePathData(imageCaption, imageUrl);
-            if (!this.foundFirstH2 || this.currentSection == null)
+            if (IsInLeadSectionNode())
+            {
                 this.leadSection.ImagePaths.Add(imageData);
+            }
             else
+            {
                 this.currentSection.ImagePaths.Add(imageData);
+            }
         }
     }
 
@@ -251,10 +282,14 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
                 string imageCaption = captionNode != null ? this.HtmlDecode(captionNode.InnerText) : string.Empty;
                 string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
                 var imageData = new ImagePathData(imageCaption, imageUrl);
-                if (!this.foundFirstH2 || this.currentSection == null)
+                if (IsInLeadSectionNode())
+                {
                     this.leadSection.ImagePaths.Add(imageData);
+                }
                 else
+                {
                     this.currentSection.ImagePaths.Add(imageData);
+                }
             }
         }
     }
@@ -271,8 +306,7 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
         if (rows == null) return null;
 
         SectionData currentSubsection = null;
-        int subsectionCount = 0;
-
+        var listItems = new List<ListItemsData>();
         foreach (var row in rows)
         {
             var th = row.SelectSingleNode("th");
@@ -290,7 +324,6 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
                     SectionType = SectionType.Subsection
                 };
                 infoboxSection.Subsections.Add(currentSubsection);
-                subsectionCount++;
             }
             else if (isDataRow)
             {
@@ -303,7 +336,6 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
                         SectionType = SectionType.Subsection
                     };
                     infoboxSection.Subsections.Add(currentSubsection);
-                    subsectionCount++;
                 }
 
                 // If this row has a th and tds, treat th as label
@@ -318,14 +350,27 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
                     value = this.HtmlDecode(tds[0].InnerText);
                 }
 
+
                 // Add as text or list
+                LocationTextData textData = null;
                 if (!string.IsNullOrWhiteSpace(label))
                 {
-                    currentSubsection.LocationText.Add(new LocationTextData($"{label}: {value}"));
+                    textData = new LocationTextData($"{label}: {value}");
                 }
                 else if (!string.IsNullOrWhiteSpace(value))
                 {
-                    currentSubsection.LocationText.Add(new LocationTextData(value));
+                    textData = new LocationTextData(value);
+
+                }
+
+                // Add textData, if any, as a list item
+                if (textData != null)
+                {
+                    if (currentSubsection.Lists.Count == 0)
+                    {
+                        currentSubsection.Lists.Add(new ListItemsData(new List<LocationTextData>()));
+                    }
+                    currentSubsection.Lists[0].Items.Add(textData);
                 }
 
                 // Handle all images in all tds
@@ -352,5 +397,20 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
         }
 
         return infoboxSection;
+    }
+
+    private bool IsNodeH3Wrapper(HtmlNode node)
+    {
+        return node.Name == "div" && NodeHasClass(node, "mw-heading3");
+    }
+
+    private bool IsNodeH2Wrapper(HtmlNode node)
+    {
+        return node.Name == "div" && NodeHasClass(node, "mw-heading2");
+    }
+
+    private bool NodeHasClass(HtmlNode node, string className)
+    {
+        return node.GetAttributeValue("class", "").Contains(className);
     }
 }

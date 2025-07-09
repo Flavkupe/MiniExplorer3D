@@ -14,7 +14,6 @@ public class RoomData : IMatchesPrefab
     private List<RoomConnectorData> connectors = new List<RoomConnectorData>();
     private List<DoorData> doors = new List<DoorData>();
     private List<SpawnPointData> spawnPoints = new List<SpawnPointData>();
-    private LevelGenRequirements requirements = new LevelGenRequirements();
     private List<ExhibitData> exhibitData = new List<ExhibitData>();
     public RoomData() { }
     public List<DoorData> Doors { get { return doors; } }
