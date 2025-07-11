@@ -42,7 +42,7 @@ public static class ExtensionFunctions
         }
     }
 
-    public static void Shuffle<T>(this IList<T> list)
+    public static IList<T> Shuffle<T>(this IList<T> list)
     {
         int n = list.Count;
         while (n > 1)
@@ -53,6 +53,8 @@ public static class ExtensionFunctions
             list[k] = list[n];
             list[n] = value;
         }
+
+        return list;
     }
 
     public static void EnqueueRange<T>(this Queue<T> queue, IEnumerable<T> list)
@@ -172,7 +174,9 @@ public static class ExtensionFunctions
             var child = parent.GetChild(i);
             var component = child.GetComponent<T>();
             if (component != null)
+            {
                 yield return component;
+            }
         }
     }
 

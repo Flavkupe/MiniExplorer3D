@@ -70,6 +70,12 @@ public class ImagePathData
 public class LocationTextData
 {
     public string Text { get; set; }
+
+    /// <summary>
+    /// Optional title for the LocationTextData, shown in some displays
+    /// </summary>
+    public string Title { get; set; }
+
     private List<LinkedLocationData> linkedLocationData = new List<LinkedLocationData>();
     public List<LinkedLocationData> LinkedLocationData { get { return this.linkedLocationData; } }
     public LocationTextData(string text)

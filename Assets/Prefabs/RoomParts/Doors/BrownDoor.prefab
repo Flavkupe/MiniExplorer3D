@@ -114,7 +114,7 @@ GameObject:
   - component: {fileID: 2363882}
   - component: {fileID: 11493476}
   - component: {fileID: 6501774}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BrownDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -226,6 +226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e45bf271d4b944b44b467ad750f45076, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  label: {fileID: 0}
   RemoveOnUnused: 1
   Data:
     DisplayName: 

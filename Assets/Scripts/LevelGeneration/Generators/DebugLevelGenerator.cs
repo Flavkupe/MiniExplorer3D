@@ -90,8 +90,6 @@ public class DebugLevelGenerator : WebLevelGenerator
         if (section == null) return;
         if (section.ImagePaths != null)
             imagePaths.AddRange(section.ImagePaths);
-        if (section.PodiumImages != null)
-            imagePaths.AddRange(section.PodiumImages);
         if (section.Subsections != null)
         {
             foreach (var sub in section.Subsections)

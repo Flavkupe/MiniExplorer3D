@@ -1,14 +1,18 @@
-
-
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class ExhibitPlaceholder : ExhibitBase
 {
-    public Exhibit[] Exhibits = new Exhibit[] { };
-
-    private Exhibit pickedExhibit = null;
+    private List<ExhibitBase> Exhibits
+    {
+        get
+        {
+            return new List<ExhibitBase>(this.transform.GetComponentsInDirectChildren<ExhibitBase>());
+        }
+    }
+    
+    private ExhibitBase pickedExhibit = null;
 
     public GameObject Cube;
 
@@ -55,23 +59,12 @@ public class ExhibitPlaceholder : ExhibitBase
             return;
         }
 
-        pickedExhibit = GetInstance(pickedExhibit);
-
+        pickedExhibit.gameObject.SetActive(true);
         pickedExhibit.PopulateExhibit(data);
     }
 
     public override RatingResult RateSectionMatch(SectionData section)
     {
         return Exhibits.Max(a => a.RateSectionMatch(section));
-    }
-
-    public Exhibit GetInstance(Exhibit exhibit)
-    {
-        // TODO: figure out rotation
-        Exhibit newInstance = Instantiate(exhibit);
-        newInstance.transform.SetParent(this.transform, true);
-        newInstance.transform.localPosition = Vector3.zero;
-        newInstance.transform.localRotation = Quaternion.identity;
-        return newInstance;
     }
 }

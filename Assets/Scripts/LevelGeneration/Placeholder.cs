@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 public class Placeholder : MonoBehaviour 
 {
@@ -7,58 +8,52 @@ public class Placeholder : MonoBehaviour
         Door,
         Reading,
         ImageFrame,
-        DisplayPodium,
         TableOfContentsPodium,
-        TextPodium,
     }
 
     public RoomPartType PartType;
 
-    public GameObject[] PossibleItems;
+    [Tooltip("The slab object for the placeholder, which will be hidden when the placeholder is applied.")]
+    public GameObject PlaceholderObject;
 
-    public bool CanHandleText => 
-        this.PartType == RoomPartType.TextPodium ||
-        this.PartType == RoomPartType.Reading;
+    public bool CanHandleText => this.PartType == RoomPartType.Reading;
+    public bool CanHandleImage => this.PartType == RoomPartType.ImageFrame;
 
-    // TODO: combine this with ImageFrame
-    public bool CanHandlePodiumImage =>
-        this.PartType == RoomPartType.DisplayPodium;
-
-    // Use this for initialization
-    void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
-    public T GetInstance<T>() where T : MonoBehaviour
+    private T GetPlaceholderOfType<T, R>(RoomPartType partType) where T : MonoBehaviour where R : MonoBehaviour
     {
-        if (this.PossibleItems == null || this.PossibleItems.Length == 0)            
+        var mainComponents = this.transform.GetComponentsInDirectChildren<R>().ToList();
+        if (mainComponents == null || mainComponents.Count == 0)
         {
-            Debug.LogError("No PossibleItems provided for Placeholder.");
+            Debug.LogWarning($"No items of {partType} found for Placeholder {this.name}");
             return null;
         }
 
-        GameObject newInstance = Instantiate(this.PossibleItems.GetRandom());
-        T component = newInstance.GetComponent<T>();
-        if (component == null)
+        var random = mainComponents.GetRandom();
+
+        var instance = random.GetComponentInChildren<T>();
+        if (instance == null)
         {
-            component = newInstance.GetComponentInChildren<T>(true);
-            if (component == null)
-            {
-                Destroy(newInstance);
-                Debug.LogError("Trying to instantiate type but possible object does not have that type");
-                return null;
-            }
+            Debug.LogWarning($"Could not cast part in Placeholder {this.name} to {(typeof(T))}");
+            return null;
         }
 
-        newInstance.transform.position = this.transform.position;
-        newInstance.transform.rotation = this.transform.rotation;
-        newInstance.transform.parent = this.transform.parent;
-        Destroy(this.gameObject);
-        return component;
+        return instance;
+    }
+
+    public T ReplaceInstance<T>() where T : MonoBehaviour
+    {
+        this.PlaceholderObject.gameObject.SetActive(false);
+        switch (this.PartType)
+        {
+            case RoomPartType.Reading:
+                return GetPlaceholderOfType<T, ReadingContent>(RoomPartType.Reading);
+            case RoomPartType.ImageFrame:
+                return GetPlaceholderOfType<T, RoomImageFrame>(RoomPartType.ImageFrame);
+            case RoomPartType.Door:
+                return GetPlaceholderOfType<T, Door>(RoomPartType.Door);
+            default:
+                Debug.LogWarning($"Unsupported placeholder type for Placeholder {this.name}");
+                return null;
+        }
     }
 }

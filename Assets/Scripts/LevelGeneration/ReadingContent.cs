@@ -7,11 +7,6 @@ using System.Collections.Generic;
 public class ReadingContent : MonoBehaviour, ICanLookAtAndInteract
 {
     /// <summary>
-    /// Displayed text, floating.
-    /// </summary>
-    public ArticleText TextFloat;
-
-    /// <summary>
     /// Displayed text, on the prefab.
     /// </summary>
     public ArticleText TextDisplay;
@@ -20,29 +15,28 @@ public class ReadingContent : MonoBehaviour, ICanLookAtAndInteract
     //  anything for this component.
     public GameObject HoldingEntity;
 
+    /// <summary>
+    /// If set, text and title can be displayed here.
+    /// </summary>
+    public DisplayPodium DisplayPodium;
+
     public LinkBoard LinkBoard;
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () 
-    {
-        if (this.TextFloat != null)
-        {
-            this.TextFloat.gameObject.SetActive(false);
-        }
-	}    
-
+  
     public void AddText(LocationTextData textData)
     {
-        List<string> keyWords = textData.LinkedLocationData.Select(a => a.DisplayName).ToList();
-        if (this.TextFloat != null)
+        AddText(textData, string.Empty);
+    }
+
+    public void AddText(LocationTextData textData, string title)
+    {
+        var shownTitle = title == string.Empty ? textData.Title : title;
+        
+        if (this.DisplayPodium != null)
         {
-            this.TextFloat.SetArticleText(textData.Text, keyWords);
+            this.DisplayPodium.SetText(textData, shownTitle);
         }
+
+        List<string> keyWords = textData.LinkedLocationData.Select(a => a.DisplayName).ToList();
 
         if (this.TextDisplay != null)
         {
@@ -55,71 +49,14 @@ public class ReadingContent : MonoBehaviour, ICanLookAtAndInteract
         }
     }
 
-    public void HideWholeEntity()
-    {
-        if (this.HoldingEntity != null)
-        {
-            this.HoldingEntity.gameObject.SetActive(false);
-        }
-    }
-
-    public void SetEmptyText()
-    {
-        if (this.TextFloat != null)
-        {
-            this.TextFloat.SetEmptyText();
-        }
-    }
-
-    //void OnTriggerEnter(Collider other)
-    //{
-    //    if (other.transform.gameObject.IsPlayer())
-    //    {
-    //        if (this.TextFloat != null)
-    //        {                
-    //            this.TextFloat.gameObject.SetActive(true);
-    //        }
-    //    }
-    //}
-
-    //void OnTriggerStay(Collider other)
-    //{
-    //    if (other.transform.gameObject.IsPlayer())
-    //    {
-    //        if (this.TextFloat != null && Input.GetKeyUp(KeyCode.Space))
-    //        {
-    //            this.TextFloat.MoveToNextSegment();
-    //        }
-    //    }
-    //}
-
-    //void OnTriggerExit(Collider other)
-    //{
-    //    if (other.transform.gameObject.IsPlayer())
-    //    {
-    //        if (this.TextFloat != null)
-    //        {
-    //            this.TextFloat.gameObject.SetActive(false);
-    //        }
-    //    }
-    //}
-
     public void LookAt(GameObject source)
     {
-        if (this.TextFloat != null)
-        {                       
-            this.TextFloat.gameObject.SetActive(true);
-        }        
+        // TODO  
     }
 
     public bool InteractWith(GameObject source, KeyCode key)
     {
-        if (this.TextFloat != null)
-        {
-            this.TextFloat.MoveToNextSegment();
-            return true;
-        }
-
+        // TODO
         return false;
     }
 }

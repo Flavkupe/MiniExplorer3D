@@ -6,9 +6,6 @@ public class DisplayPodium : MonoBehaviour
 {
     public RoomImageFrame ImageFrame;
 
-    [Tooltip("DEPRECATED: Use TextMeshPro")]
-    public InfoBoxDisplay InfoBoxDisplay;
-
     public TMPro.TextMeshPro TextContent;
 
     public TMPro.TextMeshPro Title;
@@ -28,35 +25,19 @@ public class DisplayPodium : MonoBehaviour
         if (TextContent != null)
         {
             TextContent.text = text.Text;
+            this.IsUsed = true;
         }
 
         if (Title != null)
         {
             Title.text = title;
-        }
-    }
-
-    public void SetText(InfoBoxData data)
-    {
-        if (this.InfoBoxDisplay)
-        {
-            this.InfoBoxDisplay.SetInfoBoxData(data);
-            this.IsUsed = true;            
+            this.IsUsed = true;
         }
     }
 
     public bool CanSetImage { get { return this.ImageFrame != null; } }
-    public bool CanSetText { get { return this.InfoBoxDisplay != null || this.TextContent != null; } }
+    public bool CanSetText { get { return this.TextContent != null; } }
 
-	// Use this for initialization
-	void Start () {
-        this.InfoBoxDisplay = this.GetComponentInChildren<InfoBoxDisplay>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
     public bool IsUsed { get; set; }
 }

@@ -850,6 +850,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraView: {fileID: 413819356}
   crosshairTexture: {fileID: 2800000, guid: 80fc43bf62fdfcb4eb29b5c3023a1fae, type: 3}
+  inspectTexture: {fileID: 2800000, guid: bf777b800a1b432448972721ae2e12d7, type: 3}
 --- !u!1 &430335198
 GameObject:
   m_ObjectHideFlags: 0
@@ -1608,6 +1609,14 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 3}
+      propertyPath: axes
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 3}
       propertyPath: movement.gravity
       value: 0
@@ -1620,16 +1629,25 @@ PrefabInstance:
       propertyPath: movement.maxAirAcceleration
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11400006, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 3}
+      propertyPath: axes
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400006, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5969504264297521438, guid: 9d4133d5d30b644bd87802a347eaccbe,
+        type: 3}
+      propertyPath: moveSpeed
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11400002, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 3}
     - {fileID: 11400004, guid: 9d4133d5d30b644bd87802a347eaccbe, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 100002, guid: 9d4133d5d30b644bd87802a347eaccbe,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1033254599}
     - targetCorrespondingSourceObject: {fileID: 100004, guid: 9d4133d5d30b644bd87802a347eaccbe,
         type: 3}
       insertIndex: -1
@@ -1641,19 +1659,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1033254597}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1033254599
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1033254598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 830e678f65ef551449bc3eee26adb6cc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 5
 --- !u!1 &1055563935
 GameObject:
   m_ObjectHideFlags: 0
@@ -2845,7 +2850,7 @@ MonoBehaviour:
   Minimap: {fileID: 0}
   Player: {fileID: 1033254598}
   GameDimensionMode: 0
-  InitialLocation: https://en.wikipedia.org/wiki/Penguin
+  InitialLocation: https://en.wikipedia.org/wiki/Main_Page
   Mode: 1
   RoomPrefabs:
   - {fileID: 11477982, guid: 6fc892b96105d1c40b32bacf4c85bab4, type: 3}

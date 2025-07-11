@@ -30,7 +30,7 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
     protected virtual IEnumerator ProcessImages(Location location)
     {
         // Traverse SectionData for all images
-        List<ImagePathData> imagePaths = new List<ImagePathData>();
+        List<ImagePathData> imagePaths = new ();
         
         foreach (var section in location.LocationData.Sections)
         {
@@ -75,15 +75,22 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
 
     private void CollectImagesFromSection(SectionData section, List<ImagePathData> imagePaths)
     {
-        if (section == null) return;
+        if (section == null)
+        {
+            return;
+        }
+
         if (section.ImagePaths != null)
+        {
             imagePaths.AddRange(section.ImagePaths);
-        if (section.PodiumImages != null)
-            imagePaths.AddRange(section.PodiumImages);
+        }
+
         if (section.Subsections != null)
         {
             foreach (var sub in section.Subsections)
+            {
                 CollectImagesFromSection(sub, imagePaths);
+            }
         }
     }
 

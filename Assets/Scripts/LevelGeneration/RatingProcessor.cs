@@ -24,7 +24,7 @@ public static class RatingProcessor
             return RatingResult.NoMatch;
         }
 
-        if (section == null || !exhibit.CanHandleSection(section))
+        if (!exhibit.CanHandleSection(section))
         {
             DebugLogger.Log($"----Exhibit [{section.Title}] [{exhibit.PrefabID}]: No Match", LoggerFilter.LogRatings);
             return RatingResult.NoMatch;
@@ -44,9 +44,8 @@ public static class RatingProcessor
         int readingCount = exhibit.GetReadingCount();
         score += ScoreCountMatch(readingCount, textCount, 1f);
 
-        int imagePodiumCount = exhibit.DisplayPodiums.Count(a => a.CanHandlePodiumImage);
-        score += ScoreCountMatch(exhibit.Paintings.Length, section.ImagePaths.Count, 2f);
-        score += ScoreCountMatch(imagePodiumCount, section.PodiumImages.Count, 2f);
+        int imageCount = exhibit.GetPaintingCount();
+        score += ScoreCountMatch(imageCount, section.ImagePaths.Count, 2f);
         score += ScoreCountMatch(exhibit.Exits.Count, section.Exits.Count, 2f);
 
         // Subsections and subexhibits
@@ -160,7 +159,10 @@ public static class RatingProcessor
         float bestScore = float.MinValue;
         int matchCount = 0;
         ExhibitBase bestMatch = null;
-        foreach (var exhibit in exhibits)
+
+        // shuffling the list will allow ties to be randomized for better variety
+        var exhibitList = new List<ExhibitBase>(exhibits).Shuffle();
+        foreach (var exhibit in exhibitList)
         {
             var result = exhibit.RateSectionMatch(section);
             if (!result.IsValid)

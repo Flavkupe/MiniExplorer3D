@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-public class Door : MonoBehaviour, IHasName, IHasLocation
+public class Door : MonoBehaviour, IHasName, IHasLocation, ICanLookAtAndInteract
 {
 	private NameTag nametag;
 
@@ -15,7 +15,9 @@ public class Door : MonoBehaviour, IHasName, IHasLocation
 
     public DoorData Data = new DoorData();
 
-	void Start() 
+    private bool playerTouching = false;
+
+    void Start() 
 	{
 		this.nametag = this.GetComponentInChildren<NameTag>();
         this.label = this.GetComponentInChildren<TMPro.TextMeshPro>();
@@ -36,7 +38,10 @@ public class Door : MonoBehaviour, IHasName, IHasLocation
         {
             nametag.gameObject.SetActive(false);
         }
-	}
+
+        playerTouching = false;
+
+    }
 
     void OnTriggerStay2D(Collider2D other)
     {
@@ -56,15 +61,21 @@ public class Door : MonoBehaviour, IHasName, IHasLocation
 
     private void OnPlayerTouching()
     {
+        playerTouching = true;
         if (!nametag.gameObject.activeSelf)
         {
             nametag.gameObject.SetActive(true);
             nametag.RefreshName();
         }
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            StageManager.AttemptTransition(this.GetLocation());
+            Interact();
         }
+    }
+
+    private void Interact()
+    {
+        StageManager.AttemptTransition(this.GetLocation());
     }
 
 	public void SetName(string name) 
@@ -99,6 +110,21 @@ public class Door : MonoBehaviour, IHasName, IHasLocation
     public void TeleportObjectToFront(GameObject gameObject)
     {
         gameObject.transform.position = this.transform.position + (transform.localRotation * this.boxCollider.center);
+    }
+
+    public bool InteractWith(GameObject source, KeyCode key)
+    {
+        if (playerTouching)
+        {
+            Interact();
+            return true;
+        }
+
+        return false;
+    }
+
+    public void LookAt(GameObject source)
+    {
     }
 }
 

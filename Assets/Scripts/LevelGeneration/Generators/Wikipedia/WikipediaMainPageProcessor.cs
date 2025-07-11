@@ -90,7 +90,7 @@ public class WikipediaMainPageProcessor : WikipediaBaseProcessor
                 }
                 string alt = img.GetAttributeValue("alt", "");
                 string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(img, this.currentUri.Host));
-                section.PodiumImages.Add(new ImagePathData(alt, imageUrl));   
+                section.ImagePaths.Add(new ImagePathData(alt, imageUrl));   
             }
         }
 

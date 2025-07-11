@@ -47,7 +47,6 @@ public class SectionData
     public List<SectionData> Subsections { get; private set; } = new List<SectionData>();
     public List<LocationTextData> LocationText { get; private set; } = new List<LocationTextData>();
     public List<ImagePathData> ImagePaths { get; private set; } = new List<ImagePathData>();
-    public List<ImagePathData> PodiumImages { get; private set; } = new List<ImagePathData>();
     public List<LinkedLocationData> LinkedLocationData { get; private set; } = new List<LinkedLocationData>();
     public TableOfContents TableOfContents { get; set; }
     public string RawData { get; set; }
@@ -66,7 +65,6 @@ public class SectionData
         return this.Subsections.Count == 0 &&
             this.LocationText.Count == 0 &&
             this.ImagePaths.Count == 0 &&
-            this.PodiumImages.Count == 0 &&
             this.LinkedLocationData.Count == 0 &&
             this.TableOfContents == null &&
             this.Lists.Count == 0;
@@ -83,7 +81,6 @@ public class SectionData
             TableOfContents = TableOfContents,
             LocationText = LocationText.Select(a => a.Clone()).ToList(),
             ImagePaths = ImagePaths.Select(a => a.Clone()).ToList(),
-            PodiumImages = PodiumImages.Select(a => a.Clone()).ToList(),
             LinkedLocationData = LinkedLocationData.Select(a => a.Clone()).ToList(),
             Subsections = Subsections.Select(a => a.Clone()).ToList(),
         };

@@ -396,6 +396,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: 8x8Wall
       objectReference: {fileID: 0}
+    - target: {fileID: 1638578597752085616, guid: 0f48596b0e655eb45ab0bdbd16df6def,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 6b4ba5ff2e8c63e4e817c9aa52fa7bca, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
