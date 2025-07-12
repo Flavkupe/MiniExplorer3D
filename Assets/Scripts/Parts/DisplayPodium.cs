@@ -2,13 +2,15 @@
 using System.Collections;
 using System.Linq;
 
-public class DisplayPodium : MonoBehaviour 
+public class DisplayPodium : MonoBehaviour, ICanSupportTitle
 {
     public RoomImageFrame ImageFrame;
 
     public TMPro.TextMeshPro TextContent;
 
     public TMPro.TextMeshPro Title;
+
+    public bool SupportsTitle => this.Title != null;
 
     public void SetImage(LevelImage image)
     {

@@ -208,6 +208,59 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 3767635738333808316}
   m_maskType: 0
+--- !u!1 &5471624359887779316
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7536212099658660680}
+  - component: {fileID: 3907196493674611723}
+  m_Layer: 8
+  m_Name: TextCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7536212099658660680
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5471624359887779316}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.3386559, y: 0, z: 0, w: -0.94091034}
+  m_LocalPosition: {x: 0, y: 1.569, z: -0.027}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 506059044961515337}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3907196493674611723
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5471624359887779316}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 0.14, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7000227788973187651
 GameObject:
   m_ObjectHideFlags: 0
@@ -395,7 +448,7 @@ GameObject:
   - component: {fileID: 506059044961515337}
   - component: {fileID: 3195485166983859995}
   - component: {fileID: 6791251236560528381}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TextPodium2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -418,6 +471,7 @@ Transform:
   - {fileID: 5830922180921440638}
   - {fileID: 8334235791618984780}
   - {fileID: 7511867636704687172}
+  - {fileID: 7536212099658660680}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3195485166983859995

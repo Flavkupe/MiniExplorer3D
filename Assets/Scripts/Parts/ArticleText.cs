@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-public class ArticleText : MonoBehaviour 
+public class ArticleText : MonoBehaviour, ICanSupportTitle
 {
     /// <summary>
     /// Whether to split the text by lines. Should
@@ -18,15 +17,27 @@ public class ArticleText : MonoBehaviour
 
     public TMPro.TextMeshPro textMeshPro;
 
+    public TMPro.TextMeshPro titleTextMesh;
+
     int currentSegment = 0;
     public List<string> textSegments = new List<string>();
 
     public string FullText;
+
+    public bool SupportsTitle => titleTextMesh != null;
 	
 	// Update is called once per frame
 	void Update () 
     {	
 	}
+
+    public void SetTitle(string title)
+    {
+        if (this.titleTextMesh != null)
+        {
+            this.titleTextMesh.SetText(title);
+        }
+    }
 
     public void SetArticleText(string allText, List<string> keyWords = null)
     {        

@@ -1,20 +1,20 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerMenu : MonoBehaviour
+public class PlayerMenu : BaseWindow
 {
     public TMPro.TMP_InputField navigationInputField;
 
     public Button navigationSubmitButton;
 
-    public GameObject menuWindowRoot;
-
     public SceneLoader sceneLoader;
 
-    private bool isOpen = false;
+    public static PlayerMenu Instance { get; private set; }
 
     void Awake()
     {
+        Instance = this;
+
         Toggle(false);
         if (navigationSubmitButton != null)
         {
@@ -26,27 +26,7 @@ public class PlayerMenu : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            Toggle(!isOpen);
-        }
-    }
-
-    private void Toggle(bool enabled)
-    {
-        isOpen = enabled;
-        if (menuWindowRoot != null)
-        {
-            menuWindowRoot.SetActive(isOpen);
-        }
-        // Show cursor when menu is open, hide when closed
-        if (isOpen)
-        {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
-        else
-        {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
+            Toggle();
         }
     }
 

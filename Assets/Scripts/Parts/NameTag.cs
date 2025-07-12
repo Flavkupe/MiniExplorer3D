@@ -26,6 +26,6 @@ public class NameTag : MonoBehaviour
 
     public void RefreshName()
     {
-        this.textMesh.text = this.owner.GetName();
+        this.textMesh.text = this.owner.Name;
     }
 }

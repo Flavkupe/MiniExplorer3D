@@ -83,6 +83,7 @@ public class SectionData
             ImagePaths = ImagePaths.Select(a => a.Clone()).ToList(),
             LinkedLocationData = LinkedLocationData.Select(a => a.Clone()).ToList(),
             Subsections = Subsections.Select(a => a.Clone()).ToList(),
+            Lists = Lists.Select(a => a.Clone()).ToList(),
         };
     }
 }

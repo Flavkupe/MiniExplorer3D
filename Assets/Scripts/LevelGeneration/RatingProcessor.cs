@@ -36,11 +36,15 @@ public static class RatingProcessor
         bool hasTitle = !string.IsNullOrEmpty(section.Title);
         if (hasTitle)
         {
-            score += exhibit.SupportsTitle() ? 1f : -1f;
+            score += exhibit.SupportsTitle ? 1f : -1f;
         }
 
         // Reading placeholders vs LocationText
         int textCount = section.LocationText?.Count ?? 0;
+
+        // TODO: handle reading which uses multiple list items
+        textCount += section.Lists.Count;
+
         int readingCount = exhibit.GetReadingCount();
         score += ScoreCountMatch(readingCount, textCount, 1f);
 
@@ -71,18 +75,26 @@ public static class RatingProcessor
     /// </summary>
     private static float ScoreCountMatch(int exhibitCount, int requiredCount, float weight)
     {
-        if (requiredCount == 0)
+        // score not applicable
+        if (exhibitCount == 0 && requiredCount == 0)
         {
             return 0f;
         }
 
-        if (requiredCount > 0 && exhibitCount == 0)
+        int diff = Math.Abs(exhibitCount - requiredCount);
+
+        // exhibit meant for stuff that is not required
+        if (exhibitCount > 0 && requiredCount == 0)
         {
-            // If required count is > 0 but we have none, this is a bad match
-            return -weight;
+            return -weight * diff;
         }
 
-        int diff = Math.Abs(exhibitCount - requiredCount);
+        // If required count is > 0 but we have none, this is a bad match
+        if (exhibitCount == 0 && requiredCount > 0)
+        {
+            return -weight * diff;
+        }
+
         if (diff == 0)
         {
             return weight; // perfect match

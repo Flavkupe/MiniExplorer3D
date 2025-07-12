@@ -72,7 +72,7 @@ public class SceneLoader : MonoBehaviour
 
     void LevelGenerator_OnAreaGenReady(object sender, AreaGenerationReadyEventArgs e)
     {
-        this.delayedAreaLoadArgs = e;        
+        this.delayedAreaLoadArgs = e;
     }
 
     private Room GetRoomByPrefabID(string id, Area area)
@@ -217,5 +217,37 @@ public class SceneLoader : MonoBehaviour
                 this.delayedAreaLoadArgs = null;
             }
         }        
+    }
+
+    [ContextMenu("Clear cache")]
+    public void ClearCache()
+    {
+        string cachePath = Application.temporaryCachePath;
+        Debug.Log($"Clearing cache at: {cachePath}");
+        try
+        {
+            if (System.IO.Directory.Exists(cachePath))
+            {
+                // Delete all files
+                foreach (var file in System.IO.Directory.GetFiles(cachePath))
+                {
+                    System.IO.File.Delete(file);
+                }
+                // Delete all subdirectories
+                foreach (var dir in System.IO.Directory.GetDirectories(cachePath))
+                {
+                    System.IO.Directory.Delete(dir, true);
+                }
+                Debug.Log("Cache cleared.");
+            }
+            else
+            {
+                Debug.LogWarning($"Cache path does not exist: {cachePath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error clearing cache: {ex.Message}");
+        }
     }
 }

@@ -41,7 +41,7 @@ public class Area : MonoBehaviour, IHasName
 
     }
 
-    public string GetName() { return this.DisplayName; }
+    public string Name => this.DisplayName;
     
 }
 

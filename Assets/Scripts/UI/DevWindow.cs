@@ -1,13 +1,28 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
-public class DevWindow : MonoBehaviour
+public class DevWindow : BaseWindow
 {
     public TMPro.TMP_Text errorLogText;
+    public TMPro.TMP_Text raycastInfoText;
 
-    public GameObject logWindowRoot;
+    private string rayCastText = string.Empty;
 
     private bool isOpen = false;
     private System.Text.StringBuilder logBuilder = new System.Text.StringBuilder();
+
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+
+        Toggle(false);
+    }
+
+    private static DevWindow instance = null;
+    public static DevWindow Instance => instance;
 
     void OnEnable()
     {
@@ -19,26 +34,11 @@ public class DevWindow : MonoBehaviour
         Application.logMessageReceived -= HandleLog;
     }
 
-    void Awake()
-    {
-        Toggle(false);
-
-    }
-
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.BackQuote)) // Tilde key (~)
         {
             Toggle(!isOpen);
-        }
-    }
-
-    private void Toggle(bool enabled)
-    {
-        isOpen = enabled;
-        if (logWindowRoot != null)
-        {
-            logWindowRoot.SetActive(isOpen);
         }
     }
 
@@ -63,6 +63,20 @@ public class DevWindow : MonoBehaviour
         if (errorLogText != null)
         {
             errorLogText.text = log;
+        }
+    }
+
+    // Call this to update the raycast info text
+    public void SetRaycastInfo(string info)
+    {
+        rayCastText = info;
+    }
+
+    private void FixedUpdate()
+    {
+        if (raycastInfoText != null)
+        {
+            raycastInfoText.text = rayCastText;
         }
     }
 }

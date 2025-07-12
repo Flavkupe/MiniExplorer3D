@@ -1,6 +1,6 @@
 ﻿
 using UnityEngine;
-public class RoomImageFrame : MonoBehaviour, ICanLookAt
+public class RoomImageFrame : MonoBehaviour, ICanLookAtAndInteract
 {
     public enum ImageFrameType
     {
@@ -18,6 +18,10 @@ public class RoomImageFrame : MonoBehaviour, ICanLookAt
     public float BaseHeightMultiplier = 1.0f;
     public float BasePPUMultiplier = 2.0f;
 
+    private LevelImage levelImage;
+
+    public string Name => this.name;
+
     void Start()
     {        
     }
@@ -32,6 +36,8 @@ public class RoomImageFrame : MonoBehaviour, ICanLookAt
 
     public void SetLevelImage(LevelImage newLevelImage)
     {
+        this.levelImage = newLevelImage;
+
         if (newLevelImage == null || newLevelImage.Texture2D == null)
         {
             Debug.LogError("RoomImageFrame: SetLevelImage called with null or invalid LevelImage.");
@@ -72,6 +78,18 @@ public class RoomImageFrame : MonoBehaviour, ICanLookAt
         {
             this.textObject.ToggleText(true);
         }
+    }
+
+    public bool InteractWith(GameObject source, KeyCode key)
+    {
+        if (levelImage == null || levelImage.Texture2D == null)
+        {
+            Debug.LogError("RoomImageFrame: InteractWith called with null LevelImage.");
+            return false;
+        }
+
+        InteractionWindow.Instance.SetImage(levelImage, true);
+        return true;
     }
 }
 

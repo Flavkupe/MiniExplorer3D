@@ -14,7 +14,7 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
     private Uri currentUri;
 
     private static readonly string[] SkippedSectionTitles = new[] {
-        "references", "external links", "bibliography", "further reading", "notes"
+        "references", "external links", "bibliography", "further reading", "notes", "see also"
     };
 
     private bool IsSkippedSectionTitle(string title)

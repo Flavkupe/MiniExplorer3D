@@ -18,10 +18,12 @@ public class ClickableText : MonoBehaviour , ICanLookAtAndInteract, IHasName
 
     public bool HighlightsOnFocus = true;
 
+    public string Name => this.fullText ?? this.normalText;
+
     public NameTag expandedName;
 
-	// Use this for initialization
-	void Awake () {
+    // Use this for initialization
+    void Awake () {
         this.textMesh = GetComponentInChildren<TextMesh>();
 	}
 	
@@ -58,6 +60,8 @@ public class ClickableText : MonoBehaviour , ICanLookAtAndInteract, IHasName
             return true;
         }
 
+
+
         return false;
     }
 
@@ -83,10 +87,5 @@ public class ClickableText : MonoBehaviour , ICanLookAtAndInteract, IHasName
     public void SetFullText(string fullText)
     {
         this.fullText = fullText;
-    }
-
-    public string GetName()
-    {
- 	    return this.fullText ?? this.normalText;
     }
 }

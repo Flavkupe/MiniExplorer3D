@@ -1,7 +1,7 @@
 
 public interface IHasName
 {
-	string GetName();    
+    string Name { get; }
 }
 
 

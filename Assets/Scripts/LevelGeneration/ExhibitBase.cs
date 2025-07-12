@@ -1,5 +1,6 @@
 
 
+using System.Linq;
 using UnityEngine;
 
 public abstract class ExhibitBase : MonoBehaviour, IMatchesPrefab
@@ -36,5 +37,22 @@ public abstract class ExhibitBase : MonoBehaviour, IMatchesPrefab
 
     public virtual void PopulateParts()
     {
+    }
+
+    public virtual void ReplaceWithUnused()
+    {
+        this.ClearAssignment();
+        var decorPlaceholders = this.GetComponentsInDirectChildren<Placeholder>().Where(a => a.PartType == Placeholder.RoomPartType.Decor).ToList();
+        var placeholder = decorPlaceholders.GetRandom();
+        var decor = placeholder?.ReplaceInstance<Decor>();
+        if (decor == null)
+        {
+            this.gameObject.SetActive(false);
+            return;
+        }
+
+        placeholder.gameObject.SetActive(true);
+        decor.gameObject.SetActive(true);
+        decor.Populate();
     }
 }

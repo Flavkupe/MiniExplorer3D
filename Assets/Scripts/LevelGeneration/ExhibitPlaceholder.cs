@@ -67,4 +67,14 @@ public class ExhibitPlaceholder : ExhibitBase
     {
         return Exhibits.Max(a => a.RateSectionMatch(section));
     }
+
+    public override void ReplaceWithUnused()
+    {
+        base.ReplaceWithUnused();
+
+        if (this.Cube != null)
+        {
+            this.Cube.SetActive(false);
+        }
+    }
 }

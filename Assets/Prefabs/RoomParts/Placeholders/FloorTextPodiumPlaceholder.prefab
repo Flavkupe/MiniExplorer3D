@@ -47,8 +47,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PartType: 1
-  PossibleItems:
-  - {fileID: 8996943952819659325, guid: 9c14d7ca62e4f0447a0acc4e73c50bb6, type: 3}
   PlaceholderObject: {fileID: 7802037580273629897}
 --- !u!1 &7802037580273629897
 GameObject:

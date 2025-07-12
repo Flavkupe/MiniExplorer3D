@@ -37,13 +37,16 @@ public class LinkHolder : MonoBehaviour, ICanLookAtAndInteract, IHasName
         return true;
     }
 
-    public string GetName()
+    public string Name
     {
-        if (this.link == null)
+        get
         {
-            return string.Empty;
-        }
+            if (this.link == null)
+            {
+                return string.Empty;
+            }
 
-        return this.link.DisplayName;
-    }    
+            return this.link.DisplayName;
+        }
+    }
 }

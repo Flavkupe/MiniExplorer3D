@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
 
-public class Placeholder : MonoBehaviour 
+public class Placeholder : MonoBehaviour , ICanSupportTitle
 {
     public enum RoomPartType
     {
@@ -9,6 +9,7 @@ public class Placeholder : MonoBehaviour
         Reading,
         ImageFrame,
         TableOfContentsPodium,
+        Decor,
     }
 
     public RoomPartType PartType;
@@ -18,6 +19,8 @@ public class Placeholder : MonoBehaviour
 
     public bool CanHandleText => this.PartType == RoomPartType.Reading;
     public bool CanHandleImage => this.PartType == RoomPartType.ImageFrame;
+
+    public bool SupportsTitle => this.transform.GetComponentsInDirectChildren<ICanSupportTitle>().Any(c => c.SupportsTitle);
 
     private T GetPlaceholderOfType<T, R>(RoomPartType partType) where T : MonoBehaviour where R : MonoBehaviour
     {
@@ -51,6 +54,8 @@ public class Placeholder : MonoBehaviour
                 return GetPlaceholderOfType<T, RoomImageFrame>(RoomPartType.ImageFrame);
             case RoomPartType.Door:
                 return GetPlaceholderOfType<T, Door>(RoomPartType.Door);
+            case RoomPartType.Decor:
+                return GetPlaceholderOfType<T, Decor>(RoomPartType.Decor);
             default:
                 Debug.LogWarning($"Unsupported placeholder type for Placeholder {this.name}");
                 return null;

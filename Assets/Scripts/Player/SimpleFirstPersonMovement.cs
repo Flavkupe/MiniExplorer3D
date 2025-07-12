@@ -13,6 +13,11 @@ public class SimpleFirstPersonMovement : MonoBehaviour
 
     void Update()
     {
+        if (WindowManager.IsAnyWindowOpen())
+        {
+            return; // Do not allow mouse look if any window is open
+        }
+
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 

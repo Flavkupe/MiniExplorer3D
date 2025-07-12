@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
@@ -12,6 +13,11 @@ public static class ExtensionFunctions
 
     public static T GetRandom<T>(this IEnumerable<T> list)
     {
+        if (list == null)
+        {
+            return default(T);
+        }
+
         List<T> items = list.ToList();
 
         if (items.Count == 0)
@@ -166,8 +172,13 @@ public static class ExtensionFunctions
         }
     }
 
+    public static IEnumerable<T> GetComponentsInDirectChildren<T>(this MonoBehaviour parent)
+    {
+        return parent.transform.GetComponentsInDirectChildren<T>();
+    }
+
     // Returns all components of type T on the immediate children of a Transform
-    public static IEnumerable<T> GetComponentsInDirectChildren<T>(this Transform parent) where T : Component
+    public static IEnumerable<T> GetComponentsInDirectChildren<T>(this Transform parent)
     {
         for (int i = 0; i < parent.childCount; ++i)
         {

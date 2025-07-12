@@ -1,8 +1,8 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public enum ExhibitListItemMode
 {
@@ -24,9 +24,14 @@ public enum ExhibitListItemMode
     // TODO: eventually, add actual specific displays for list items
 }
 
-public class Exhibit : ExhibitBase
+public class Exhibit : ExhibitBase, ICanSupportTitle
 {
     private SectionData section;
+
+    /// <summary>
+    /// Clone of the original section, for debug purposes
+    /// </summary>
+    private SectionData originalSection;
 
     [Tooltip("How list items are displayed.")]
     public ExhibitListItemMode ListItemMode = ExhibitListItemMode.Skip;
@@ -137,6 +142,9 @@ public class Exhibit : ExhibitBase
             this.gameObject.SetActive(false);
             return;
         }
+
+        this.originalSection = this.section.Clone();
+
         IsAssigned = true;
 
         // Handle list items according to the mode
@@ -180,8 +188,7 @@ public class Exhibit : ExhibitBase
         {
             if (data.SubExhibitData.Count <= i || data.SubExhibitData[i] == null)
             {
-                SubExhibits[i].ClearAssignment();
-                SubExhibits[i].gameObject.SetActive(false);
+                SubExhibits[i].ReplaceWithUnused();
                 continue;
             }
             SubExhibits[i].PopulateExhibit(data.SubExhibitData[i]);
@@ -363,10 +370,7 @@ public class Exhibit : ExhibitBase
         return RatingProcessor.RateExhibitMatch(this, section);
     }
 
-    public bool SupportsTitle()
-    {
-        return this.AreaTitleSigns.Count > 0;
-    }
+    public bool SupportsTitle => this.AreaTitleSigns.Count > 0 || this.Reading.Any(a => a.SupportsTitle) || this.ReadingPlaceholders.Any(a => a.SupportsTitle);
 
     public int GetReadingCount()
     {
@@ -376,6 +380,25 @@ public class Exhibit : ExhibitBase
     public int GetPaintingCount()
     {
         return this.Paintings.Count + this.PaintingPlaceholders.Count;
+    }
+
+    [ContextMenu("Print Section to console")]
+    public void PrintSectionToConsole()
+    {
+        if (this.originalSection == null)
+        {
+            Debug.LogWarning("Section is null.");
+            return;
+        }
+        try
+        {
+            string json = JsonConvert.SerializeObject(this.originalSection, Formatting.Indented);
+            Debug.Log(json);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Failed to serialize section: {ex.Message}");
+        }
     }
 
 }

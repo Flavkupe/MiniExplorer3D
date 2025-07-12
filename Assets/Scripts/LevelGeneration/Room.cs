@@ -49,7 +49,7 @@ public class Room : MonoBehaviour, IHasName
 
 	}
 
-	public string GetName() { return this.Data.DisplayName; }
+    public string Name => this.Data.DisplayName;
 
     public RoomData ToRoomData()
     {
@@ -100,8 +100,7 @@ public class Room : MonoBehaviour, IHasName
             }
             else
             {
-                exhibit.ClearAssignment();
-                exhibit.gameObject.SetActive(false);
+                exhibit.ReplaceWithUnused();
             }
         }
 

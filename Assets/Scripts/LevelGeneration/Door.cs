@@ -17,6 +17,9 @@ public class Door : MonoBehaviour, IHasName, IHasLocation, ICanLookAtAndInteract
 
     private bool playerTouching = false;
 
+    public string Name => this.Data?.DisplayName ?? this.name;
+
+
     void Start() 
 	{
 		this.nametag = this.GetComponentInChildren<NameTag>();
@@ -86,8 +89,6 @@ public class Door : MonoBehaviour, IHasName, IHasLocation, ICanLookAtAndInteract
             this.label.text = name;
         }
     }
-
-	public string GetName() { return this.Data.DisplayName; }
 
     public void SetLocation(Location location) { this.Data.Location = location; }
 

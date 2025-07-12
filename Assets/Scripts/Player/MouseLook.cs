@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections;
+
 
 /// MouseLook rotates the transform based on the mouse delta.
 /// Minimum and Maximum values can be used to constrain the possible rotation
@@ -32,7 +32,12 @@ public class MouseLook : MonoBehaviour {
 
 	void Update ()
 	{
-		if (axes == RotationAxes.MouseXAndY)
+		if (WindowManager.IsAnyWindowOpen())
+		{
+			return; // Do not allow mouse look if any window is open
+        }
+
+        if (axes == RotationAxes.MouseXAndY)
 		{
 			float rotationX = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * sensitivityX;
 			

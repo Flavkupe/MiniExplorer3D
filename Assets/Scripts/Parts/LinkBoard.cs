@@ -16,7 +16,9 @@ public class LinkBoard : MonoBehaviour, ICanLookAtAndInteract
 
     public LinkHolder[] PossibleLinkHolders;
 
-    public Transform DirectionPointer; 
+    public Transform DirectionPointer;
+
+    public string Name => this.name;
 
     public void SetLinks(List<LinkedLocationData> links)
     {
