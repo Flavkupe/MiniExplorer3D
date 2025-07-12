@@ -90,6 +90,7 @@
     <Compile Include="Assets\Scripts\LevelGeneration\ReadingContent.cs" />
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
     <Compile Include="Assets\Scripts\UI\ImagePanel.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\ListReadingContent.cs" />
     <Compile Include="Assets\Scripts\Parts\TableOfContentsPodium.cs" />
     <Compile Include="Assets\Scripts\UI\PlayerMenu.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\RatingProcessor.cs" />

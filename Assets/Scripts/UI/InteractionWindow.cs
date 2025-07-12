@@ -41,6 +41,11 @@ public class InteractionWindow : BaseWindow
         }
     }
 
+    public void SetText(string text, bool open = true)
+    {
+        SetText(new LocationTextData(text), open);
+    }
+
     public void SetText(LocationTextData textData, bool open = true)
     {
         if (textData == null)

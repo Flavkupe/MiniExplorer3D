@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 445024}
   - component: {fileID: 2336648}
   - component: {fileID: 10243334}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263,7 +263,7 @@ GameObject:
   - component: {fileID: 3377212}
   - component: {fileID: 2348798}
   - component: {fileID: 6469528}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: pCube2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -373,7 +373,7 @@ GameObject:
   - component: {fileID: 10207432}
   - component: {fileID: 11463964}
   - component: {fileID: 11434198}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: NameTag
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -502,7 +502,7 @@ GameObject:
   - component: {fileID: 6687494147827446377}
   - component: {fileID: 8639109223415440227}
   - component: {fileID: 9155301060444383233}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}

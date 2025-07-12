@@ -21,7 +21,10 @@ public enum ExhibitListItemMode
     /// </summary>
     CombinedIntoOneParagraph = 2,
 
-    // TODO: eventually, add actual specific displays for list items
+    /// <summary>
+    /// Only uses ListReadingContent for list items; does not use Placeholders or ReadingContent.
+    /// </summary>
+    UseListContainersOnly = 3,
 }
 
 public class Exhibit : ExhibitBase, ICanSupportTitle
@@ -41,6 +44,8 @@ public class Exhibit : ExhibitBase, ICanSupportTitle
 
     public List<ReadingContent> Reading { get; private set; } = new();
     public List<Placeholder> ReadingPlaceholders { get; private set; } = new();
+
+    public List<ListReadingContent> ListReadingContent { get; private set; } = new();
 
     public List<AreaTitle> AreaTitleSigns { get; private set; } = new();
 
@@ -63,6 +68,8 @@ public class Exhibit : ExhibitBase, ICanSupportTitle
         this.Reading = children.SelectMany(go => go.GetComponents<ReadingContent>()).ToList();
         this.AreaTitleSigns = children.SelectMany(go => go.GetComponents<AreaTitle>()).ToList();
         this.Exits = children.SelectMany(go => go.GetComponents<Door>()).ToList();
+        this.ListReadingContent = children.SelectMany(go => go.GetComponents<ListReadingContent>()).ToList();
+
 
         this.PaintingPlaceholders = allPlaceholders.Where(a => a.PartType == Placeholder.RoomPartType.ImageFrame).ToList();
         this.ReadingPlaceholders = allPlaceholders.Where(a => a.PartType == Placeholder.RoomPartType.Reading).ToList();
@@ -155,6 +162,9 @@ public class Exhibit : ExhibitBase, ICanSupportTitle
 
         // Place the images
         PopulateImages();
+
+        // Set the text
+        PopulateListItems();
 
         // Set the text
         PopulateText();
@@ -309,6 +319,24 @@ public class Exhibit : ExhibitBase, ICanSupportTitle
         }
     }
 
+    private void PopulateListItems()
+    {
+        foreach (ListReadingContent listReading in this.ListReadingContent)
+        {
+            if (section.Lists.Count > 0)
+            {
+                var listData = section.Lists[0];
+                listReading.SetList(listData);
+                listReading.gameObject.SetActive(true);
+                section.Lists.RemoveAt(0);
+            }
+            else
+            {
+                listReading.gameObject.SetActive(false);
+            }
+        }
+    }
+
     // Handles list items in section.Lists according to ListItemMode
     private void HandleListItems()
     {
@@ -321,6 +349,7 @@ public class Exhibit : ExhibitBase, ICanSupportTitle
         {
             case ExhibitListItemMode.Skip:
                 Debug.LogWarning($"Exhibit {this.PrefabID}: List items present in section '{section.Title}' but ExhibitListItemMode is Skip. Lists will be ignored.");
+                section.Lists.Clear();
                 break;
             case ExhibitListItemMode.CombineWithParagraphs:
                 // Each list item becomes a paragraph (LocationTextData)
@@ -358,9 +387,11 @@ public class Exhibit : ExhibitBase, ICanSupportTitle
 
                 section.Lists.Clear();
                 break;
+            case ExhibitListItemMode.UseListContainersOnly:
+                // no-op; list items preserved as list items
+                break;
         }
     }
-
 
     /// <summary>
     /// Rates how well this Exhibit matches the given SectionData, including subexhibits. Does not mutate the Exhibit.
@@ -392,7 +423,11 @@ public class Exhibit : ExhibitBase, ICanSupportTitle
         }
         try
         {
-            string json = JsonConvert.SerializeObject(this.originalSection, Formatting.Indented);
+            var settings = new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
+            string json = JsonConvert.SerializeObject(this.originalSection, Formatting.Indented, settings);
             Debug.Log(json);
         }
         catch (Exception ex)
