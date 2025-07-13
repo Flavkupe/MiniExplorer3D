@@ -16,6 +16,12 @@ public abstract class BaseLevelGenerator : ILevelGenerator
         return startingRoom;
     }
 
+    public virtual IEnumerator GenerateRandom(MonoBehaviour caller)
+    {
+        // Default implementation does nothing
+        yield return null;
+    }
+
     public abstract RoomGrid GenerateRoomGrid(Location targetLocation);
 
     protected abstract void ProcessLocation(Location location);

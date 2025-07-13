@@ -309,6 +309,9 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
         var listItems = new List<ListItemsData>();
         foreach (var row in rows)
         {
+            // Skip style rows
+            if (row.Name == "style") continue;
+
             var th = row.SelectSingleNode("th");
             var td = row.SelectSingleNode("td");
             var tds = row.SelectNodes("td");
@@ -341,13 +344,17 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
                 // If this row has a th and tds, treat th as label
                 string label = th != null ? this.HtmlDecode(th.InnerText) : null;
                 string value = string.Empty;
-                if (tds.Count > 1)
+                
+                // Process each cell in the row
+                foreach (var cell in tds.Cast<HtmlNode>())
                 {
-                    value = string.Join(" ", tds.Cast<HtmlNode>().Select(cell => this.HtmlDecode(cell.InnerText)).Where(s => !string.IsNullOrWhiteSpace(s)));
-                }
-                else
-                {
-                    value = this.HtmlDecode(tds[0].InnerText);
+                    // Skip style nodes
+                    if (cell.Name == "style") continue;
+
+                    // Remove nested style nodes
+                    foreach (var styleNode in cell.SelectNodes(".//style") ?? Enumerable.Empty<HtmlNode>())
+                        styleNode.Remove();
+                    value = this.HtmlDecode(cell.InnerText);
                 }
 
 

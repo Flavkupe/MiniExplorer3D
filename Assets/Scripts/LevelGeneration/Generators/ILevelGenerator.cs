@@ -13,6 +13,8 @@ public interface ILevelGenerator
     
     bool CanLoadLocation(Location location);
 
+    IEnumerator GenerateRandom(MonoBehaviour caller);
+
     IEnumerator PrepareAreaGeneration(Location location, MonoBehaviour caller);
     IEnumerator AreaPostProcessing(Location location, MonoBehaviour caller);
     

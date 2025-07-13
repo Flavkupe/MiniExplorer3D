@@ -140,6 +140,7 @@
     <Compile Include="Assets\Scripts\Parts\InfoBoxDisplay.cs" />
     <Compile Include="Assets\Scripts\Parts\ICanLookAt.cs" />
     <Compile Include="Assets\Scripts\Parts\TiledQuad.cs" />
+    <Compile Include="Assets\Scripts\Utils\WebRequester.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

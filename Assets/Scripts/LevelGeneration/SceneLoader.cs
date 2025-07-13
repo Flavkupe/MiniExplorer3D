@@ -181,6 +181,14 @@ public class SceneLoader : MonoBehaviour
         return instance;
     }
 
+    public void LoadRandomArticle()
+    {
+        this.Loading = StageManager.LoadingViewer;
+        this.Loading.ToggleCamera(true);
+        WindowManager.Instance.CloseAllWindows();
+        StartCoroutine(this.levelGenerator.GenerateRandom(this));
+    }
+
     public void LoadWikipediaArticle(string articleName)
     {
         if (string.IsNullOrEmpty(articleName))

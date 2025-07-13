@@ -83,12 +83,6 @@ public static class RatingProcessor
 
         int diff = Math.Abs(exhibitCount - requiredCount);
 
-        // exhibit meant for stuff that is not required
-        if (exhibitCount > 0 && requiredCount == 0)
-        {
-            return -weight * diff;
-        }
-
         // If required count is > 0 but we have none, this is a bad match
         if (exhibitCount == 0 && requiredCount > 0)
         {
@@ -99,15 +93,15 @@ public static class RatingProcessor
         {
             return weight; // perfect match
         }
-        else if (diff > 0)
+        else if (exhibitCount > requiredCount)
         {
             // Too many: small penalty per extra
-            return weight - (0.25f * diff * weight);
+            return Math.Max(weight - (0.2f * diff), 0);
         }
         else
         {
             // Too few: larger penalty per missing
-            return weight - (0.5f * diff * weight);
+            return Math.Max(weight - (0.8f * diff), 0);
         }
     }
 

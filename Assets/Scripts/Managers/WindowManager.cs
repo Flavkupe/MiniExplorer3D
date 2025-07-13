@@ -54,7 +54,7 @@ public class WindowManager : MonoBehaviour
         }
     }
 
-    private void CloseAllWindows()
+    public void CloseAllWindows()
     {
         if (DevWindow.Instance != null)
         {
