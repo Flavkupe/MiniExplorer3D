@@ -11,7 +11,6 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
     private SectionData currentSection;
     private SectionData parentSection;
     private bool foundFirstH2;
-    private Uri currentUri;
 
     private static readonly string[] SkippedSectionTitles = new[] {
         "references", "external links", "bibliography", "further reading", "notes", "see also"
@@ -24,9 +23,8 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
         return SkippedSectionTitles.Any(skip => lower == skip);
     }
 
-    public override void ProcessHtml(MainLocation location, HtmlDocument htmlDoc, Uri currentUri)
+    public override void ProcessHtml(MainLocation location, HtmlDocument htmlDoc)
     {
-        this.currentUri = currentUri;
         this.leadSection = new SectionData { SectionType = SectionType.Main };
         this.currentSection = null;
         this.foundFirstH2 = false;
@@ -36,6 +34,9 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
         {
             StageManager.CurrentLocation.Name = location.Name;
         }
+
+        // add door to lobby to starting location
+        this.leadSection.LinkedLocationData.Add(new LinkedLocationData("Lobby", WikipediaConstants.MainPageName, LinkedLocationDataType.DoorLink));
 
         HtmlNode contentNode = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class, 'mw-parser-output')]");
         if (contentNode == null)
@@ -147,6 +148,7 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
         this.currentSection = new SectionData
         {
             Title = string.Empty,
+            ParentTitle = this.parentSection.Title,
             Anchor = string.Empty,
             SectionType = SectionType.Subsection,
         };
@@ -171,18 +173,19 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
             anchor = node.GetAttributeValue("id", "");
         }
 
-        var subsection = new SectionData
-        {
-            Title = title,
-            Anchor = anchor,
-            SectionType = SectionType.Subsection
-        };
-
         if (this.parentSection == null)
         {
             Debug.LogWarning("Parent section is null when trying to add a subsection. This may indicate an issue with the HTML structure.");
             return;
         }
+
+        var subsection = new SectionData
+        {
+            Title = title,
+            ParentTitle = this.parentSection.Title,
+            Anchor = anchor,
+            SectionType = SectionType.Subsection
+        };
 
         this.parentSection.Subsections.Add(subsection);
         this.currentSection = subsection;
@@ -196,37 +199,22 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
             return;
         }
         var textData = new LocationTextData(text);
-        ExtractLinks(node, textData, (IsInLeadSectionNode()) ? this.leadSection : this.currentSection, this.currentUri.Host);
-        if (IsInLeadSectionNode())
-        {
-            this.leadSection.LocationText.Add(textData);
-        }
-        else
-        {
-            this.currentSection.LocationText.Add(textData);
-        }
+
+        var section = IsInLeadSectionNode() ? this.leadSection : this.currentSection;
+        ExtractLinks(node, textData, section);
+        section.LocationText.Add(textData);
     }
 
     private void HandleListNode(HtmlNode node)
     {
         if (IsInLeadSectionNode())
         {
-            HandleListNode(node, this.leadSection, this.currentUri.Host);
+            HandleListNode(node, this.leadSection);
         }
         else
         {
-            HandleListNode(node, this.currentSection, this.currentUri.Host);
+            HandleListNode(node, this.currentSection);
         }
-    }
-
-    private void HandleTableNode()
-    {
-        // TODO
-    }
-
-    private bool IsInLeadSectionNode()
-    {
-        return !this.foundFirstH2 || this.currentSection == null;
     }
 
     private void HandleThumbinnerDivNode(HtmlNode node)
@@ -236,7 +224,7 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
         if (caption != null && imgTag != null)
         {
             string imageCaption = this.HtmlDecode(caption.InnerText);
-            string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
+            string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(imgTag));
             var imageData = new ImagePathData(imageCaption, imageUrl);
             if (IsInLeadSectionNode())
             {
@@ -256,7 +244,7 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
         if (imgTag != null)
         {
             string imageCaption = captionNode != null ? this.HtmlDecode(captionNode.InnerText) : string.Empty;
-            string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
+            string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(imgTag));
             var imageData = new ImagePathData(imageCaption, imageUrl);
             if (IsInLeadSectionNode())
             {
@@ -280,7 +268,7 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
             if (imgTag != null)
             {
                 string imageCaption = captionNode != null ? this.HtmlDecode(captionNode.InnerText) : string.Empty;
-                string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
+                string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(imgTag));
                 var imageData = new ImagePathData(imageCaption, imageUrl);
                 if (IsInLeadSectionNode())
                 {
@@ -324,6 +312,7 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
                 currentSubsection = new SectionData
                 {
                     Title = this.HtmlDecode(th.InnerText),
+                    ParentTitle = infoboxSection.Title,
                     SectionType = SectionType.Subsection
                 };
                 infoboxSection.Subsections.Add(currentSubsection);
@@ -336,6 +325,7 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
                     currentSubsection = new SectionData
                     {
                         Title = string.Empty,
+                        ParentTitle = infoboxSection.Title,
                         SectionType = SectionType.Subsection
                     };
                     infoboxSection.Subsections.Add(currentSubsection);
@@ -388,7 +378,7 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
                     {
                         foreach (var imgTag in imgTags)
                         {
-                            string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(imgTag, this.currentUri.Host));
+                            string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(imgTag));
                             currentSubsection.ImagePaths.Add(new ImagePathData(string.Empty, imageUrl));
                         }
                     }
@@ -397,13 +387,18 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
                     var listNode = cell.SelectSingleNode("ul") ?? cell.SelectSingleNode("ol");
                     if (listNode != null)
                     {
-                        HandleListNode(listNode, currentSubsection, this.currentUri.Host);
+                        HandleListNode(listNode, currentSubsection);
                     }
                 }
             }
         }
 
         return infoboxSection;
+    }
+
+    private void HandleTableNode()
+    {
+        // No-op for now. Table handling is not implemented.
     }
 
     private bool IsNodeH3Wrapper(HtmlNode node)
@@ -419,5 +414,10 @@ public class WikipediaArticleProcessor : WikipediaBaseProcessor
     private bool NodeHasClass(HtmlNode node, string className)
     {
         return node.GetAttributeValue("class", "").Contains(className);
+    }
+
+    private bool IsInLeadSectionNode()
+    {
+        return !this.foundFirstH2 || this.currentSection == null;
     }
 }

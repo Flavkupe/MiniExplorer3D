@@ -247,8 +247,8 @@ public class Exhibit : ExhibitBase, ICanSupportTitle
                 if (!frame.IsUsed)
                 {
                     LevelImage image = section.ImagePaths[0].LoadedImage;
-                    frame.SetLevelImage(image);
                     frame.gameObject.SetActive(true);
+                    frame.SetLevelImage(image);
                     section.ImagePaths.RemoveAt(0);
                 }
             }

@@ -14,16 +14,21 @@ public static class Utils
         return url;
     }
 
-    public static string GetImageUrlFromImageTag(HtmlNode node, string currentUriHost)
+    public static string GetImageUrlFromImageTag(HtmlNode node)
     {
         string imageSrc = node.GetAttributeValue("src", "");
         if (imageSrc.StartsWith("//"))
         {
             return "https://" + imageSrc.TrimStart('/');
         }
+        else if (imageSrc.StartsWith("http://") || imageSrc.StartsWith("https://"))
+        {
+            return EnsureHttps(imageSrc);
+        }
         else
         {
-            return "https://" + currentUriHost + "/" + imageSrc.TrimStart('/');
+            // Wikipedia images are always hosted on upload.wikimedia.org if not protocol-relative
+            return "https://upload.wikimedia.org/" + imageSrc.TrimStart('/');
         }
     }
 }

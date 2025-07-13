@@ -1,22 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 public static class RatingProcessor
 {
-    public static float CalculateRating(RoomData roomData)
-    {
-        if (roomData == null)
-        {
-            throw new ArgumentNullException(nameof(roomData), "Room data cannot be null.");
-        }
-        // Example rating calculation based on room dimensions and number of exhibits
-        float baseRating = roomData.DimX * roomData.DimY * roomData.DimZ;
-        float exhibitBonus = roomData.ExhibitData.Count * 10f; // Each exhibit adds 10 points
-        return baseRating + exhibitBonus;
-    }
-
-
     public static RatingResult RateExhibitMatch(Exhibit exhibit, SectionData section)
     {
         if (section == null)
@@ -93,15 +79,25 @@ public static class RatingProcessor
         {
             return weight; // perfect match
         }
-        else if (exhibitCount > requiredCount)
+
+        if (requiredCount == 0)
         {
-            // Too many: small penalty per extra
-            return Math.Max(weight - (0.2f * diff), 0);
+            // If we have exhibits but no required count, this is a bad match;
+            // take a small penalty for each extra exhibit, as other parts of the
+            // exhibit may still match well.
+            return -(0.2f * diff * weight);
+        }
+
+        // these are partial matches, so the score should be positive but reduced
+        if (exhibitCount > requiredCount)
+        {
+            // Too many exhibits: small penalty per unused exhibit
+            return Math.Max(weight - (0.2f * diff), 0.1f);
         }
         else
         {
-            // Too few: larger penalty per missing
-            return Math.Max(weight - (0.8f * diff), 0);
+            // Too few exhibits: larger penalty per missing exhibit
+            return Math.Max(weight - (0.5f * diff), 0.1f);
         }
     }
 

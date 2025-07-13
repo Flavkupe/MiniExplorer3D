@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 public abstract class WikipediaBaseProcessor
 {
-    public abstract void ProcessHtml(MainLocation location, HtmlDocument htmlDoc, System.Uri currentUri);
+    public abstract void ProcessHtml(MainLocation location, HtmlDocument htmlDoc);
 
-    protected void ExtractLinks(HtmlNode node, LocationTextData textData, SectionData section, string host)
+    protected void ExtractLinks(HtmlNode node, LocationTextData textData, SectionData section)
     {
         var linkNodes = node.SelectNodes(".//a");
         if (linkNodes != null)
@@ -16,15 +16,16 @@ public abstract class WikipediaBaseProcessor
                 string href = link.GetAttributeValue("href", "");
                 if (!string.IsNullOrEmpty(href) && href.StartsWith("/wiki/"))
                 {
-                    string url = Utils.EnsureHttps("https://" + host + href);
-                    textData.LinkedLocationData.Add(new LinkedLocationData(name, url));
-                    section.LinkedLocationData.Add(new LinkedLocationData(name, url, LinkedLocationDataType.TextLink));
+                    // Extract just the article name from the href
+                    string articleName = href.Substring("/wiki/".Length);
+                    textData.LinkedLocationData.Add(new LinkedLocationData(name, articleName));
+                    section.LinkedLocationData.Add(new LinkedLocationData(name, articleName, LinkedLocationDataType.TextLink));
                 }
             }
         }
     }
 
-    protected void HandleListNode(HtmlNode node, SectionData section, string host)
+    protected void HandleListNode(HtmlNode node, SectionData section)
     {
         var items = new List<LocationTextData>();
         foreach (var li in node.SelectNodes("li") ?? new HtmlNodeCollection(node))
@@ -33,7 +34,7 @@ public abstract class WikipediaBaseProcessor
             if (!string.IsNullOrWhiteSpace(text))
             {
                 var textData = new LocationTextData(text);
-                ExtractLinks(li, textData, section, host);
+                ExtractLinks(li, textData, section);
                 items.Add(textData);
             }
         }

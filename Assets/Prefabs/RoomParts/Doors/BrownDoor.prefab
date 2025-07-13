@@ -113,7 +113,7 @@ GameObject:
   - component: {fileID: 6412118}
   - component: {fileID: 2363882}
   - component: {fileID: 11493476}
-  - component: {fileID: 6501774}
+  - component: {fileID: 683951585470784468}
   m_Layer: 8
   m_Name: BrownDoor
   m_TagString: Untagged
@@ -230,7 +230,7 @@ MonoBehaviour:
   RemoveOnUnused: 1
   Data:
     DisplayName: 
---- !u!65 &6501774
+--- !u!65 &683951585470784468
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -249,8 +249,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 5.553151, y: 0.11823692, z: 0.12360048}
-  m_Center: {x: -2.7817454, y: 0.05328415, z: -0.0000002861023}
+  m_Size: {x: 3.6260688, y: 0.11823692, z: 0.08000977}
+  m_Center: {x: -1.8182045, y: 0.05328413, z: 0}
 --- !u!1 &137394
 GameObject:
   m_ObjectHideFlags: 0

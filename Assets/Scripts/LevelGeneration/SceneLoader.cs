@@ -57,16 +57,28 @@ public class SceneLoader : MonoBehaviour
     {
         this.Loading = StageManager.LoadingViewer;
         this.Loading.ToggleCamera(true);
+        LoadLocation(StageManager.CurrentLocation);
+    }
 
-        Location current = StageManager.CurrentLocation;        
-
-        if (this.levelGenerator.NeedsAreaGenPreparation)
+    private void LoadLocation(Location location)
+    {
+        if (location == null)
         {
-            StartCoroutine(this.levelGenerator.PrepareAreaGeneration(current, this));
+            Debug.LogError("Cannot load a null location.");
+            return;
         }
-        else 
+
+        if (location.IsRandomLocation)
         {
-            StartCoroutine(this.GenerateLevel(current));
+            LoadRandomArticle();
+        }
+        else if (this.levelGenerator.NeedsAreaGenPreparation)
+        {
+            StartCoroutine(this.levelGenerator.PrepareAreaGeneration(location, this));
+        }
+        else
+        {
+            StartCoroutine(this.GenerateLevel(location));
         }
     }
 
@@ -181,12 +193,21 @@ public class SceneLoader : MonoBehaviour
         return instance;
     }
 
+    /// <summary>
+    /// Loads a random article. This can also be called from the UI
+    /// through an inspector event.
+    /// </summary>
     public void LoadRandomArticle()
     {
         this.Loading = StageManager.LoadingViewer;
         this.Loading.ToggleCamera(true);
         WindowManager.Instance.CloseAllWindows();
         StartCoroutine(this.levelGenerator.GenerateRandom(this));
+    }
+
+    public void LoadMainPage()
+    {
+        LoadWikipediaArticle(WikipediaConstants.MainPageName);
     }
 
     public void LoadWikipediaArticle(string articleName)
@@ -198,18 +219,11 @@ public class SceneLoader : MonoBehaviour
 
         // Wikipedia expects underscores for spaces
         string safeName = articleName.Replace(' ', '_');
-        string url = $"https://en.wikipedia.org/wiki/{safeName}";
-        // Optionally, set the display name to the article name
-        StageManager.CurrentLocation = new MainLocation(url, articleName);
+        // Only use the article name as the path, not a full URL
+        StageManager.CurrentLocation = new MainLocation(safeName, articleName);
+
         // Start the area generation process
-        if (this.levelGenerator.NeedsAreaGenPreparation)
-        {
-            StartCoroutine(this.levelGenerator.PrepareAreaGeneration(StageManager.CurrentLocation, this));
-        }
-        else
-        {
-            StartCoroutine(this.GenerateLevel(StageManager.CurrentLocation));
-        }
+        LoadLocation(StageManager.CurrentLocation);
     }
 
     void Update () 

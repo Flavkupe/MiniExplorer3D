@@ -9,7 +9,7 @@ public class DebugLevelGenerator : WebLevelGenerator
     {
     }
 
-    protected override void ProcessHtmlDocument(MainLocation location, Uri currentUri)
+    protected override void ProcessHtmlDocument(MainLocation location)
     {
         // No-op for debug generator
     }
@@ -37,27 +37,6 @@ public class DebugLevelGenerator : WebLevelGenerator
         debugSection.LocationText.Add(textData);
         debugSection.LocationText.Add(new LocationTextData("bbb"));
         debugSection.ImagePaths.Add(new ImagePathData("MyImg", "Debug/DsnSo"));
-
-        // SubLocations
-        SubLocation loc1 = new SubLocation(parentLocation, "Loc1");        
-        SubLocation loc2 = new SubLocation(parentLocation, "Loc2");
-        SubLocation loc3 = new SubLocation(parentLocation, "Loc3");
-        SubLocation subloc1 = new SubLocation(parentLocation, "SubLoc1");
-        SubLocation subloc2 = new SubLocation(parentLocation, "SubLoc2");
-        loc1.LocationData.SubLocations.Add(subloc1);
-        loc1.LocationData.SubLocations.Add(subloc2);
-        SectionData loc1Section = new SectionData { Title = "Loc1 Section", SectionType = SectionType.Standard };
-        loc1Section.LocationText.Add(new LocationTextData("123"));
-        LocationTextData textData2 = new LocationTextData("456");
-        textData2.LinkedLocationData.Add(new LinkedLocationData("DataName1", "DataPath1"));
-        textData2.LinkedLocationData.Add(new LinkedLocationData("DataName2", "DataPath2"));
-        textData2.LinkedLocationData.Add(new LinkedLocationData("DataName3", "DataPath3"));
-        loc1Section.LocationText.Add(textData2);
-        loc1.LocationData.Sections.Add(loc1Section);
-
-        location.LocationData.SubLocations.Add(loc1);
-        location.LocationData.SubLocations.Add(loc2);
-        location.LocationData.SubLocations.Add(loc3);
 
         // Add the debug section to the main location
         location.LocationData.Sections.Add(debugSection);

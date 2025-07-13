@@ -3,11 +3,8 @@ using System;
 
 public class WikipediaMainPageProcessor : WikipediaBaseProcessor
 {
-    private Uri currentUri;
-
-    public override void ProcessHtml(MainLocation location, HtmlDocument htmlDoc, Uri currentUri)
+    public override void ProcessHtml(MainLocation location, HtmlDocument htmlDoc)
     {
-        this.currentUri = currentUri;
         location.LocationData.Sections.Clear();
 
         // Set the location name
@@ -35,6 +32,23 @@ public class WikipediaMainPageProcessor : WikipediaBaseProcessor
                 location.LocationData.Sections.Add(section);
             }
         }
+
+        this.AddAdditionalSections(location);
+    }
+
+    /// <summary>
+    /// Creates additional hardcoded sections, not always tied to the html
+    /// </summary>
+    /// <returns></returns>
+    private void AddAdditionalSections(MainLocation location)
+    {
+        var randomDoor = new SectionData()
+        {
+            Title = "Random Exhibit",
+            SectionType = SectionType.Standard,
+        };
+        randomDoor.LinkedLocationData.Add(LinkedLocationData.CreateLinkToRandomLocation(randomDoor.Title, LinkedLocationDataType.DoorLink));
+        location.LocationData.Sections.Add(randomDoor);
     }
 
     private SectionData ParsePortalSection(HtmlNode portalNode, string portalId)
@@ -68,12 +82,12 @@ public class WikipediaMainPageProcessor : WikipediaBaseProcessor
                     continue;
                 }
                 var textData = new LocationTextData(text);
-                ExtractLinks(node, textData, section, this.currentUri.Host);
+                ExtractLinks(node, textData, section);
                 section.LocationText.Add(textData);
             }
             else if (node.Name == "ul" || node.Name == "ol")
             {
-                HandleListNode(node, section, this.currentUri.Host);
+                HandleListNode(node, section);
             }
         }
 
@@ -89,7 +103,7 @@ public class WikipediaMainPageProcessor : WikipediaBaseProcessor
                     continue; // skip gifs
                 }
                 string alt = img.GetAttributeValue("alt", "");
-                string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(img, this.currentUri.Host));
+                string imageUrl = Utils.EnsureHttps(Utils.GetImageUrlFromImageTag(img));
                 section.ImagePaths.Add(new ImagePathData(alt, imageUrl));   
             }
         }

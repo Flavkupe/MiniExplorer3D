@@ -40,7 +40,8 @@ public class RoomImageFrame : MonoBehaviour, ICanLookAtAndInteract
 
         if (newLevelImage == null || newLevelImage.Texture2D == null)
         {
-            Debug.LogError("RoomImageFrame: SetLevelImage called with null or invalid LevelImage.");
+            Debug.LogError("RoomImageFrame: SetLevelImage called with null or invalid LevelImage.", this);
+            HideImageFrame();
             return;
         }
 
@@ -70,6 +71,11 @@ public class RoomImageFrame : MonoBehaviour, ICanLookAtAndInteract
         {
             this.textObject.SetText(newLevelImage.Name);
         }
+    }
+
+    public void HideImageFrame()
+    {
+        this.gameObject.SetActive(false);
     }
 
     public void LookAt(GameObject source)

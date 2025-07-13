@@ -1,8 +1,6 @@
 
 
 using System;
-using System.Collections.Generic;
-
 
 [Serializable]
 public abstract class Location 
@@ -30,6 +28,8 @@ public abstract class Location
 
     public abstract bool NeedsInitialization { get; }
     public abstract bool IsBackLocation { get; }
+
+    public virtual bool IsRandomLocation => false;
 
     public abstract string LocationKey { get; }
     public abstract Location Clone(bool deepClone = false);
@@ -94,53 +94,22 @@ public class BackLocation : Location
     public override string LocationKey { get { return this.Path; } }
 }
 
-/// <summary>
-/// A location that has a parent Location. The content
-/// of the locations (text, images, etc) should be in here.
-/// </summary>
+
 [Serializable]
-public class SubLocation : Location
+public class RandomLocation : MainLocation
 {
+    public RandomLocation() : base(string.Empty, "Random") { }
+
     public override bool IsBackLocation { get { return false; } }
 
-    public Location ParentLocation { get; set; }    
+    public override bool IsRandomLocation => true;
+
+    public override bool NeedsInitialization => true;
+
+    public override string LocationKey => "Random";
 
     public override Location Clone(bool deepClone = false)
     {
-        SubLocation loc = new SubLocation();
-        loc.Name = this.Name;
-        loc.Path = this.Path;
-        if (deepClone)
-        {
-            loc.LocationData = this.LocationData.Clone();
-            loc.ParentLocation = this.ParentLocation == null ? null : this.ParentLocation.Clone();
-        }
-        else
-        {
-            loc.LocationData = this.LocationData;
-            loc.ParentLocation = this.ParentLocation;
-        }
-
-        return loc;
+        return new RandomLocation{};
     }
-
-    public SubLocation()
-        : base()
-    {
-    }
-
-    public SubLocation(Location parent, string name)
-        : base(parent.Path, name)
-    {
-        this.ParentLocation = parent.Clone();
-    }
-
-    public override Location GetParentLocation()
-    {
-        return this.ParentLocation;
-    }
-
-    public override bool NeedsInitialization { get { return false; } }
-    public override string LocationKey { get { return this.Path + "###" + this.Name; } }
 }
-

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
+using UnityEngine;
 
 public class LocationData
 {
@@ -126,17 +129,26 @@ public enum LinkedLocationDataType
 
 public class LinkedLocationData
 {
-    public string DisplayName { get; set; }
-    public string Path { get; set; }
+    public string DisplayName => LocationData.Name;
+    public string Path => LocationData.Path;
+
+    public Location LocationData { get; private set; }
 
     public LinkedLocationDataType Type { get; private set; } = LinkedLocationDataType.TextLink;
 
-    public LinkedLocationData(string display, string path, LinkedLocationDataType type = LinkedLocationDataType.TextLink)
+    private LinkedLocationData(Location location, LinkedLocationDataType type = LinkedLocationDataType.TextLink)
     {
-        this.DisplayName = display;
-        this.Path = path;
+        this.LocationData = location;
         this.Type = type;
     }
+
+    public static LinkedLocationData CreateLinkToRandomLocation(string displayName, LinkedLocationDataType type = LinkedLocationDataType.TextLink)
+    {
+        return new LinkedLocationData(new RandomLocation(), type);
+    }
+
+    public LinkedLocationData(string display, string path, LinkedLocationDataType type = LinkedLocationDataType.TextLink)
+        : this(new MainLocation(path, display), type) {}
 
     public LinkedLocationData Clone()
     {

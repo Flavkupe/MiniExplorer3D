@@ -91,8 +91,8 @@
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
     <Compile Include="Assets\Scripts\UI\ImagePanel.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\ListReadingContent.cs" />
-    <Compile Include="Assets\Scripts\Parts\TableOfContentsPodium.cs" />
     <Compile Include="Assets\Scripts\UI\PlayerMenu.cs" />
+    <Compile Include="Assets\Scripts\Parts\TableOfContentsPodium.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\RatingProcessor.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Area.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\TiledSprite.cs" />
@@ -112,6 +112,7 @@
     <Compile Include="Assets\Scripts\LevelGeneration\ExhibitData.cs" />
     <Compile Include="Assets\Scripts\Managers\ResourceManager.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\SectionData.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\Generators\Wikipedia\Constants.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerControls.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\RoomImageFrame.cs" />
     <Compile Include="Assets\Scripts\Parts\ArticleText.cs" />

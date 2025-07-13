@@ -13,8 +13,6 @@ public class WikipediaGenerator : WebLevelGenerator
 
     private const string RandomArtileAPICall = "https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json";
 
-    private const string MainPageName = "Main_Page";
-
     public override IEnumerator GenerateRandom(MonoBehaviour caller)
     {
         var requestor = new WebRequestor();
@@ -69,7 +67,7 @@ public class WikipediaGenerator : WebLevelGenerator
 
     private void LoadMainPage()
     {
-        SceneLoader.Instance.LoadWikipediaArticle(MainPageName);
+        SceneLoader.Instance.LoadMainPage();
     }
 
     public override IEnumerator PrepareAreaGeneration(Location location, MonoBehaviour caller)
@@ -80,26 +78,11 @@ public class WikipediaGenerator : WebLevelGenerator
             yield break;
         }
 
-        // Extract the Wikipedia page title from the URL
-        string pageTitle = null;
-        try
-        {
-            var uri = new Uri(location.Path);
-            // Wikipedia URLs are like https://en.wikipedia.org/wiki/Page_Title
-            var segments = uri.Segments;
-            if (segments.Length > 0)
-            {
-                pageTitle = segments.Last().TrimEnd('/');
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.LogWarning($"Failed to parse Wikipedia URL: {location.Path} ({ex.Message})");
-        }
-
+        // Now Path is just the Wikipedia page title (not a URL)
+        string pageTitle = location.Path;
         if (string.IsNullOrEmpty(pageTitle))
         {
-            Debug.LogWarning($"Could not determine Wikipedia page title from URL: {location.Path}");
+            Debug.LogWarning($"Could not determine Wikipedia page title from Path: {location.Path}");
             location.LocationData.RawData = string.Empty;
         }
         else
@@ -123,7 +106,6 @@ public class WikipediaGenerator : WebLevelGenerator
             location.LocationData.RawData = html;
             location.Name = title;
         }
-
 
         this.CallOnAreaGenReady(new AreaGenerationReadyEventArgs() { AreaLocation = StageManager.CurrentLocation });
         yield return null;
@@ -180,23 +162,23 @@ public class WikipediaGenerator : WebLevelGenerator
         return room;
     }
 
-    protected override void ProcessHtmlDocument(MainLocation location, Uri currentUri)
+    protected override void ProcessHtmlDocument(MainLocation location)
     {
         HtmlDocument htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(location.LocationData.RawData);
 
         if (LocationIsMainPage(location))
         {
-            mainPageProcessor.ProcessHtml(location, htmlDoc, currentUri);
+            mainPageProcessor.ProcessHtml(location, htmlDoc);
         }
         else
         {
-            articleProcessor.ProcessHtml(location, htmlDoc, currentUri);
+            articleProcessor.ProcessHtml(location, htmlDoc);
         }
     }
 
     private bool LocationIsMainPage(Location location)
     {
-        return location.Path.EndsWith(MainPageName);
+        return location.Path.EndsWith(WikipediaConstants.MainPageName);
     }
 }

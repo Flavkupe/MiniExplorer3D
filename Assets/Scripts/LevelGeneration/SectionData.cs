@@ -42,6 +42,12 @@ public enum SectionType
 public class SectionData
 {
     public string Title { get; set; }
+
+    /// <summary>
+    /// The title of a parent, for subsections and such
+    /// </summary>
+    public string ParentTitle { get; set; }
+
     public string Anchor { get; set; }
     public SectionType SectionType { get; set; }
     public List<SectionData> Subsections { get; private set; } = new List<SectionData>();

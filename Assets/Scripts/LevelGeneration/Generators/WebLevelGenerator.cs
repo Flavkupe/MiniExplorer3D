@@ -12,18 +12,18 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
 
     protected override void ProcessLocation(Location parentLocation)
     {
+        // TODO: is this check necessary?
         if (!(parentLocation is MainLocation))
         {
             return;
         }
 
         MainLocation location = parentLocation as MainLocation;
-        Uri currentUri = new Uri(location.Path);
-        this.ProcessHtmlDocument(location, currentUri);
+        this.ProcessHtmlDocument(location);
         location.LocationData.RemoveEmptySections();
     }
 
-    protected abstract void ProcessHtmlDocument(MainLocation location, Uri currentUri);
+    protected abstract void ProcessHtmlDocument(MainLocation location);
 
     protected virtual IEnumerator ProcessImages(Location location)
     {

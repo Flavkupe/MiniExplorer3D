@@ -94,7 +94,7 @@ public class Door : MonoBehaviour, IHasName, IHasLocation, ICanLookAtAndInteract
 
     public void SetLocationData(LinkedLocationData data)
     {
-        this.Data.Location = new MainLocation(data.Path, data.DisplayName);
+        this.Data.Location = data.LocationData;
         this.SetName(data.DisplayName);
     }
 
