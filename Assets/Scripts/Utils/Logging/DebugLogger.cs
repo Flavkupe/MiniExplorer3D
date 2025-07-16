@@ -6,6 +6,36 @@ public enum LoggerFilter {
 }
 
 public static class DebugLogger {
+    private static DataLogger dataLogger = new DataLogger();
+
+    public static void LogSample(LoggingRatingData data)
+    {
+        var config = LoggerConfig.Instance;
+        if (config == null || !config.LogRatings)
+        {
+            return;
+        }
+
+        dataLogger.Sample(data);
+    }
+
+    public static void LogSample(LoggingRoomRatingData data)
+    {
+        var config = LoggerConfig.Instance;
+        if (config == null || !config.LogRatings)
+        {
+            return;
+        }
+
+        dataLogger.Sample(data);
+    }
+
+    public static void GenerateSampleCsvs()
+    {
+        dataLogger.OutputToFiles();
+        dataLogger.Clear();
+    }
+
     public static void Log(string message, LoggerFilter filter) {
         var config = LoggerConfig.Instance;
         if (config == null)

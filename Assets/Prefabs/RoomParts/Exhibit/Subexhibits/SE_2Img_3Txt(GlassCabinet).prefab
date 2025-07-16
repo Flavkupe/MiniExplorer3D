@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7256843015728724009}
   - component: {fileID: 3282174837209614414}
   m_Layer: 0
-  m_Name: SubExhibit3TextGlassCabinet
+  m_Name: SE_2Img_3Txt(GlassCabinet)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

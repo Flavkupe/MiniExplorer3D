@@ -1,0 +1,14 @@
+{
+  "sections": [
+    {
+      "date": "7/15/2025",
+      "version": "0.0.1alpha",
+      "title": "Changelist!",
+      "entries": [
+        "Though the game has been out for a bit now, there is now a changelist! You are seeing it!",
+        "Started tracking versions",
+        "Created main menu"
+      ]
+    }
+  ]
+}

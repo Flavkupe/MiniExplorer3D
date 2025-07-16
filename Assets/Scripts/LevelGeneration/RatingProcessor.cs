@@ -16,13 +16,16 @@ public static class RatingProcessor
             return RatingResult.NoMatch;
         }
 
-        float score = 5f;
+        float score = 50f;
+
+        float baseWeight = 10.0f;
 
         // Title/AreaTitleSign
         bool hasTitle = !string.IsNullOrEmpty(section.Title);
+        var titleScore = 0.0f;
         if (hasTitle)
         {
-            score += exhibit.SupportsTitle ? 1f : -1f;
+            titleScore += exhibit.SupportsTitle ? baseWeight : -baseWeight;
         }
 
         // Reading placeholders vs LocationText
@@ -32,18 +35,26 @@ public static class RatingProcessor
         textCount += section.Lists.Count;
 
         int readingCount = exhibit.GetReadingCount();
-        score += ScoreCountMatch(readingCount, textCount, 1f);
+        var readingScore = ScoreCountMatch(readingCount, textCount, baseWeight);
 
         int imageCount = exhibit.GetPaintingCount();
-        score += ScoreCountMatch(imageCount, section.ImagePaths.Count, 2f);
-        score += ScoreCountMatch(exhibit.Exits.Count, section.Exits.Count, 2f);
+        var imageScore = ScoreCountMatch(imageCount, section.ImagePaths.Count, baseWeight * 2f);
+        var exitsScore = ScoreCountMatch(exhibit.Exits.Count, section.Exits.Count, baseWeight * 2f);
 
         // Subsections and subexhibits
-        score += ScoreSubsections(exhibit, section);
+        var subsectionScore = ScoreSubsections(exhibit, section);
 
-        DebugLogger.Log($"----Exhibit [{section.Title}] [{exhibit.PrefabID}]: {score}", LoggerFilter.LogRatings);
+        score += titleScore + readingScore + imageScore + exitsScore + subsectionScore;
+        var result = new RatingResult(score, true);
+        result.SubsectionScore = subsectionScore;
+        result.ReadingScore = readingScore;
+        result.ImageScore = imageScore;
+        result.ExitsScore = exitsScore;
+        result.TitleScore = titleScore;
 
-        return new RatingResult(score, true);
+        DebugLogger.LogSample(new LoggingRatingData(exhibit, section, result));
+
+        return result;
     }
 
     public static RatingResult RateRoomMatch(Room room, LevelGenRequirements reqs)
@@ -53,7 +64,15 @@ public static class RatingProcessor
             return RatingResult.NoMatch;
         }
 
-        return GetRoundRobinScore(room.Exhibits, reqs.SectionData);
+        var result = GetRoundRobinScore(room.Exhibits, reqs.SectionData);
+        DebugLogger.LogSample(new LoggingRoomRatingData
+        {
+            RoomPrefabID = room.Name,
+            Score = result.Score,
+            UnmachedExhibitPercentage = result.UnusedPercentage,
+        });
+
+        return result;
     }
 
     /// <summary>
@@ -148,11 +167,15 @@ public static class RatingProcessor
             return RatingResult.NoMatch;
         }
 
-        score -= exhibitsAvailable.Count * 0.5f; // penalize for unused exhibits
+        var unmatchedPercentage = (float)exhibitsAvailable.Count / (float)exhibits.Count;
+
+        // penalize for unused exhibits
+        score *= 1.0f - unmatchedPercentage;
 
         return new RatingResult(score, true)
         {
-            MatchedSections = matchedSections
+            MatchedSections = matchedSections,
+            UnusedPercentage = unmatchedPercentage,
         };
     }
 

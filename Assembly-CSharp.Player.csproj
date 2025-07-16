@@ -77,12 +77,15 @@
     <Compile Include="Assets\Scripts\Parts\ICanSupportTitle.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Location.cs" />
     <Compile Include="Assets\Scripts\Utils\LoggerConfig.cs" />
+    <Compile Include="Assets\Scripts\Managers\ChangelistManager.cs" />
     <Compile Include="Assets\Scripts\Pair.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Door.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\RoomGrid.cs" />
     <Compile Include="Assets\Scripts\UI\BaseWindow.cs" />
     <Compile Include="Assets\Scripts\Entities\Enemy.cs" />
+    <Compile Include="Assets\Scripts\Utils\Logging\DataLogger.cs" />
     <Compile Include="Assets\Scripts\Parts\FloatyText.cs" />
+    <Compile Include="Assets\Scripts\Utils\Logging\DataModels.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\LocationData.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Room.cs" />
     <Compile Include="Assets\SnapToGrid.cs" />
@@ -96,9 +99,9 @@
     <Compile Include="Assets\Scripts\LevelGeneration\RatingProcessor.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Area.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\TiledSprite.cs" />
+    <Compile Include="Assets\Scripts\Managers\MainMenuManager.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\SceneLoader.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\DebugLevelGenerator.cs" />
-    <Compile Include="Assets\Scripts\Utils\DebugLogger.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\FileLevelGenerator.cs" />
     <Compile Include="Assets\Scripts\Map\AreaMapDrawer.cs" />
     <Compile Include="Assets\Scripts\Utils\Utils.cs" />
@@ -118,6 +121,7 @@
     <Compile Include="Assets\Scripts\Parts\ArticleText.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\ILevelGenerator.cs" />
     <Compile Include="Assets\Scripts\Utils\ExtensionFunctions.cs" />
+    <Compile Include="Assets\Scripts\Utils\Logging\DebugLogger.cs" />
     <Compile Include="Assets\Scripts\Player\SimpleFirstPersonMovement.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Placeholder.cs" />
     <Compile Include="Assets\Scripts\Parts\LinkBoard.cs" />
@@ -129,6 +133,7 @@
     <Compile Include="Assets\Scripts\Player\MouseLook.cs" />
     <Compile Include="Assets\Scripts\Parts\AreaTitle.cs" />
     <Compile Include="Assets\Scripts\Parts\ClickableText.cs" />
+    <Compile Include="Assets\Scripts\Utils\OscillateScale.cs" />
     <Compile Include="Assets\Scripts\Parts\Simple3DText.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Generators\WebLevelGenerator.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\ExhibitBase.cs" />

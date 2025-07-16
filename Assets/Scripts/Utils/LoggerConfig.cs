@@ -17,4 +17,10 @@ public class LoggerConfig : MonoBehaviour {
         Instance = this;
         DontDestroyOnLoad(this.gameObject);
     }
+
+    [ContextMenu("Generate Sample CSVs")]
+    public void GenerateSampleCsvs()
+    {
+        DebugLogger.GenerateSampleCsvs();
+    }
 }

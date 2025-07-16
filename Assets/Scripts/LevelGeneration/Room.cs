@@ -49,7 +49,7 @@ public class Room : MonoBehaviour, IHasName
 
 	}
 
-    public string Name => this.Data.DisplayName;
+    public string Name => string.IsNullOrEmpty(this.Data.DisplayName) ? this.name : this.Data.DisplayName;
 
     public RoomData ToRoomData()
     {

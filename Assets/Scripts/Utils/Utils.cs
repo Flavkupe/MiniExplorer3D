@@ -67,12 +67,22 @@ public class RatingResult : IComparable<RatingResult>
     public float Score { get; set; }
     public bool IsValid { get; set; }
 
+    // Subscores, for detailed analysis
+    public float ReadingScore { get; set; }
+    public float ImageScore { get; set; }
+    public float ExitsScore { get; set; }
+    public float SubsectionScore { get; set; }
+    public float TitleScore { get; set; }
+    public float UnusedPercentage { get; set; }
+
     /// <summary>
     /// List of sections matched for this result.
     /// </summary>
     public List<RatingResultMatch> MatchedSections = new();
 
     public static RatingResult NoMatch { get; } = new RatingResult(0, false);
+
+    
 
     public RatingResult(float score, bool isValid = true)
     {
