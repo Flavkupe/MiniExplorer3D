@@ -10,22 +10,11 @@ public static class StageManager
     public const int MaxAreaEntities = 2;
     public const int MaxRoomDoors = 300;
 
-    private static Dictionary<string, RoomGrid> knownAreaMap = new Dictionary<string, RoomGrid>();
-    private static ILevelGenerator levelGenerator = new FileLevelGenerator();
-
-    public static Dictionary<string, RoomGrid> KnownAreaMap
-    {
-        get { return StageManager.knownAreaMap; }
-    }
+    private static ILevelGenerator levelGenerator = new WikipediaGenerator();
     
     public static ILevelGenerator LevelGenerator
     {
         get { return StageManager.levelGenerator; }        
-    }
-
-    public static RoomGrid GetAreaRoomGridOrNull(Location location)
-    {
-        return knownAreaMap.GetValueOrDefault(location.LocationKey);
     }
 
     public static GameObject Player { get; set; }    
@@ -105,20 +94,13 @@ public static class StageManager
 
     public static void SetLevelGenMode(LevelGenerationMode levelGenerationMode)
     {
-        if (levelGenerationMode == LevelGenerationMode.File &&
-            !(levelGenerator is FileLevelGenerator)) 
-        {
-            levelGenerator = new FileLevelGenerator();
-        }
-        else if (levelGenerationMode == LevelGenerationMode.Wikipedia &&
-            !(levelGenerator is WikipediaGenerator))
+        if (levelGenerationMode == LevelGenerationMode.Wikipedia)
         {
             levelGenerator = new WikipediaGenerator();
         }
-        else if (levelGenerationMode == LevelGenerationMode.Debug && 
-            !(levelGenerator is DebugLevelGenerator))
+        else
         {
-            levelGenerator = new DebugLevelGenerator();
+            throw new System.NotSupportedException($"Level generation mode {levelGenerationMode} is not supported.");
         }
     }
 

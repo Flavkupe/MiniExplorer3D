@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a3a0bf9abf0b74c4b8faaf993418391a
+timeCreated: 1476286529
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 73740
+  packageName: Showroom Environment
+  packageVersion: 1.1
+  assetPath: Assets/Display room/Materials/Architecture/Metal.mat
+  uploadId: 171491

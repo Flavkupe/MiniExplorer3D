@@ -64,6 +64,7 @@
     <Compile Include="Assets\Scripts\Parts\DisplayPodium.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\Exhibit.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\RoomData.cs" />
+    <Compile Include="Assets\Scripts\LevelGeneration\RoomSelector.cs" />
     <Compile Include="Assets\Scripts\Entities\GameCharacterBase.cs" />
     <Compile Include="Assets\Scripts\Parts\TextOutline.cs" />
     <Compile Include="Assets\Scripts\Parts\WallWithDoor.cs" />
@@ -101,8 +102,6 @@
     <Compile Include="Assets\Scripts\LevelGeneration\TiledSprite.cs" />
     <Compile Include="Assets\Scripts\Managers\MainMenuManager.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\SceneLoader.cs" />
-    <Compile Include="Assets\Scripts\LevelGeneration\Generators\DebugLevelGenerator.cs" />
-    <Compile Include="Assets\Scripts\LevelGeneration\Generators\FileLevelGenerator.cs" />
     <Compile Include="Assets\Scripts\Map\AreaMapDrawer.cs" />
     <Compile Include="Assets\Scripts\Utils\Utils.cs" />
     <Compile Include="Assets\Scripts\LevelGeneration\IHasLocation.cs" />
@@ -152,14 +151,18 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile-2-Pass.shader" />
+    <None Include="Assets\Display room\Shaders\Glass.shader" />
     <None Include="Assets\Simple Toon\Shaders\STOutline.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
+    <None Include="Assets\UI Pack - Antiquity\Documentation_UIpack_Antiquity_01.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
+    <None Include="Assets\Display room\Shaders\Lamp metal.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\SDFFunctions.hlsl" />
     <None Include="Assets\Shaders\3DTextOneSided.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
+    <None Include="Assets\Display room\READ ME.txt" />
     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
     <None Include="Assets\Simple Toon\Shaders\STTransparent.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
@@ -169,8 +172,10 @@
     <None Include="Assets\Shaders\SimpleToonSurface.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
     <None Include="Assets\Simple Toon\Shaders\STCore.cginc" />
+    <None Include="Assets\Display room\Shaders\Glass ASE.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+    <None Include="Assets\Display room\Shaders\wood_ground.shader" />
     <None Include="Assets\Simple Toon\Shaders\STDefault.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
@@ -1159,6 +1164,10 @@
     </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.2D.Sprite.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.2D.Sprite.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Multiplayer.Center.Common">

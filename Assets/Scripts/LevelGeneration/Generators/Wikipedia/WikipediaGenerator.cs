@@ -72,12 +72,6 @@ public class WikipediaGenerator : WebLevelGenerator
 
     public override IEnumerator PrepareAreaGeneration(Location location, MonoBehaviour caller)
     {
-        if (!location.NeedsInitialization)
-        {
-            this.CallOnAreaGenReady(new AreaGenerationReadyEventArgs() { AreaLocation = StageManager.CurrentLocation });
-            yield break;
-        }
-
         // Now Path is just the Wikipedia page title (not a URL)
         string pageTitle = location.Path;
         if (string.IsNullOrEmpty(pageTitle))

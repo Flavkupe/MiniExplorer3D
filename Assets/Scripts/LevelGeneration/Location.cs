@@ -26,7 +26,6 @@ public abstract class Location
         this.Name = name;
     }
 
-    public abstract bool NeedsInitialization { get; }
     public abstract bool IsBackLocation { get; }
 
     public virtual bool IsRandomLocation => false;
@@ -66,7 +65,6 @@ public class MainLocation : Location
     {
     }
 
-    public override bool NeedsInitialization { get { return this.LocationData.RawData == null; } }
     public override string LocationKey { get { return this.Path; } }
 }
 
@@ -90,7 +88,6 @@ public class BackLocation : Location
     {
     }
 
-    public override bool NeedsInitialization { get { return false; } }
     public override string LocationKey { get { return this.Path; } }
 }
 
@@ -103,8 +100,6 @@ public class RandomLocation : MainLocation
     public override bool IsBackLocation { get { return false; } }
 
     public override bool IsRandomLocation => true;
-
-    public override bool NeedsInitialization => true;
 
     public override string LocationKey => "Random";
 

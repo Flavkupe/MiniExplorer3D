@@ -379,60 +379,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 57095654}
   m_CullTransparentMesh: 1
---- !u!1 &136667491
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 136667493}
-  - component: {fileID: 136667492}
-  m_Layer: 0
-  m_Name: WebSceneLoader
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &136667492
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 136667491}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a518962c4837f68418e7de50a5e5477c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Minimap: {fileID: 0}
-  Player: {fileID: 1033254598}
-  GameDimensionMode: 1
-  InitialLocation: https://en.wikipedia.org/wiki/Hearthstone:_Heroes_of_Warcraft
-  Mode: 1
-  RoomPrefabs:
-  - {fileID: 11422824, guid: 32d128c29981042449ff93eb62b812c5, type: 3}
-  StartingRoomPrefabs:
-  - {fileID: 11479754, guid: ac200f66a7d5a0f4fb8bb90c4787a3bd, type: 3}
-  EntranceRoomPrefabs: []
---- !u!4 &136667493
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 136667491}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &167086753
 GameObject:
   m_ObjectHideFlags: 0
@@ -1679,7 +1625,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 230591178}
   m_HandleRect: {fileID: 230591177}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -2123,61 +2069,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding: {x: -8, y: -5, z: -8, w: -5}
   m_Softness: {x: 0, y: 0}
---- !u!1 &609380912
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 609380914}
-  - component: {fileID: 609380913}
-  m_Layer: 0
-  m_Name: FileSceneLoader
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &609380913
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 609380912}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a518962c4837f68418e7de50a5e5477c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Minimap: {fileID: 0}
-  Player: {fileID: 1033254598}
-  GameDimensionMode: 1
-  InitialLocation: C:\test\2
-  Mode: 0
-  RoomPrefabs:
-  - {fileID: 11440740, guid: dcf5e6bf86850a741aea8be015031272, type: 3}
-  - {fileID: 11422824, guid: 32d128c29981042449ff93eb62b812c5, type: 3}
-  StartingRoomPrefabs:
-  - {fileID: 11479754, guid: ac200f66a7d5a0f4fb8bb90c4787a3bd, type: 3}
-  EntranceRoomPrefabs: []
---- !u!4 &609380914
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 609380912}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.254622, y: -14.40625, z: -8.1137085}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &660094739
 GameObject:
   m_ObjectHideFlags: 0
@@ -3304,60 +3195,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1156308609}
   m_CullTransparentMesh: 1
---- !u!1 &1187944677
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1187944679}
-  - component: {fileID: 1187944678}
-  m_Layer: 0
-  m_Name: DebugSceneLoader
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1187944678
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1187944677}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a518962c4837f68418e7de50a5e5477c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Minimap: {fileID: 0}
-  Player: {fileID: 1033254598}
-  GameDimensionMode: 1
-  InitialLocation: BBB
-  Mode: 2
-  RoomPrefabs:
-  - {fileID: 11422824, guid: 32d128c29981042449ff93eb62b812c5, type: 3}
-  StartingRoomPrefabs:
-  - {fileID: 11479754, guid: ac200f66a7d5a0f4fb8bb90c4787a3bd, type: 3}
-  EntranceRoomPrefabs: []
---- !u!4 &1187944679
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1187944677}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1208777771
 GameObject:
   m_ObjectHideFlags: 0
@@ -4746,9 +4583,8 @@ MonoBehaviour:
   Player: {fileID: 1033254598}
   GameDimensionMode: 0
   InitialLocation: Hearthstone
-  Mode: 1
+  Mode: 0
   RoomPrefabs:
-  - {fileID: 11477982, guid: 6fc892b96105d1c40b32bacf4c85bab4, type: 3}
   - {fileID: 11479754, guid: e0a890c1c1cb3e34693ef3f3a09ee36f, type: 3}
   - {fileID: 11479754, guid: bc89efe3e3aaa6f4b8596b648f2359f3, type: 3}
   StartingRoomPrefabs:
@@ -5496,9 +5332,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 381290961}
   - {fileID: 188984490}
-  - {fileID: 609380914}
-  - {fileID: 136667493}
-  - {fileID: 1187944679}
   - {fileID: 1822563566}
   - {fileID: 1033254597}
   - {fileID: 1519618362}

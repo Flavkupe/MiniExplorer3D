@@ -280,7 +280,7 @@ namespace Assets.Scripts.LevelGeneration
             }
         }
 
-        public RoomData AddRoomFromList(List<Room> allRooms, LevelGenRequirements reqs) 
+        public RoomData AddRoomFromList(List<Room> allRooms, LevelGenRequirements reqs)
         {
             Queue<OpenConnectorCell> openConnectors = new Queue<OpenConnectorCell>();
             foreach (OpenConnectorCell connector in this.openConnections)

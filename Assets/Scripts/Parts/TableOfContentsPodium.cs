@@ -3,6 +3,9 @@ using System.Collections;
 using System.Linq;
 using System;
 
+/// <summary>
+/// DEPRECATED: This is no longer used but keeping around for reference of how this was done
+/// </summary>
 public class TableOfContentsPodium : MonoBehaviour 
 {
 

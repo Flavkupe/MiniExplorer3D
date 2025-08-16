@@ -20,9 +20,6 @@ public interface ILevelGenerator
     
     event EventHandler<AreaGenerationReadyEventArgs> OnAreaGenReady;
     event EventHandler<AreaGenerationReadyEventArgs> OnAreaPostProcessingDone;
-    
-
-    bool NeedsAreaGenPreparation { get; }
 }
 
 

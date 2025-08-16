@@ -1,0 +1,28 @@
+This asset pack contains everything you'll need to build a User Interface with elements befitting a world set in antiquity - that is, prior to the middle ages. However, it may also suit a fantasy setting!
+
+Includes Heads Up Display assets such as bars, icons, buttons and frames - the latter of which are tile-able. Most everything is scaled to power of two and is divisible by 8, except the smallest of assets.
+
+---  ASSETS 128px to 1024 (72dpi)  ---
+- Health, Mana, Energy and Stamina Bar textures
+- Two styles of avian header artwork with color varieties
+- 4 types of text banner textures and color varieties
+- Antiquity border pattern and ancient column textures
+Multiple button textures with art for states (default, hover and pressed)
+- Two styles of UI frame, 9-sliced for ease of tiling
+- Slider frame and tab textures
+- 3 sizes of button framework and a 9-sliced frame, so you can build your own borders!
+- 18 different button icon textures for the range of user needs within the interface (chr sheet, inv, store, achievements, options etc!)
+- Minimap textures and central player arrow
+- PSD file included, so you can make changes to the art work to suit your needs!
+
+Please rate and comment, if you like my work and have found a use for it in your project!
+I encourage feedback and tips for assets to make in the future!
+
+Please feel free to reach out to me at: kubashvisualdesign@protonmail.com
+
+Technical Details:
+You just need to navigate to the PNG folder to find all of the .pngs. 
+Compatibility Information:
+Contains .PNGs .PSD working file, as well as one .txt
+
+ui, user interface, gui, hud, ancient, antiquity, fantasy, roman, greek, cracked, old, worn, stylized, cesar, button, frame, metalic, stone, marble

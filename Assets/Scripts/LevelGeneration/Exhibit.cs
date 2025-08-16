@@ -49,7 +49,6 @@ public class Exhibit : ExhibitBase, ICanSupportTitle
 
     public List<AreaTitle> AreaTitleSigns { get; private set; } = new();
 
-    public Placeholder TOCPodium = null;
     public List<Door> Exits { get; private set; } = new();
 
     public List<ExhibitBase> SubExhibits { get; private set; } = new();
@@ -74,7 +73,6 @@ public class Exhibit : ExhibitBase, ICanSupportTitle
         this.PaintingPlaceholders = allPlaceholders.Where(a => a.PartType == Placeholder.RoomPartType.ImageFrame).ToList();
         this.ReadingPlaceholders = allPlaceholders.Where(a => a.PartType == Placeholder.RoomPartType.Reading).ToList();
 
-        this.TOCPodium = allPlaceholders.FirstOrDefault(a => a.PartType == Placeholder.RoomPartType.TableOfContentsPodium);
         this.SubExhibits = children.SelectMany(go => go.GetComponents<ExhibitBase>()).Where(e => e != this).ToList();
 
         foreach (var exhibit in this.SubExhibits)
@@ -171,22 +169,6 @@ public class Exhibit : ExhibitBase, ICanSupportTitle
 
         // Set the exits
         PopulateExits();
-
-        // Table of Contents podium
-        if (this.TOCPodium != null)
-        {
-            if (section.TableOfContents != null)
-            {
-                TableOfContentsPodium podium = this.TOCPodium.ReplaceInstance<TableOfContentsPodium>();
-                podium.SetTableOfContents(section.TableOfContents);
-                section.TableOfContents = null;
-            }
-            else
-            {
-                this.TOCPodium.gameObject.SetActive(false);
-            }
-        }
-
 
         // Populate subexhibits recursively
         if (SubExhibits.Count < data.SubExhibitData.Count)

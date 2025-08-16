@@ -114,8 +114,6 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
         yield return null;
     }
 
-    public override bool NeedsAreaGenPreparation { get { return true; } }
-
     protected override AreaTheme GetAreaTheme(Location location)
     {
         // TODO
@@ -128,26 +126,19 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
         AreaTheme theme = GetAreaTheme(targetLocation);
         grid.AreaTheme = theme;
 
+        // Parse the raw HTML into sections
         this.ProcessLocation(targetLocation);
 
-        // Use new SectionData-based requirements constructor
         LevelGenRequirements reqs = new WebLevelGenRequirements(targetLocation);
 
         Location backLocation = this.GetBackLocation(targetLocation);
         if (backLocation != null)
         {
+            // door to previous location
             reqs.Locations.Enqueue(backLocation);
         }
 
-        List<Room> possibleRooms = null;
-        if (StageManager.SceneLoader.RoomPrefabs.Length > 0)
-        {
-            possibleRooms = StageManager.SceneLoader.RoomPrefabs.ToList();
-        }
-        else
-        {
-            possibleRooms = ResourceManager.GetAllRoomPrefabs(theme);
-        }
+        List<Room> possibleRooms = GetPossibleRooms(theme);
         possibleRooms.ForEach(room => room.PopulateParts());
 
         Room startingRoom = this.GetFirstRoom(targetLocation);
@@ -183,6 +174,25 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
         } while (!reqs.AllRequirementsMet && currentRoomData != null);
 
         return grid;
+    }
+
+    /// <summary>
+    /// Gets list of possible rooms to use for generation, either from the SceneLoader (if set) or from resources.
+    /// </summary>
+    /// <returns></returns>
+    private static List<Room> GetPossibleRooms(AreaTheme theme)
+    {
+        List<Room> possibleRooms = null;
+        if (StageManager.SceneLoader.RoomPrefabs.Length > 0)
+        {
+            possibleRooms = StageManager.SceneLoader.RoomPrefabs.ToList();
+        }
+        else
+        {
+            possibleRooms = ResourceManager.GetAllRoomPrefabs(theme);
+        }
+
+        return possibleRooms;
     }
 
     private void LogMissingReqs(LevelGenRequirements reqs)

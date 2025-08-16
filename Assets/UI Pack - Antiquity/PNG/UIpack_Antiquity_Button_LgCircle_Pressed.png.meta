@@ -1,0 +1,605 @@
+fileFormatVersion: 2
+guid: 647f6b88c5f562e40970fa4dab091212
+AssetOrigin:
+  serializedVersion: 1
+  productId: 190042
+  packageName: UI Pack - Antiquity
+  packageVersion: 1.1
+  assetPath: Assets/UI Pack - Antiquity/PNG/UIpack_Antiquity_Button_LgCircle_Pressed.png
+  uploadId: 656916
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4942807472030631319
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_0
+  - first:
+      213: 910967524469016303
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_1
+  - first:
+      213: 2213215878608955587
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_2
+  - first:
+      213: -1181191264255907361
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_3
+  - first:
+      213: 7922770339168614689
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_4
+  - first:
+      213: 5694854383800595739
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_5
+  - first:
+      213: 4675593459897424724
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_6
+  - first:
+      213: 580995087169261769
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_7
+  - first:
+      213: -8602638278900115696
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_8
+  - first:
+      213: 7023556831174850089
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_9
+  - first:
+      213: -8937559831736827601
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_10
+  - first:
+      213: -1842971861397261281
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_11
+  - first:
+      213: 2902066690358020511
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_12
+  - first:
+      213: -2164842655695964093
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_13
+  - first:
+      213: 5352452081928791267
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_14
+  - first:
+      213: -7808192357580686232
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_15
+  - first:
+      213: 1002281577859925477
+    second: UIpack_Antiquity_Button_LgCircle_Pressed_16
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_0
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 214
+        width: 55
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96ab774dace976bb0800000000000000
+      internalID: -4942807472030631319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_1
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 227
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe684e1132864ac00800000000000000
+      internalID: 910967524469016303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_2
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 153
+        width: 33
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c8adbf8d1ce6be10800000000000000
+      internalID: 2213215878608955587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_3
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 193
+        width: 40
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd96b3aadc09b9fe0800000000000000
+      internalID: -1181191264255907361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_4
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 193
+        width: 40
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 129752795a553fd60800000000000000
+      internalID: 7922770339168614689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_5
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 153
+        width: 33
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b15b202b3ef280f40800000000000000
+      internalID: 5694854383800595739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_6
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 175
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45b535bba7b03e040800000000000000
+      internalID: 4675593459897424724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_7
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 174
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c098fa14fb101800800000000000000
+      internalID: 580995087169261769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_8
+      rect:
+        serializedVersion: 2
+        x: 28
+        y: 109
+        width: 14
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0171bf6601a4d9880800000000000000
+      internalID: -8602638278900115696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_9
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 109
+        width: 14
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 926f1fdb9bfa87160800000000000000
+      internalID: 7023556831174850089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_10
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 60
+        width: 38
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f21c68eafa867f380800000000000000
+      internalID: -8937559831736827601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_11
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 60
+        width: 34
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1430664bd27c66e0800000000000000
+      internalID: -1842971861397261281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_12
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 66
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9988417746364820800000000000000
+      internalID: 2902066690358020511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_13
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 35
+        width: 40
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 348f0a0131fe4f1e0800000000000000
+      internalID: -2164842655695964093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_14
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 31
+        width: 55
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e46aac5fcab74a40800000000000000
+      internalID: 5352452081928791267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_15
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 35
+        width: 40
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86cbb7c9b6ab3a390800000000000000
+      internalID: -7808192357580686232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgCircle_Pressed_16
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 13
+        width: 14
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e54245e8c1d8ed00800000000000000
+      internalID: 1002281577859925477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      UIpack_Antiquity_Button_LgCircle_Pressed_0: -4942807472030631319
+      UIpack_Antiquity_Button_LgCircle_Pressed_1: 910967524469016303
+      UIpack_Antiquity_Button_LgCircle_Pressed_10: -8937559831736827601
+      UIpack_Antiquity_Button_LgCircle_Pressed_11: -1842971861397261281
+      UIpack_Antiquity_Button_LgCircle_Pressed_12: 2902066690358020511
+      UIpack_Antiquity_Button_LgCircle_Pressed_13: -2164842655695964093
+      UIpack_Antiquity_Button_LgCircle_Pressed_14: 5352452081928791267
+      UIpack_Antiquity_Button_LgCircle_Pressed_15: -7808192357580686232
+      UIpack_Antiquity_Button_LgCircle_Pressed_16: 1002281577859925477
+      UIpack_Antiquity_Button_LgCircle_Pressed_2: 2213215878608955587
+      UIpack_Antiquity_Button_LgCircle_Pressed_3: -1181191264255907361
+      UIpack_Antiquity_Button_LgCircle_Pressed_4: 7922770339168614689
+      UIpack_Antiquity_Button_LgCircle_Pressed_5: 5694854383800595739
+      UIpack_Antiquity_Button_LgCircle_Pressed_6: 4675593459897424724
+      UIpack_Antiquity_Button_LgCircle_Pressed_7: 580995087169261769
+      UIpack_Antiquity_Button_LgCircle_Pressed_8: -8602638278900115696
+      UIpack_Antiquity_Button_LgCircle_Pressed_9: 7023556831174850089
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

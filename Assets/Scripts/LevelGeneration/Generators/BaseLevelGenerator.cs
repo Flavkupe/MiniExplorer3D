@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 
 
@@ -11,6 +10,7 @@ public abstract class BaseLevelGenerator : ILevelGenerator
 {
     protected virtual Room GetFirstRoom(Location targetLocation)
     {
+        // TODO: be more selective?
         Room startingRoom = StageManager.SceneLoader.StartingRoomPrefabs.GetRandom();
         startingRoom.PopulateParts();
         return startingRoom;
@@ -33,8 +33,6 @@ public abstract class BaseLevelGenerator : ILevelGenerator
     public abstract List<string> GetLevelEntities(Location location);
 
     public abstract bool CanLoadLocation(Location location);
-
-    public virtual bool NeedsAreaGenPreparation { get { return false; } }
 
     public virtual IEnumerator PrepareAreaGeneration(Location location, MonoBehaviour caller)
     {
@@ -70,9 +68,7 @@ public abstract class BaseLevelGenerator : ILevelGenerator
 
 public enum LevelGenerationMode 
 {
-    File,
     Wikipedia,
-    Debug
 }
 
 public class AreaGenerationReadyEventArgs : EventArgs

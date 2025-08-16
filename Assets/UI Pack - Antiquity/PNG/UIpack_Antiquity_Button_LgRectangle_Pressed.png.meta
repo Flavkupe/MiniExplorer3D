@@ -1,0 +1,397 @@
+fileFormatVersion: 2
+guid: abbd997dcc2387c48917bf49e7266161
+AssetOrigin:
+  serializedVersion: 1
+  productId: 190042
+  packageName: UI Pack - Antiquity
+  packageVersion: 1.1
+  assetPath: Assets/UI Pack - Antiquity/PNG/UIpack_Antiquity_Button_LgRectangle_Pressed.png
+  uploadId: 656916
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1480042769550554615
+    second: UIpack_Antiquity_Button_LgRectangle_Pressed_0
+  - first:
+      213: -6019450526487674520
+    second: UIpack_Antiquity_Button_LgRectangle_Pressed_1
+  - first:
+      213: 1194383779119339623
+    second: UIpack_Antiquity_Button_LgRectangle_Pressed_2
+  - first:
+      213: -1121210460974298544
+    second: UIpack_Antiquity_Button_LgRectangle_Pressed_3
+  - first:
+      213: -475866058595015013
+    second: UIpack_Antiquity_Button_LgRectangle_Pressed_4
+  - first:
+      213: -5519714312208210860
+    second: UIpack_Antiquity_Button_LgRectangle_Pressed_5
+  - first:
+      213: 4387147894087882807
+    second: UIpack_Antiquity_Button_LgRectangle_Pressed_6
+  - first:
+      213: -5178480265956762848
+    second: UIpack_Antiquity_Button_LgRectangle_Pressed_7
+  - first:
+      213: 2878441873545538862
+    second: UIpack_Antiquity_Button_LgRectangle_Pressed_8
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgRectangle_Pressed_0
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 192
+        width: 47
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f5327bae0b2a8410800000000000000
+      internalID: 1480042769550554615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgRectangle_Pressed_1
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 220
+        width: 894
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8610aa973ad967ca0800000000000000
+      internalID: -6019450526487674520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgRectangle_Pressed_2
+      rect:
+        serializedVersion: 2
+        x: 963
+        y: 192
+        width: 45
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76895ef08bd439010800000000000000
+      internalID: 1194383779119339623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgRectangle_Pressed_3
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 68
+        width: 12
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05acc23b609a070f0800000000000000
+      internalID: -1121210460974298544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgRectangle_Pressed_4
+      rect:
+        serializedVersion: 2
+        x: 986
+        y: 68
+        width: 7
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9667c847526569f0800000000000000
+      internalID: -475866058595015013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgRectangle_Pressed_5
+      rect:
+        serializedVersion: 2
+        x: 992
+        y: 68
+        width: 7
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 454a037e3190663b0800000000000000
+      internalID: -5519714312208210860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgRectangle_Pressed_6
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 16
+        width: 47
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 738163cf3c742ec30800000000000000
+      internalID: 4387147894087882807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgRectangle_Pressed_7
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 24
+        width: 894
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02bd64782a75228b0800000000000000
+      internalID: -5178480265956762848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIpack_Antiquity_Button_LgRectangle_Pressed_8
+      rect:
+        serializedVersion: 2
+        x: 963
+        y: 16
+        width: 45
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2daa4322a742f720800000000000000
+      internalID: 2878441873545538862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      UIpack_Antiquity_Button_LgRectangle_Pressed_0: 1480042769550554615
+      UIpack_Antiquity_Button_LgRectangle_Pressed_1: -6019450526487674520
+      UIpack_Antiquity_Button_LgRectangle_Pressed_2: 1194383779119339623
+      UIpack_Antiquity_Button_LgRectangle_Pressed_3: -1121210460974298544
+      UIpack_Antiquity_Button_LgRectangle_Pressed_4: -475866058595015013
+      UIpack_Antiquity_Button_LgRectangle_Pressed_5: -5519714312208210860
+      UIpack_Antiquity_Button_LgRectangle_Pressed_6: 4387147894087882807
+      UIpack_Antiquity_Button_LgRectangle_Pressed_7: -5178480265956762848
+      UIpack_Antiquity_Button_LgRectangle_Pressed_8: 2878441873545538862
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

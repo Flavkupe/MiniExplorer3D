@@ -1,5 +1,4 @@
 using HtmlAgilityPack;
-using System;
 
 public class WikipediaMainPageProcessor : WikipediaBaseProcessor
 {

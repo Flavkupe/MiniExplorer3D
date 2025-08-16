@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Assets.Scripts.LevelGeneration;
 using System.Collections.Generic;
 using System.Linq;
 using System;
@@ -45,10 +44,7 @@ public class SceneLoader : MonoBehaviour
             StageManager.CurrentLocation = new MainLocation(this.InitialLocation);
         }
 
-        if (this.levelGenerator.NeedsAreaGenPreparation)
-        {
-            this.levelGenerator.OnAreaGenReady += LevelGenerator_OnAreaGenReady;              
-        }
+        this.levelGenerator.OnAreaGenReady += LevelGenerator_OnAreaGenReady;
 
         instance = this;
     }
@@ -72,14 +68,11 @@ public class SceneLoader : MonoBehaviour
         {
             LoadRandomArticle();
         }
-        else if (this.levelGenerator.NeedsAreaGenPreparation)
+        else
         {
             StartCoroutine(this.levelGenerator.PrepareAreaGeneration(location, this));
         }
-        else
-        {
-            StartCoroutine(this.GenerateLevel(location));
-        }
+        
     }
 
     void LevelGenerator_OnAreaGenReady(object sender, AreaGenerationReadyEventArgs e)
@@ -128,26 +121,16 @@ public class SceneLoader : MonoBehaviour
         area.name = currentLocation.Name ?? currentLocation.Path;
         area.DisplayName = area.name;
 
-        RoomGrid grid = StageManager.GetAreaRoomGridOrNull(currentLocation);
-        if (grid == null)
-        {
-            // Generate new map if none exists            
-            grid = this.levelGenerator.GenerateRoomGrid(currentLocation);
-        }
-
         // Populate rooms with stuff and create actual instances
-        area.RoomGrid = grid;
+        area.RoomGrid = this.levelGenerator.GenerateRoomGrid(currentLocation); ;
         StageManager.CurrentArea = area;
 
-        if (this.levelGenerator.NeedsAreaGenPreparation)
-        {
-            yield return this.levelGenerator.AreaPostProcessing(currentLocation, this);
-        }
+        yield return this.levelGenerator.AreaPostProcessing(currentLocation, this);
 
         Vector3? spawnPos = null;
         Quaternion? spawnRotation = null;
         List<Room> instances = new List<Room>();
-        foreach (RoomData roomData in grid.Rooms)
+        foreach (RoomData roomData in area.RoomGrid.Rooms)
         {
             // Put each room from grid in its actual location
             Room model = this.GetRoomByPrefabID(roomData.PrefabID, area);
@@ -168,7 +151,6 @@ public class SceneLoader : MonoBehaviour
         }
 
         area.Rooms = instances.ToArray();
-        StageManager.KnownAreaMap[currentLocation.LocationKey] = area.RoomGrid;
 
         if (this.Minimap != null)
         {

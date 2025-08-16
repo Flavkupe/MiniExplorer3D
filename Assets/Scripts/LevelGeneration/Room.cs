@@ -13,12 +13,12 @@ public class Room : MonoBehaviour, IHasName
     public int Width { get { return this.Data.DimX; } }
 
     /// <summary>
-    /// Y dimension in 2D and 3D
+    /// Y dimension
     /// </summary>
     public int Height { get { return this.Data.DimY; } }
 
     /// <summary>
-    /// 0 in 2D, Z dimension in 3D
+    /// Z dimension
     /// </summary>
     public int Length { get { return this.Data.DimZ; } }
 
@@ -29,8 +29,6 @@ public class Room : MonoBehaviour, IHasName
     public SpawnPoint[] SpawnPoints = new SpawnPoint[] { }; 
 
     public RoomConnector[] Connectors = new RoomConnector[] { };
-
-    public Placeholder TOCPodium = null;
 
     public AreaTitle AreaTitleSign = null;
 
@@ -68,13 +66,17 @@ public class Room : MonoBehaviour, IHasName
         return data;
     }
 
+    /// <summary>
+    /// Finds corresponding child elements for the properties of this Room.
+    /// These are used in a readonly way to help process the room during level generation.
+    /// This must be called before a Room can be processed for RoomGrid generation.
+    /// </summary>
     public void PopulateParts()
     {
         List<Placeholder> allPlaceholders = this.GetComponentsInChildren<Placeholder>(true).ToList();
 
         this.Connectors = this.transform.GetComponentsInChildren<RoomConnector>(true);
         this.SpawnPoints = this.transform.GetComponentsInChildren<SpawnPoint>(true);
-        this.TOCPodium = allPlaceholders.FirstOrDefault(a => a.PartType == Placeholder.RoomPartType.TableOfContentsPodium);
         this.AreaTitleSign = this.transform.GetComponentInChildren<AreaTitle>();
         this.Exhibits = this.transform.GetComponentsInChildren<Exhibit>().Where(exhibit => !exhibit.SectionTypes.HasFlag(SectionType.Subsection)).ToArray();
         foreach (var exhibit in this.Exhibits)

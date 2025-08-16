@@ -4,7 +4,9 @@ public class AreaTitle : MonoBehaviour
 {
     private TMPro.TextMeshPro childTextMesh;
 
-	void Awake() {
+    public bool RemoveObjectOnEmptyTitle = false;
+
+    void Awake() {
         this.childTextMesh = this.GetComponentInChildren<TMPro.TextMeshPro>();
 	}
 	
@@ -18,6 +20,11 @@ public class AreaTitle : MonoBehaviour
         if (this.childTextMesh != null)
         {
             this.childTextMesh.text = text;
+        }
+
+        if (this.RemoveObjectOnEmptyTitle && string.IsNullOrEmpty(text))
+        {
+            this.gameObject.SetActive(false);
         }
     }
 }
