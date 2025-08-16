@@ -66,7 +66,7 @@ namespace Assets.Scripts.LevelGeneration
             this.dimensions = dimensions;
         }
 
-        public void AddRoom(RoomData data, int x, int y) 
+        private void PlaceRoomAtCoordinate(RoomData data, int x, int y) 
         {
             this.rooms.Add(data);
 
@@ -126,7 +126,11 @@ namespace Assets.Scripts.LevelGeneration
             return new Vector2(x, y);
         }
 
-        public bool CanAddRoom(Room room, int x, int y)
+        /// <summary>
+        /// Whether a room can be placed at a specific grid location.
+        /// </summary>
+        /// <returns></returns>
+        private bool CanPlaceRoomAtCoordinate(Room room, int x, int y)
         {
             int stepX = room.Width / StageManager.StepSize;            
             int gridRoomHeight = room.Length;
@@ -157,7 +161,7 @@ namespace Assets.Scripts.LevelGeneration
             return this.grid[x, y] != null;            
         }
 
-        public bool IsInBounds(int x, int y)
+        private bool IsInBounds(int x, int y)
         {
             if (x < 0 || y < 0 ||
                 x >= this.dimensions ||
@@ -182,155 +186,106 @@ namespace Assets.Scripts.LevelGeneration
             return new Vector3(xWorld, depth, yWorld);
         }
 
-        private List<RoomAndConnector> GetPossibleRooms(OpenConnectorCell openConnectorCell, List<Room> allRooms, LevelGenRequirements reqs)
+        /// <summary>
+        /// Returns true if the room can be added to the grid based on the open connectors.
+        /// </summary>
+        public bool CanAddRoom(Room room)
         {
-            var possibleRooms = new List<RoomAndConnector>();
+            foreach (var connector in this.openConnections)
+            {
+                if (FindRoomPlacement(room, connector) != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public List<Room> GetPossibleRooms(List<Room> allRooms, LevelGenRequirements reqs)
+        {
+            List<Room> possibleRooms = new();
             foreach (var room in allRooms)
             {
-                // Must have a matching exhibit
-                if (!room.HasMatchingExhibit(reqs.SectionData))
+                if (this.CanAddRoom(room) && room.HasMatchingExhibit(reqs.SectionData))
                 {
-                    continue;
-                }
-
-                // Must have a connector that matches the open connector
-                var matchingConnectors = room.Connectors.Where(connector => connector.IsMatchingConnector(openConnectorCell.OpenConnector)).ToList();
-                matchingConnectors.Shuffle();
-                if (matchingConnectors.Count == 0)
-                {
-                    continue;
-                }
-                
-                // At least one matching connector must allow the room to be placed
-                foreach (var connector in matchingConnectors)
-                {
-                    Vector2 roomOffset = connector.GetRelativeGridCoords();
-                    int roomCoordX = openConnectorCell.X - (int)roomOffset.x;
-                    int roomCoordY = openConnectorCell.Y - (int)roomOffset.y;
-                    if (this.CanAddRoom(room, roomCoordX, roomCoordY))
-                    {
-                        possibleRooms.Add(new RoomAndConnector(room, connector, roomCoordX, roomCoordY));
-                        break;
-                    }
-                }
+                    possibleRooms.Add(room);
+                }   
             }
 
             return possibleRooms;
         }
 
-        public RoomData AddFirstRoom(Room room, LevelGenRequirements reqs)
+        public RoomData AddFirstRoom(Room room)
         {
             int center = this.dimensions / 2;
             RoomData data = this.GetRoomData(room, center, center);
-            this.AddRoom(data, center, center);
-            
-            // Use rating system to select the best matching sections for the room
-            var rating = room.RateRequirementsMatch(reqs);
-            if (!rating.IsValid)
-            {
-                // TODO: how to actually handle this?
-                Debug.LogError("First room does not match requirements");
-            }
-
-            TransferMatchesToRoomData(rating.MatchedSections, reqs, data);
-
+            this.PlaceRoomAtCoordinate(data, center, center);
             return data;
         }
 
-        private RoomAndConnector FindBestRoom(List<RoomAndConnector> possibleRooms, LevelGenRequirements reqs, out RatingResult ratingResult)
-        {
-            RoomAndConnector bestRoom = null;
-            ratingResult = null;
-            foreach (var roomAndConnector in possibleRooms)
-            {
-                var rating = roomAndConnector.Room.RateRequirementsMatch(reqs);
-                if (!rating.IsValid)
-                {
-                    continue;
-                }
-
-                if (ratingResult == null || rating.Score > ratingResult.Score)
-                {
-                    bestRoom = roomAndConnector;
-                    ratingResult = rating;
-                }
-            }
-
-            return bestRoom;
-        }
-
-        /// <summary>
-        /// Given a list of matches from room/exhibit selection, removes them from
-        /// reqs and puts them into the room data to populate rooms later.
-        /// </summary>
-        private void TransferMatchesToRoomData(List<RatingResultMatch> matches, LevelGenRequirements reqs, RoomData roomData)
-        {
-            // Transfer section requirements to the room data
-            foreach (var match in matches)
-            {
-                if (reqs.SectionData.Contains(match.SectionData))
-                {
-                    roomData.ExhibitData.Add(new ExhibitData(match.PrefabID, match.SectionData));
-                    reqs.SectionData.Remove(match.SectionData);
-                }
-                else
-                {
-                    Debug.LogWarning($"Section data {match.SectionData.Title} not found in requirements, cannot transfer to room data.");
-                }
-            }
-        }
-
-        public RoomData AddRoomFromList(List<Room> allRooms, LevelGenRequirements reqs)
+        public RoomData AddRoomToGrid(Room room)
         {
             Queue<OpenConnectorCell> openConnectors = new Queue<OpenConnectorCell>();
             foreach (OpenConnectorCell connector in this.openConnections)
             {
                 openConnectors.Enqueue(connector);
-            }        
+            }
 
             while (openConnectors.Count > 0)
             {
                 OpenConnectorCell currentOpenConnectorCell = openConnectors.Dequeue();
-                List<RoomAndConnector> possibleRooms = GetPossibleRooms(currentOpenConnectorCell, allRooms, reqs);
 
-                if (possibleRooms.Count == 0)
-                {
-                    continue;
-                }
+                RoomPlacement roomPlacement = this.FindRoomPlacement(room, currentOpenConnectorCell);
+                var x = roomPlacement.CoordX;
+                var y = roomPlacement.CoordY;
 
-                RatingResult ratingResult = null;
-                var bestRoom = this.FindBestRoom(possibleRooms, reqs, out ratingResult);
-                if (bestRoom == null || ratingResult == null || !ratingResult.IsValid)
-                {
-                    // no viable room available for connector; this is not necessarily an error
-                    continue;
-                }
-
-                var x = bestRoom.CoordX;
-                var y = bestRoom.CoordY;
-                RoomData data = this.GetRoomData(bestRoom.Room, x, y);
-                TransferMatchesToRoomData(ratingResult.MatchedSections, reqs, data);
-
-                this.AddRoom(data, x, y);
+                this.PlaceRoomAtCoordinate(roomPlacement.RoomData, x, y);
                 this.openConnections.Remove(currentOpenConnectorCell);
-                RoomConnectorData usedConnector = data.Connectors.FirstOrDefault(a => a.IsSamePrefab(bestRoom.Connector));
-                if (usedConnector != null)
-                {
-                    usedConnector.Used = true;
-                    currentOpenConnectorCell.OpenConnector.Used = true;
-                }
-                else
-                {
-                    Debug.LogError("Unmatching connector");
-                }
-                return data;
+                
+                roomPlacement.MatchedConnector.Used = true;
+                roomPlacement.OtherConnector.Used = true;
+                return roomPlacement.RoomData;
             }
 
             Debug.LogError("No possible room prefabs could be placed to satisfy any open connector or condition. Level generation may be stuck or incomplete.");
             return null;
         }
 
-        public RoomData GetRoomData(Room room, int x, int y)
+        /// <summary>
+        /// Finds a placement for the room based on the open connector cell. Returns null if no placement is found.
+        /// </summary>
+        /// <param name="openConnectorCell">A connector already available to be used in the grid.</param>
+        /// <returns></returns>
+        private RoomPlacement FindRoomPlacement(Room room, OpenConnectorCell openConnectorCell)
+        {
+            // Find all connectors on the room that match the open connector
+            var matchingConnectors = room.Connectors.Where(connector => connector.Data.IsMatchingConnector(openConnectorCell.OpenConnector)).ToList();
+            if (matchingConnectors.Count == 0)
+            {
+                // No matching connector found
+                return null;
+            }
+
+            // Try each matching connector to see if the room can fit
+            foreach (var connector in matchingConnectors)
+            {
+                Vector2 roomOffset = connector.GetRelativeGridCoords();
+                int roomCoordX = openConnectorCell.X - (int)roomOffset.x;
+                int roomCoordY = openConnectorCell.Y - (int)roomOffset.y;
+                if (this.CanPlaceRoomAtCoordinate(room, roomCoordX, roomCoordY))
+                {
+                    RoomData data = this.GetRoomData(room, roomCoordX, roomCoordY);
+                    var connectorData = connector.ToRoomConnectorData();
+                    return new RoomPlacement(data, connectorData, openConnectorCell.OpenConnector, roomCoordX, roomCoordY);
+                }
+            }
+
+            // No valid placement found
+            return null;
+        }
+
+        private RoomData GetRoomData(Room room, int x, int y)
         {
             RoomData data = room.ToRoomData();
             data.RoomReference = room;
@@ -341,10 +296,21 @@ namespace Assets.Scripts.LevelGeneration
             return data;
         }
 
-        private class RoomAndConnector
+        private class RoomPlacement
         {
-            public Room Room { get; private set; }
-            public RoomConnector Connector { get; private set; }
+            // public Room Room { get; private set; }
+
+            public RoomData RoomData { get; private set; }
+
+            /// <summary>
+            /// The connector in this room that was matched to an open connector.
+            /// </summary>
+            public RoomConnectorData MatchedConnector { get; private set; }
+
+            /// <summary>
+            /// An open connector existing in the grid that led to this room.
+            /// </summary>
+            public RoomConnectorData OtherConnector { get; private set; }
             public int CoordX { get; private set; }
             public int CoordY { get; private set; }
 
@@ -353,10 +319,11 @@ namespace Assets.Scripts.LevelGeneration
             /// viable rooms and the connector that can lead to them. CoordX and CoordY
             /// are the grid coords for where the room will be placed in this scenario.
             /// </summary>
-            public RoomAndConnector(Room room, RoomConnector connector, int coordX, int coordY)
+            public RoomPlacement(RoomData roomData, RoomConnectorData matchedConnector, RoomConnectorData otherConnector, int coordX, int coordY)
             {
-                this.Room = room;
-                this.Connector = connector;
+                this.RoomData = roomData;
+                this.MatchedConnector = matchedConnector;
+                this.OtherConnector = otherConnector;
                 this.CoordX = coordX;
                 this.CoordY = coordY;
             }

@@ -1,13 +1,16 @@
-﻿using System;
+﻿using Assets.Scripts.LevelGeneration;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
-using Assets.Scripts.LevelGeneration;
+using UnityEngine.UIElements.Experimental;
 
 public abstract class WebLevelGenerator : BaseLevelGenerator
 {
+    private RoomSelector roomSelector = new RoomSelector();
+
     public WebLevelGenerator() { }
 
     protected override void ProcessLocation(Location parentLocation)
@@ -138,13 +141,15 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
             reqs.Locations.Enqueue(backLocation);
         }
 
-        List<Room> possibleRooms = GetPossibleRooms(theme);
-        possibleRooms.ForEach(room => room.PopulateParts());
+        List<Room> allAvailableRooms = GetPossibleRooms(theme);
+        allAvailableRooms.ForEach(room => room.PopulateParts());
 
         Room startingRoom = this.GetFirstRoom(targetLocation);
 
         List<RoomData> rooms = new List<RoomData>();
-        RoomData currentRoomData = grid.AddFirstRoom(startingRoom, reqs);
+        var firstRoom = roomSelector.FindBestRoom(new List<Room> { startingRoom }, reqs);
+        RoomData currentRoomData = grid.AddFirstRoom(firstRoom.Room);
+        TransferMatchesToRoomData(firstRoom.Rating.MatchedSections, reqs, currentRoomData);
 
         int failsafeCount = 0;
 
@@ -152,17 +157,17 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
         {
             if (!reqs.AllRequirementsMet)
             {
-                currentRoomData = grid.AddRoomFromList(possibleRooms, reqs);
-                if (currentRoomData != null)
-                {
-                    rooms.Add(currentRoomData);
-                }
-                else
+                var possibleRooms = grid.GetPossibleRooms(allAvailableRooms, reqs);
+                var bestRoom = roomSelector.FindBestRoom(possibleRooms, reqs);
+                if (bestRoom == null)
                 {
                     Debug.LogWarning("WebLevelGenerator: no more viable rooms exist to handle missing reqs; breaking loop.");
                     this.LogMissingReqs(reqs);
                     break;
                 }
+
+                var roomData = grid.AddRoomToGrid(bestRoom.Room);
+                TransferMatchesToRoomData(bestRoom.Rating.MatchedSections, reqs, roomData);
             }
 
             if (failsafeCount++ > 30)
@@ -174,6 +179,27 @@ public abstract class WebLevelGenerator : BaseLevelGenerator
         } while (!reqs.AllRequirementsMet && currentRoomData != null);
 
         return grid;
+    }
+
+    /// <summary>
+    /// Given a list of matches from room/exhibit selection, removes them from
+    /// reqs and puts them into the room data to populate rooms later.
+    /// </summary>
+    private void TransferMatchesToRoomData(List<RatingResultMatch> matches, LevelGenRequirements reqs, RoomData roomData)
+    {
+        // Transfer section requirements to the room data
+        foreach (var match in matches)
+        {
+            if (reqs.SectionData.Contains(match.SectionData))
+            {
+                roomData.ExhibitData.Add(new ExhibitData(match.PrefabID, match.SectionData));
+                reqs.SectionData.Remove(match.SectionData);
+            }
+            else
+            {
+                Debug.LogWarning($"Section data {match.SectionData.Title} not found in requirements, cannot transfer to room data.");
+            }
+        }
     }
 
     /// <summary>
