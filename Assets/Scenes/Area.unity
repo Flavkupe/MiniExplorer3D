@@ -4590,11 +4590,12 @@ MonoBehaviour:
   Minimap: {fileID: 0}
   Player: {fileID: 1033254598}
   GameDimensionMode: 0
-  InitialLocation: Hearthstone
+  InitialLocation: 
   Mode: 0
   RoomPrefabs:
   - {fileID: 11479754, guid: e0a890c1c1cb3e34693ef3f3a09ee36f, type: 3}
   - {fileID: 11479754, guid: bc89efe3e3aaa6f4b8596b648f2359f3, type: 3}
+  - {fileID: 11477982, guid: 6fc892b96105d1c40b32bacf4c85bab4, type: 3}
   StartingRoomPrefabs:
   - {fileID: 11479754, guid: 5a19c7eb1adb43a4bb809213e57d6ec6, type: 3}
   EntranceRoomPrefabs:

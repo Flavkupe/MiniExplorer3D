@@ -68,6 +68,10 @@ public class SceneLoader : MonoBehaviour
         {
             LoadRandomArticle();
         }
+        else if (location.IsEmptyLocation)
+        {
+            LoadMainPage();
+        }
         else
         {
             StartCoroutine(this.levelGenerator.PrepareAreaGeneration(location, this));

@@ -28,6 +28,8 @@ public abstract class Location
 
     public abstract bool IsBackLocation { get; }
 
+    public bool IsEmptyLocation => string.IsNullOrEmpty(this.Path);
+
     public virtual bool IsRandomLocation => false;
 
     public abstract string LocationKey { get; }
