@@ -237,6 +237,11 @@ namespace Assets.Scripts.LevelGeneration
                 OpenConnectorCell currentOpenConnectorCell = openConnectors.Dequeue();
 
                 RoomPlacement roomPlacement = this.FindRoomPlacement(room, currentOpenConnectorCell);
+                if (roomPlacement == null)
+                {
+                    continue;
+                }
+
                 var x = roomPlacement.CoordX;
                 var y = roomPlacement.CoordY;
 
